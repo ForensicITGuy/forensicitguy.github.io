@@ -3,35 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://forensicitguy.github.io/categories/</loc>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/tags/dfir/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/posts/my-sans-dfir-netwars-experience/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/tags/netwars/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/tags/sans/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/categories/</loc>
   </url>
   
 </urlset>
