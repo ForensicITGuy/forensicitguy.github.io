@@ -6,18 +6,17 @@
     <description>Recent content in Posts on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 Mar 2019 08:47:11 +0100</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>My Test Post</title>
-      <link>https://forensicitguy.github.io/posts/testpost/</link>
-      <pubDate>Tue, 26 Mar 2019 08:47:11 +0100</pubDate>
+      <title>My Sans Dfir NetWars Experience</title>
+      <link>https://forensicitguy.github.io/posts/my-sans-dfir-netwars-experience/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://forensicitguy.github.io/posts/testpost/</guid>
-      <description>Lorem ipsum</description>
+      <guid>https://forensicitguy.github.io/posts/my-sans-dfir-netwars-experience/</guid>
+      <description>At SANSFIRE 2018 in Washington, DC I had the awesome opportunity to compete in SANS DFIR NetWars with a coworker from Red Canary. This was my first experience with NetWars, and I wasn’t sure what to expect with the tournament. We heard that at SANSFIRE DFIR NetWars would allow team competition this time around, which is different from the previous individual-only competition. I went to a SANS@Night session titled “Intro to NetWars” given by Tim Medin of Red Siege Infosec fame with my coworker and our experience soon turned into a recruiting effort.</description>
     </item>
     
   </channel>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Where DFIR Meets IT</title>
-    <link>https://forensicitguy.github.io/</link>
-    <description>Recent content on Where DFIR Meets IT</description>
+    <title>DFIR on Where DFIR Meets IT</title>
+    <link>https://forensicitguy.github.io/tags/dfir/</link>
+    <description>Recent content in DFIR on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="https://forensicitguy.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://forensicitguy.github.io/tags/dfir/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

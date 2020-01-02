@@ -3,31 +3,35 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://forensicitguy.github.io/about/</loc>
-    <lastmod>2020-01-02T00:11:23-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
-    <lastmod>2020-01-02T00:11:23-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/testpost/</loc>
-    <lastmod>2019-03-26T08:47:11+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
-    <lastmod>2019-03-26T08:47:11+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/categories/</loc>
   </url>
   
   <url>
+    <loc>https://forensicitguy.github.io/tags/dfir/</loc>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/my-sans-dfir-netwars-experience/</loc>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/netwars/</loc>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/sans/</loc>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/</loc>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
   </url>
   
 </urlset>
