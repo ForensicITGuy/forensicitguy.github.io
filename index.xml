@@ -6,10 +6,19 @@
     <description>Recent content on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 Mar 2019 08:47:11 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jan 2020 00:11:23 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>About</title>
+      <link>https://forensicitguy.github.io/about/</link>
+      <pubDate>Thu, 02 Jan 2020 00:11:23 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/about/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>My Test Post</title>
