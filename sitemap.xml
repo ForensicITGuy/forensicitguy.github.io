@@ -3,6 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://forensicitguy.github.io/tags/certification/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/education/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/linux/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/redhat/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/rhcsa/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/road-to-rhcsa8-00/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2020-01-02T21:06:20-06:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/ld_audit/</loc>
     <lastmod>2019-08-29T00:00:00+00:00</lastmod>
   </url>
@@ -18,27 +63,7 @@
   </url>
   
   <url>
-    <loc>https://forensicitguy.github.io/tags/linux/</loc>
-    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
-    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/tags/</loc>
-    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/tags/unix/</loc>
-    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
     <lastmod>2019-08-29T00:00:00+00:00</lastmod>
   </url>
   

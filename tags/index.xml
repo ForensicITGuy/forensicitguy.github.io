@@ -6,10 +6,55 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jan 2020 21:06:20 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>certification</title>
+      <link>https://forensicitguy.github.io/tags/certification/</link>
+      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/certification/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>education</title>
+      <link>https://forensicitguy.github.io/tags/education/</link>
+      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/education/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://forensicitguy.github.io/tags/linux/</link>
+      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>RedHat</title>
+      <link>https://forensicitguy.github.io/tags/redhat/</link>
+      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/redhat/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>RHCSA</title>
+      <link>https://forensicitguy.github.io/tags/rhcsa/</link>
+      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/rhcsa/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>ld_audit</title>
@@ -35,15 +80,6 @@
       <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>https://forensicitguy.github.io/tags/libpreloadvaccine/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>linux</title>
-      <link>https://forensicitguy.github.io/tags/linux/</link>
-      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://forensicitguy.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
