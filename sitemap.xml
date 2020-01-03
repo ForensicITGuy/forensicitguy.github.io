@@ -3,6 +3,41 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://forensicitguy.github.io/posts/adding-process-hiding-to-merlin/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/ld_preload/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/merlin/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/redteam/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/chrome/</loc>
     <lastmod>2019-01-18T00:00:00+00:00</lastmod>
   </url>
@@ -29,21 +64,6 @@
   
   <url>
     <loc>https://forensicitguy.github.io/tags/msfvenom/</loc>
-    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
-    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/tags/</loc>
-    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
     <lastmod>2019-01-18T00:00:00+00:00</lastmod>
   </url>
   

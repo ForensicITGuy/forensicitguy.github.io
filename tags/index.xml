@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 18 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 28 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ld_preload</title>
+      <link>https://forensicitguy.github.io/tags/ld_preload/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/ld_preload/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>merlin</title>
+      <link>https://forensicitguy.github.io/tags/merlin/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/merlin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>RedTeam</title>
+      <link>https://forensicitguy.github.io/tags/redteam/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/redteam/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>chrome</title>
