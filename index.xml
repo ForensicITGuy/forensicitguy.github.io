@@ -6,10 +6,20 @@
     <description>Recent content on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 28 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Whitelisting Ld_preload for Fun and No Profit</title>
+      <link>https://forensicitguy.github.io/posts/whitelisting-ld_preload-for-fun-and-no-profit/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/posts/whitelisting-ld_preload-for-fun-and-no-profit/</guid>
+      <description>If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…
+A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX).</description>
+    </item>
     
     <item>
       <title>Adding Process Hiding to Merlin</title>

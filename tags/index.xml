@@ -6,17 +6,62 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 28 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>ld_audit</title>
+      <link>https://forensicitguy.github.io/tags/ld_audit/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/ld_audit/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>ld_preload</title>
       <link>https://forensicitguy.github.io/tags/ld_preload/</link>
-      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>https://forensicitguy.github.io/tags/ld_preload/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>libpreloadvaccine</title>
+      <link>https://forensicitguy.github.io/tags/libpreloadvaccine/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/libpreloadvaccine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://forensicitguy.github.io/tags/linux/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>unix</title>
+      <link>https://forensicitguy.github.io/tags/unix/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/unix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>whitelisting</title>
+      <link>https://forensicitguy.github.io/tags/whitelisting/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/whitelisting/</guid>
       <description></description>
     </item>
     

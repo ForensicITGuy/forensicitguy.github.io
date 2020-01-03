@@ -3,12 +3,57 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://forensicitguy.github.io/posts/adding-process-hiding-to-merlin/</loc>
-    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
+    <loc>https://forensicitguy.github.io/tags/ld_audit/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/tags/ld_preload/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/libpreloadvaccine/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/linux/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/unix/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/whitelisting/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/whitelisting-ld_preload-for-fun-and-no-profit/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/adding-process-hiding-to-merlin/</loc>
     <lastmod>2019-08-28T00:00:00+00:00</lastmod>
   </url>
   
@@ -18,22 +63,7 @@
   </url>
   
   <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
-    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/tags/redteam/</loc>
-    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/tags/</loc>
-    <lastmod>2019-08-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
     <lastmod>2019-08-28T00:00:00+00:00</lastmod>
   </url>
   
