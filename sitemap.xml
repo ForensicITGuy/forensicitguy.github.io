@@ -3,6 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://forensicitguy.github.io/tags/chrome/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/jar/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/making-meterpreter-look-google-signed/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/metasploit/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/meterpreter/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/msfvenom/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2019-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/dfir/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
@@ -18,22 +63,7 @@
   </url>
   
   <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/tags/sans/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/tags/</loc>
-    <lastmod>2018-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
     <lastmod>2018-08-26T00:00:00+00:00</lastmod>
   </url>
   

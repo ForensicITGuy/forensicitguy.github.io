@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>msfvenom on Where DFIR Meets IT</title>
+    <link>https://forensicitguy.github.io/tags/msfvenom/</link>
+    <description>Recent content in msfvenom on Where DFIR Meets IT</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 18 Jan 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://forensicitguy.github.io/tags/msfvenom/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Making Meterpreter Look Google Signed</title>
+      <link>https://forensicitguy.github.io/posts/making-meterpreter-look-google-signed/</link>
+      <pubDate>Fri, 18 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://forensicitguy.github.io/posts/making-meterpreter-look-google-signed/</guid>
+      <description>In this post I’ll use some of the information made public by VirusTotal in a recent blog post and show how you can easily create a Metasploit Meterpreter payload and append it to a signed MSI file. This will allow you to leverage the code signing from the MSI file to make your payload appear legitimately signed by Google, Inc. After I’ll cover a bit of discussion on why this technique is dangerously significant and how to investigate for its use.</description>
+    </item>
+    
+  </channel>
+</rss>
