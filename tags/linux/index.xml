@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>linux on Where DFIR Meets IT</title>
+    <title>Linux on Where DFIR Meets IT</title>
     <link>https://forensicitguy.github.io/tags/linux/</link>
-    <description>Recent content in linux on Where DFIR Meets IT</description>
+    <description>Recent content in Linux on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 02 Jan 2020 21:06:20 -0600</lastBuildDate>
@@ -17,7 +17,8 @@
       <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
       
       <guid>https://forensicitguy.github.io/posts/road-to-rhcsa8-00/</guid>
-      <description>Choosing my educational goal for the year always causes a bit of anxiety. I try to find the right balance between something that is fun to learn and something that will help with my day job. Last year, the educational goal was to learn Volatility memory forensics better through a training class. This year I want to do something a little less complex that will help improve my Linux skills since I often focus on malware and threats for Linux during my day job.</description>
+      <description>Updated 2020-01-04 - Added the Red Hat Certs Slack group to the community list and lab environment to the lab list.
+Choosing my educational goal for the year always causes a bit of anxiety. I try to find the right balance between something that is fun to learn and something that will help with my day job. Last year, the educational goal was to learn Volatility memory forensics better through a training class.</description>
     </item>
     
     <item>
