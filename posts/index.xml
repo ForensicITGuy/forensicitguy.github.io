@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Jan 2020 21:06:20 -0600</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jan 2020 22:07:01 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>When Local Password Resets Aren&#39;t Local</title>
+      <link>https://forensicitguy.github.io/posts/when-local-resets-arent-local/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/posts/when-local-resets-arent-local/</guid>
+      <description>When You Reset a Domain Administrator Instead of Local During an IR engagement, one of my colleagues identified malicious activity where an adversary reset the password for a local administrator account. While this reset would gain the adversary access to the local administrator account, it might not have warranted an emergency. That is, until we noticed that the password reset occurred on a domain controller.
+Are There Local Accounts on Domain Controllers?</description>
+    </item>
     
     <item>
       <title>Road to RHCSA 8 - Getting Started</title>

@@ -6,10 +6,55 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Jan 2020 21:06:20 -0600</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jan 2020 22:07:01 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ActiveDirectory</title>
+      <link>https://forensicitguy.github.io/tags/activedirectory/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/activedirectory/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Administrators</title>
+      <link>https://forensicitguy.github.io/tags/administrators/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/administrators/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DomainControllers</title>
+      <link>https://forensicitguy.github.io/tags/domaincontrollers/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/domaincontrollers/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>LocalAccounts</title>
+      <link>https://forensicitguy.github.io/tags/localaccounts/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/localaccounts/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Windows</title>
+      <link>https://forensicitguy.github.io/tags/windows/</link>
+      <pubDate>Thu, 09 Jan 2020 22:07:01 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/windows/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>certification</title>
