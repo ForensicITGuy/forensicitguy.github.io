@@ -24,13 +24,39 @@
 <meta name="author" content="Tony Lambert">
 <meta name="description" content="In this post I’ll use some of the information made public by VirusTotal in a recent blog post and show how you can easily create a Metasploit Meterpreter payload and append it to a signed MSI file. This will allow you to leverage the code signing from the MSI file to make your payload appear legitimately signed by Google, Inc. After I’ll cover a bit of discussion on why this technique is dangerously significant and how to investigate for its use.">
 
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "https:\/\/forensicitguy.github.io"
+        },
+        "articleSection" : "posts",
+        "name" : "Making Meterpreter Look Google Signed",
+        "headline" : "Making Meterpreter Look Google Signed",
+        "description" : "In this post I’ll use some of the information made public by VirusTotal in a recent blog post and show how you can easily create a Metasploit Meterpreter payload and append it to a signed MSI file. This will allow you to leverage the code signing from the MSI file to make your payload appear legitimately signed by Google, Inc. After I’ll cover a bit of discussion on why this technique is dangerously significant and how to investigate for its use.",
+        "inLanguage" : "en-US",
+        "author" : "",
+        "creator" : "",
+        "publisher": "",
+        "accountablePerson" : "",
+        "copyrightHolder" : "",
+        "copyrightYear" : "2019",
+        "datePublished": "2019-01-18 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2019-01-18 00:00:00 \x2b0000 UTC",
+        "url" : "https:\/\/forensicitguy.github.io\/posts\/making-meterpreter-look-google-signed\/",
+        "wordCount" : "1095",
+        "keywords" : [ "meterpreter","chrome","msfvenom","jar","metasploit","Blog" ]
+    }
+</script>
+
 <meta property="og:title" content="Making Meterpreter Look Google Signed" />
 <meta property="og:description" content="In this post I’ll use some of the information made public by VirusTotal in a recent blog post and show how you can easily create a Metasploit Meterpreter payload and append it to a signed MSI file. This will allow you to leverage the code signing from the MSI file to make your payload appear legitimately signed by Google, Inc. After I’ll cover a bit of discussion on why this technique is dangerously significant and how to investigate for its use." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://forensicitguy.github.io/posts/making-meterpreter-look-google-signed/" />
 <meta property="article:published_time" content="2019-01-18T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-01-18T00:00:00+00:00" />
-
 
 </head>
 <body><nav class="navbar is-transparent " role="navigation" aria-label="main navigation">

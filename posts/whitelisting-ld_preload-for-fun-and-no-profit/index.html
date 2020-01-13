@@ -25,6 +25,33 @@
 <meta name="description" content="If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…
 A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX).">
 
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "https:\/\/forensicitguy.github.io"
+        },
+        "articleSection" : "posts",
+        "name" : "Whitelisting LD_PRELOAD for Fun and No Profit",
+        "headline" : "Whitelisting LD_PRELOAD for Fun and No Profit",
+        "description" : "If you’ve been around the Linux\/BSD\/Solaris\/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…\nA Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX).",
+        "inLanguage" : "en-US",
+        "author" : "",
+        "creator" : "",
+        "publisher": "",
+        "accountablePerson" : "",
+        "copyrightHolder" : "",
+        "copyrightYear" : "2019",
+        "datePublished": "2019-08-29 00:00:00 \x2b0000 UTC",
+        "dateModified" : "2019-08-29 00:00:00 \x2b0000 UTC",
+        "url" : "https:\/\/forensicitguy.github.io\/posts\/whitelisting-ld_preload-for-fun-and-no-profit\/",
+        "wordCount" : "1054",
+        "keywords" : [ "ld_preload","linux","whitelisting","unix","ld_audit","libpreloadvaccine","Blog" ]
+    }
+</script>
+
 <meta property="og:title" content="Whitelisting LD_PRELOAD for Fun and No Profit" />
 <meta property="og:description" content="If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…
 A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX)." />
@@ -32,7 +59,6 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
 <meta property="og:url" content="https://forensicitguy.github.io/posts/whitelisting-ld_preload-for-fun-and-no-profit/" />
 <meta property="article:published_time" content="2019-08-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-08-29T00:00:00+00:00" />
-
 
 </head>
 <body><nav class="navbar is-transparent " role="navigation" aria-label="main navigation">
@@ -256,7 +282,7 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
     
     
     
-    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">Linux</a>
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">linux</a>
     
     
     
