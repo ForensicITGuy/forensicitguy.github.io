@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DNF on Where DFIR Meets IT</title>
+    <link>https://forensicitguy.github.io/tags/dnf/</link>
+    <description>Recent content in DNF on Where DFIR Meets IT</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 13 Jan 2020 12:52:55 -0600</lastBuildDate>
+    
+	<atom:link href="https://forensicitguy.github.io/tags/dnf/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>“Exploiting Yum and DNF Plugins for Persistence”</title>
+      <link>https://forensicitguy.github.io/posts/exploiting-yum-dnf-plugins/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/posts/exploiting-yum-dnf-plugins/</guid>
+      <description>Two Metasploit Framework modules have held my interest in the last few weeks: the ones for persistence using Linux package managers apt and Yum. While they require root privileges to exploit, they provide a novel persistence mechanism that is likely overlooked by defenders. While looking at these modules I noticed that persistence using DNF wasn’t included, and I set off to find a way to persist on Linux systems using DNF plugins.</description>
+    </item>
+    
+  </channel>
+</rss>

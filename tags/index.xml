@@ -6,10 +6,100 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 09 Jan 2020 22:07:01 -0600</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jan 2020 12:52:55 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>CentOS 8</title>
+      <link>https://forensicitguy.github.io/tags/centos-8/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/centos-8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DNF</title>
+      <link>https://forensicitguy.github.io/tags/dnf/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/dnf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://forensicitguy.github.io/tags/linux/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Package Manager</title>
+      <link>https://forensicitguy.github.io/tags/package-manager/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/package-manager/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Penetration Testing</title>
+      <link>https://forensicitguy.github.io/tags/penetration-testing/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/penetration-testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Persistence</title>
+      <link>https://forensicitguy.github.io/tags/persistence/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/persistence/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Plugin</title>
+      <link>https://forensicitguy.github.io/tags/plugin/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/plugin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Red Hat Enterprise Linux 8</title>
+      <link>https://forensicitguy.github.io/tags/red-hat-enterprise-linux-8/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/red-hat-enterprise-linux-8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Red Team</title>
+      <link>https://forensicitguy.github.io/tags/red-team/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/red-team/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Yum</title>
+      <link>https://forensicitguy.github.io/tags/yum/</link>
+      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/yum/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>ActiveDirectory</title>
@@ -71,15 +161,6 @@
       <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
       
       <guid>https://forensicitguy.github.io/tags/education/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://forensicitguy.github.io/tags/linux/</link>
-      <pubDate>Thu, 02 Jan 2020 21:06:20 -0600</pubDate>
-      
-      <guid>https://forensicitguy.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
