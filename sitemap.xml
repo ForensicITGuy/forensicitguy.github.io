@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>https://forensicitguy.github.io/posts/exploiting-yum-dnf-plugins/</loc>
+    <lastmod>2020-01-13T12:52:55-06:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/linux/</loc>
     <lastmod>2020-01-13T12:52:55-06:00</lastmod>
   </url>
@@ -64,11 +69,6 @@
   
   <url>
     <loc>https://forensicitguy.github.io/tags/yum/</loc>
-    <lastmod>2020-01-13T12:52:55-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/exploiting-yum-dnf-plugins/</loc>
     <lastmod>2020-01-13T12:52:55-06:00</lastmod>
   </url>
   
