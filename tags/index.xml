@@ -6,10 +6,55 @@
     <description>Recent content in Tags on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 13 Jan 2020 12:52:55 -0600</lastBuildDate>
+    <lastBuildDate>Thu, 06 Feb 2020 16:06:16 -0600</lastBuildDate>
     
 	<atom:link href="https://forensicitguy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>edr</title>
+      <link>https://forensicitguy.github.io/tags/edr/</link>
+      <pubDate>Thu, 06 Feb 2020 16:06:16 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/edr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>evasion</title>
+      <link>https://forensicitguy.github.io/tags/evasion/</link>
+      <pubDate>Thu, 06 Feb 2020 16:06:16 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/evasion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ld_preload</title>
+      <link>https://forensicitguy.github.io/tags/ld_preload/</link>
+      <pubDate>Thu, 06 Feb 2020 16:06:16 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/ld_preload/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://forensicitguy.github.io/tags/linux/</link>
+      <pubDate>Thu, 06 Feb 2020 16:06:16 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>meterpreter</title>
+      <link>https://forensicitguy.github.io/tags/meterpreter/</link>
+      <pubDate>Thu, 06 Feb 2020 16:06:16 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/tags/meterpreter/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>CentOS 8</title>
@@ -26,15 +71,6 @@
       <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
       
       <guid>https://forensicitguy.github.io/tags/dnf/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://forensicitguy.github.io/tags/linux/</link>
-      <pubDate>Mon, 13 Jan 2020 12:52:55 -0600</pubDate>
-      
-      <guid>https://forensicitguy.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
@@ -192,15 +228,6 @@
     </item>
     
     <item>
-      <title>ld_preload</title>
-      <link>https://forensicitguy.github.io/tags/ld_preload/</link>
-      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://forensicitguy.github.io/tags/ld_preload/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>libpreloadvaccine</title>
       <link>https://forensicitguy.github.io/tags/libpreloadvaccine/</link>
       <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
@@ -269,15 +296,6 @@
       <pubDate>Fri, 18 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>https://forensicitguy.github.io/tags/metasploit/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>meterpreter</title>
-      <link>https://forensicitguy.github.io/tags/meterpreter/</link>
-      <pubDate>Fri, 18 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://forensicitguy.github.io/tags/meterpreter/</guid>
       <description></description>
     </item>
     
