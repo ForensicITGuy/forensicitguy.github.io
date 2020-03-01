@@ -88,6 +88,18 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/base64/">
+        
+        Base64
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/bash/">
+        
+        Bash
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/centos-8/">
         
         Cent o s 8
@@ -139,6 +151,12 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/evasion/">
         
         Evasion
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/input/">
+        
+        Input
         
       </a>
       
@@ -208,6 +226,12 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/output/">
+        
+        Output
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/package-manager/">
         
         Package manager
@@ -226,9 +250,21 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/piping/">
+        
+        Piping
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
         
         Plugin
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
+        
+        Python
         
       </a>
       
@@ -247,6 +283,12 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/redhat/">
         
         Red hat
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redirection/">
+        
+        Redirection
         
       </a>
       
@@ -298,19 +340,25 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
       
       <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="github-circle" src='https://forensicitguy.github.io/icons/svg/github-circle.svg'>
+          
+            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://linkedin.com/in/tonymlambert" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="linkedin" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
+            <img alt="icons/svg/linkedin.svg" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://twitter.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="twitter" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
+            <img alt="icons/svg/twitter.svg" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
         </span>
       </a>
       
@@ -348,7 +396,7 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
     
     
     
-    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">linux</a>
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">Linux</a>
     
     
     
@@ -381,7 +429,7 @@ A Brief Look at LD_PRELOAD LD_PRELOAD is an environment variable used by the dyn
   <div class="container">
 <div class="content is-medium">
   <p>If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…</p>
-<h2 id="a-brief-look-at-ld-preload">A Brief Look at LD_PRELOAD</h2>
+<h2 id="a-brief-look-at-ld_preload">A Brief Look at LD_PRELOAD</h2>
 <p><img src="https://forensicitguy.github.io/img/whitelisting-ld_preload-fun-no-profit/ld_preload-header.png" alt=""></p>
 <p>LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX). Libraries specified using the LD_PRELOAD variable are loaded before the ones typically required by whatever command you’ll execute. It also goes one step further, libraries specified in LD_PRELOAD are loaded by commands even if their executables don’t require the preloaded binaries for operation.</p>
 <p>This is an insanely easy way to introduce malicious code to a system. Preloaded libraries allow an adversary some extra advantages. First, an adversary has the ability to hook system calls or library calls. In at least one project, <a href="https://github.com/gianlucaborello/libprocesshider">libprocesshider</a>, this functionality is leveraged to taint the contents of a directory listing to hide processes. It doesn’t stop there, either. As shown in the <a href="https://github.com/dsnezhkov/zombieant">Zombie Ant Farm project</a>, adversaries don’t need specific information about the internals of binaries to execute their evil code. In the case of the ZAF project, it’s shown that adversaries can implement functions that execute at the load or unload of preloaded binaries. This means that adversaries can execute code by simply specifying a library is a preload and waiting for a legitimate user to execute something.</p>

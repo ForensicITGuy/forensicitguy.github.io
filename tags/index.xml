@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Where DFIR Meets IT</title>
@@ -48,7 +48,7 @@
     </item>
     
     <item>
-      <title>linux</title>
+      <title>Linux</title>
       <link>https://forensicitguy.github.io/tags/linux/</link>
       <pubDate>Sat, 29 Feb 2020 15:08:25 -0600</pubDate>
       

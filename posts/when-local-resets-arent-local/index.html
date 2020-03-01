@@ -88,6 +88,18 @@ Are There Local Accounts on Domain Controllers?" />
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/base64/">
+        
+        Base64
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/bash/">
+        
+        Bash
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/centos-8/">
         
         Cent o s 8
@@ -139,6 +151,12 @@ Are There Local Accounts on Domain Controllers?" />
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/evasion/">
         
         Evasion
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/input/">
+        
+        Input
         
       </a>
       
@@ -208,6 +226,12 @@ Are There Local Accounts on Domain Controllers?" />
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/output/">
+        
+        Output
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/package-manager/">
         
         Package manager
@@ -226,9 +250,21 @@ Are There Local Accounts on Domain Controllers?" />
         
       </a>
       
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/piping/">
+        
+        Piping
+        
+      </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
         
         Plugin
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
+        
+        Python
         
       </a>
       
@@ -247,6 +283,12 @@ Are There Local Accounts on Domain Controllers?" />
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/redhat/">
         
         Red hat
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redirection/">
+        
+        Redirection
         
       </a>
       
@@ -298,19 +340,25 @@ Are There Local Accounts on Domain Controllers?" />
       
       <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="github-circle" src='https://forensicitguy.github.io/icons/svg/github-circle.svg'>
+          
+            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://linkedin.com/in/tonymlambert" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="linkedin" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
+            <img alt="icons/svg/linkedin.svg" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
         </span>
       </a>
       
       <a class="navbar-item" href="https://twitter.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
-          <img alt="twitter" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
+            <img alt="icons/svg/twitter.svg" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
         </span>
       </a>
       
@@ -379,20 +427,20 @@ Are There Local Accounts on Domain Controllers?" />
 <p>During an IR engagement, one of my colleagues identified malicious activity where an adversary reset the password for a local administrator account. While this reset would gain the adversary access to the local administrator account, it might not have warranted an emergency. That is, until we noticed that the password reset occurred on a domain controller.</p>
 <h2 id="are-there-local-accounts-on-domain-controllers">Are There Local Accounts on Domain Controllers?</h2>
 <p>Well, that gets complicated. Security pros and IT generalists are usually aware of SAM account databases on Windows systems. These databases contain the credentials needed for user logons when no domain connections are present. In the absence of Active Directory, such as in workgroup or home network scenarios, the Windows systems will use the SAM account database to authenticate users. In some cases, users may also choose to logon with a local account in enterprise environments, authenticating from the SAM database instead of the domain controller.</p>
-<p>Most Windows systems follow this same pattern, unless they are promoted to Active Directory domain controllers. Once this happens, the promoted DC will stop using the local SAM database for its own everyday authentication, instead it uses the Active Directory database stored in NTDS.dit. In addition, the &ldquo;local&rdquo; groups for the DC will be defined by the AD Built-In groups. If the DC is the first of a domain, the contents of the SAM account database are migrated into the new domain's NTDS.dit database. If the DC is an addition to an existing domain, it will receive a replica of the NTDS.dit database to authenticate from.</p>
+<p>Most Windows systems follow this same pattern, unless they are promoted to Active Directory domain controllers. Once this happens, the promoted DC will stop using the local SAM database for its own everyday authentication, instead it uses the Active Directory database stored in NTDS.dit. In addition, the &ldquo;local&rdquo; groups for the DC will be defined by the AD Built-In groups. If the DC is the first of a domain, the contents of the SAM account database are migrated into the new domain&rsquo;s NTDS.dit database. If the DC is an addition to an existing domain, it will receive a replica of the NTDS.dit database to authenticate from.</p>
 <p>During the promotion of a domain controller you may also notice that the process requires you to set a Directory Services Restore Mode password. Once you have promoted the domain controller this account will be the only one stored within the local SAM database and it will not be available for use unless you boot into DSRM mode on the DC for recovery.</p>
 <h2 id="does-this-really-matter">Does This Really Matter?</h2>
 <p>It absolutely matters when investigating password resets and assigning permissions within an Active Directory domain.</p>
 <p>Consider these commands:</p>
 <pre><code>net user Administrator Password123
-</code></pre><p>If this command executes on a non-domain controller system, it will reset the local Administrator account's password (in the SAM database) to <code>Password123</code>. On a domain controller, it will reset the <strong><em>domain's</em></strong> Administrator account in NTDS.dit instead. This implies that whoever resets this password will have Administrator access for the entire Active Directory domain and all systems therein rather than just a single system.</p>
+</code></pre><p>If this command executes on a non-domain controller system, it will reset the local Administrator account&rsquo;s password (in the SAM database) to <code>Password123</code>. On a domain controller, it will reset the <strong><em>domain&rsquo;s</em></strong> Administrator account in NTDS.dit instead. This implies that whoever resets this password will have Administrator access for the entire Active Directory domain and all systems therein rather than just a single system.</p>
 <p>This also implies that any malware that achieves use of the SYSTEM account on a domain controller will be able to escalate to domain privileges as the SYSTEM account will be able to reset user account passwords on the DC.</p>
 <pre><code>net user Joffrey
 </code></pre><p>If this command executes on a non-DC system, it will add a local user by the name of <code>Joffrey</code> to the SAM database. On a DC, it will add a domain user by the same name to NTDS.dit. This is important because performing this action on a DC may circumvent your account creation processes unintentionally.</p>
 <pre><code>net localgroup Administrators /add WESTEROS\Jorah.Mormont
-</code></pre><p>If this command executes on a non-DC system it will add Jorah's account to the local Administrators group, entitling him to manage a single computer system. If the command executes on a DC system, Jorah's account will be added to the Built-In Administrators group in Active Directory. This would entitle Jorah to make changes to Active Directory's NTDS.dit database, Group Policy Objects, AD Sites, and also allow administrative access on all computers across the domain. This can get very bad very quickly.</p>
+</code></pre><p>If this command executes on a non-DC system it will add Jorah&rsquo;s account to the local Administrators group, entitling him to manage a single computer system. If the command executes on a DC system, Jorah&rsquo;s account will be added to the Built-In Administrators group in Active Directory. This would entitle Jorah to make changes to Active Directory&rsquo;s NTDS.dit database, Group Policy Objects, AD Sites, and also allow administrative access on all computers across the domain. This can get very bad very quickly.</p>
 <h2 id="taking-action">Taking Action</h2>
-<p>Be vigilent when performing operations on accounts from a domain controller's command line. Remember that your &ldquo;local&rdquo; changes likely aren't local if they occur on a DC.</p>
+<p>Be vigilent when performing operations on accounts from a domain controller&rsquo;s command line. Remember that your &ldquo;local&rdquo; changes likely aren&rsquo;t local if they occur on a DC.</p>
 <h2 id="sources">Sources</h2>
 <ul>
 <li><a href="https://social.technet.microsoft.com/Forums/exchange/en-US/2f120e62-52a9-4001-b8e0-15a897f28b7e/is-there-any-possible-to-create-a-local-account-on-domain-controller-not-domain-account?forum=winserverDS">Technet</a></li>
