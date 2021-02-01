@@ -3,6 +3,46 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://forensicitguy.github.io/tags/dmg/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/linux/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/macos/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/pkg/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/tags/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://forensicitguy.github.io/posts/macos-pkg-dmg-on-linux/</loc>
+    <lastmod>2021-01-31T20:46:21-06:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://forensicitguy.github.io/tags/base64/</loc>
     <lastmod>2020-02-29T15:08:25-06:00</lastmod>
   </url>
@@ -23,22 +63,12 @@
   </url>
   
   <url>
-    <loc>https://forensicitguy.github.io/tags/linux/</loc>
-    <lastmod>2020-02-29T15:08:25-06:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://forensicitguy.github.io/tags/output/</loc>
     <lastmod>2020-02-29T15:08:25-06:00</lastmod>
   </url>
   
   <url>
     <loc>https://forensicitguy.github.io/tags/piping/</loc>
-    <lastmod>2020-02-29T15:08:25-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/posts/</loc>
     <lastmod>2020-02-29T15:08:25-06:00</lastmod>
   </url>
   
@@ -64,16 +94,6 @@
   
   <url>
     <loc>https://forensicitguy.github.io/posts/road-to-rhcsa8-input-redirection/</loc>
-    <lastmod>2020-02-29T15:08:25-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/tags/</loc>
-    <lastmod>2020-02-29T15:08:25-06:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://forensicitguy.github.io/</loc>
     <lastmod>2020-02-29T15:08:25-06:00</lastmod>
   </url>
   

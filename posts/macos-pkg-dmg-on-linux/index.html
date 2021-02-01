@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    
+    Working with macOS DMG and PKG files on Linux
+     | Tony Lambert 
+  </title>
+  <link rel="stylesheet" href='https://forensicitguy.github.io/css/site.min.76020436cf046947e8c2e9e90dd1cb5eefaeadbb0db7bd02cab327511f62295a1f5ae30e470f070e0955c4d4fa302f399cb74b893f61716bb1149741cea15d41.css' integrity='sha512-dgIENs8EaUfowunpDdHLXu&#43;urbsNt70CyrMnUR9iKVofWuMORw8HDglVxNT6MC85nLdLiT9hcWuxFJdBzqFdQQ=='>
+  <link rel="canonical" href="https://forensicitguy.github.io/posts/macos-pkg-dmg-on-linux/">
+  <link rel="alternate" type="application/rss&#43;xml" href="https://forensicitguy.github.io/index.xml" title="Where DFIR Meets IT">
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Tony Lambert">
+<meta name="description" content="At my day job I’ve been diving into macOS malware, and it turns out that quite a lot of macOS malware gets distributed through installer packages like DMG images and PKG archives. I work on malware using REMnux or a Pop!_OS Linux system, so I wanted to share how I work with these files to analyze them on Linux.
+Ripping open PKG files PKG files are xar archive files you can open with bsdtar.">
+
+<script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "https:\/\/forensicitguy.github.io"
+        },
+        "articleSection" : "posts",
+        "name" : "Working with macOS DMG and PKG files on Linux",
+        "headline" : "Working with macOS DMG and PKG files on Linux",
+        "description" : "At my day job I’ve been diving into macOS malware, and it turns out that quite a lot of macOS malware gets distributed through installer packages like DMG images and PKG archives. I work on malware using REMnux or a Pop!_OS Linux system, so I wanted to share how I work with these files to analyze them on Linux.\nRipping open PKG files PKG files are xar archive files you can open with bsdtar.",
+        "inLanguage" : "en-US",
+        "author" : "Tony Lambert",
+        "creator" : "Tony Lambert",
+        "publisher": "Tony Lambert",
+        "accountablePerson" : "Tony Lambert",
+        "copyrightHolder" : "Tony Lambert",
+        "copyrightYear" : "2021",
+        "datePublished": "2021-01-31 20:46:21 -0600 CST",
+        "dateModified" : "2021-01-31 20:46:21 -0600 CST",
+        "url" : "https:\/\/forensicitguy.github.io\/posts\/macos-pkg-dmg-on-linux\/",
+        "wordCount" : "960",
+        "keywords" : [ "macos","linux","dmg","pkg","Blog" ]
+    }
+</script>
+
+<meta property="og:title" content="Working with macOS DMG and PKG files on Linux" />
+<meta property="og:description" content="At my day job I’ve been diving into macOS malware, and it turns out that quite a lot of macOS malware gets distributed through installer packages like DMG images and PKG archives. I work on malware using REMnux or a Pop!_OS Linux system, so I wanted to share how I work with these files to analyze them on Linux.
+Ripping open PKG files PKG files are xar archive files you can open with bsdtar." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://forensicitguy.github.io/posts/macos-pkg-dmg-on-linux/" />
+<meta property="article:published_time" content="2021-01-31T20:46:21-06:00" />
+<meta property="article:modified_time" content="2021-01-31T20:46:21-06:00" />
+
+</head>
+<body><nav class="navbar is-transparent " role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://forensicitguy.github.io/">
+      <figure class="image">
+        <img alt="" class="is-rounded" src="https://www.gravatar.com/avatar/c0ec92ffadd1bc3cba3cf9364ea250d6?s=128&d=identicon">
+      </figure>
+    </a>
+    <a class="navbar-item" href="https://forensicitguy.github.io/">
+      Where DFIR Meets IT
+    </a>
+  </div>
+  
+  <div class="navbar-menu">
+    <div class="navbar-start">
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/activedirectory/">
+        
+        Active directory
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/administrators/">
+        
+        Administrators
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/base64/">
+        
+        Base64
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/bash/">
+        
+        Bash
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/centos-8/">
+        
+        Cent o s 8
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/certification/">
+        
+        Certification
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/chrome/">
+        
+        Chrome
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/dfir/">
+        
+        DFIR
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/dmg/">
+        
+        Dmg
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/dnf/">
+        
+        DNF
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/domaincontrollers/">
+        
+        Domain controllers
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/edr/">
+        
+        Edr
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/education/">
+        
+        Education
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/evasion/">
+        
+        Evasion
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/input/">
+        
+        Input
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/jar/">
+        
+        Jar
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/ld_audit/">
+        
+        Ld audit
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/ld_preload/">
+        
+        Ld preload
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/libpreloadvaccine/">
+        
+        Libpreloadvaccine
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/linux/">
+        
+        Linux
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/localaccounts/">
+        
+        Local accounts
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/macos/">
+        
+        Macos
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/merlin/">
+        
+        Merlin
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/metasploit/">
+        
+        Metasploit
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/meterpreter/">
+        
+        Meterpreter
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/msfvenom/">
+        
+        Msfvenom
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/netwars/">
+        
+        Net wars
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/output/">
+        
+        Output
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/package-manager/">
+        
+        Package manager
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/penetration-testing/">
+        
+        Penetration testing
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/persistence/">
+        
+        Persistence
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/piping/">
+        
+        Piping
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/pkg/">
+        
+        Pkg
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
+        
+        Plugin
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
+        
+        Python
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/red-hat-enterprise-linux-8/">
+        
+        Red hat enterprise linux 8
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/red-team/">
+        
+        Red team
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redhat/">
+        
+        Red hat
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redirection/">
+        
+        Redirection
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/redteam/">
+        
+        Red team
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/rhcsa/">
+        
+        RHCSA
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/sans/">
+        
+        SANS
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/unix/">
+        
+        Unix
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/whitelisting/">
+        
+        Whitelisting
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/windows/">
+        
+        Windows
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/yum/">
+        
+        Yum
+        
+      </a>
+      
+    </div>
+    
+    <div class="navbar-end">
+      
+      <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
+        <span class="icon">
+          
+            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+          
+        </span>
+      </a>
+      
+      <a class="navbar-item" href="https://linkedin.com/in/tonymlambert" rel="noopener" target="_blank">
+        <span class="icon">
+          
+            <img alt="icons/svg/linkedin.svg" src='https://forensicitguy.github.io/icons/svg/linkedin.svg'>
+          
+        </span>
+      </a>
+      
+      <a class="navbar-item" href="https://twitter.com/ForensicITGuy" rel="noopener" target="_blank">
+        <span class="icon">
+          
+            <img alt="icons/svg/twitter.svg" src='https://forensicitguy.github.io/icons/svg/twitter.svg'>
+          
+        </span>
+      </a>
+      
+      <a class="navbar-item" href="mailto:tmlambert13@gmail.com" target="_blank">
+        <span class="icon">
+          <img alt="email" src='https://forensicitguy.github.io/icons/svg/email.svg'>
+        </span>
+      </a>
+      <a class="navbar-item" href="https://forensicitguy.github.io/index.xml" target="_blank">
+        <span class="icon">
+          <img alt="rss" src='https://forensicitguy.github.io/icons/svg/rss.svg'>
+        </span>
+      </a>
+      
+    </div>
+  </div>
+</nav>
+<section class="hero is-small is-info is-fullwidth">
+  <div class="hero-body">
+<div class="container">
+  <h1 class="title">
+    Working with macOS DMG and PKG files on Linux
+  </h1>
+  <h2 class="subtitle">
+    <time datetime='2021-01-31T20:46:21-06:00'>
+      January 31, 2021
+    </time>
+    
+    <br>
+    
+    
+    
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/macos/">macos</a>
+    
+    
+    
+    
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/linux/">Linux</a>
+    
+    
+    
+    
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/dmg/">dmg</a>
+    
+    
+    
+    
+    <a class="tag is-link" href="https://forensicitguy.github.io/tags/pkg/">pkg</a>
+    
+    
+    
+  </h2>
+</div>
+
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+<div class="content is-medium">
+  <p>At my day job I’ve been diving into macOS malware, and it turns out that quite a lot of macOS malware gets distributed through installer packages like DMG images and PKG archives. I work on malware using REMnux or a Pop!_OS Linux system, so I wanted to share how I work with these files to analyze them on Linux.</p>
+<h2 id="ripping-open-pkg-files">Ripping open PKG files</h2>
+<p>PKG files are xar archive files you can open with bsdtar. I tried to use tar, but bsdtar actually did the trick where tar didn’t. To get bsdtar I ran <code>sudo apt update &amp;&amp; sudo apt install libarchive-tools</code> because it didn’t exist on my system by default. To show how it works, in this post I unpack the legitimate AnonymousVPN client PKG.</p>
+<p>To get started, make a folder for the contents of the PKG file and unpack it.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ mkdir anonymous-vpn
+$ bsdtar xvf AnonymousVPN.pkg -C anonymous-vpn/
+
+x Bom
+x Payload
+x Scripts
+x PackageInfo
+
+$ cd anonymous-vpn/
+$ ls -lah
+
+total 13M
+drwxrwxr-x <span style="color:#ae81ff">2</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:54 .
+drwxrwxr-x <span style="color:#ae81ff">5</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:54 ..
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  43K Nov <span style="color:#ae81ff">10</span> 10:04 Bom
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  <span style="color:#ae81ff">347</span> Nov <span style="color:#ae81ff">10</span> 10:04 PackageInfo
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  13M Nov <span style="color:#ae81ff">10</span> 10:04 Payload
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  46K Nov <span style="color:#ae81ff">10</span> 10:04 Scripts
+</code></pre></div><p>Within the folder you should find multiple files, including a <code>Bill of Materials</code> (BOM) file, a <code>PackageInfo</code> file, a <code>Payload</code> archive, and a <code>Scripts</code> archive. The last two archive files are gzipped CPIO archives. To unpack the contents of the archives you can execute these commands.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ cat Payload | gunzip | cpio -i
+<span style="color:#ae81ff">62475</span> blocks
+
+$ cat Scripts | gunzip | cpio -i
+<span style="color:#ae81ff">294</span> blocks
+
+$ ls -lah
+
+total 13M
+drwxrwxr-x <span style="color:#ae81ff">4</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:58 .
+drwxrwxr-x <span style="color:#ae81ff">5</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:54 ..
+drwxrwxr-x <span style="color:#ae81ff">3</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:57 Applications
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  43K Nov <span style="color:#ae81ff">10</span> 10:04 Bom
+drwxr-xr-x <span style="color:#ae81ff">6</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 20:57 Library
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  <span style="color:#ae81ff">347</span> Nov <span style="color:#ae81ff">10</span> 10:04 PackageInfo
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  13M Nov <span style="color:#ae81ff">10</span> 10:04 Payload
+-rwxr-xr-x <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  <span style="color:#ae81ff">178</span> Jan <span style="color:#ae81ff">31</span> 20:58 postinstall*
+-rwxr-xr-x <span style="color:#ae81ff">1</span> forensicitguy forensicitguy 147K Jan <span style="color:#ae81ff">31</span> 20:58 preinstall*
+-rw-r--r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  46K Nov <span style="color:#ae81ff">10</span> 10:04 Scripts
+</code></pre></div><p>After unpacking Payload, you may find one or more folders that include MACH-O binaries and other data for an application. If the Payload doesn’t unpack into anything, it means that you have an empty, payload-free package. In these packages, the installation relies on the contents of the Scripts archive.</p>
+<p>After unpacking Scripts, you may find a <code>preinstall</code> and <code>postinstall</code> file. As their names suggest, these files contain content run before the PKG installer runs and then after. While they live within the Scripts archive, they can be any form of executable content for macOS. They may exist as Bash shell scripts, Python or Ruby scripts, or even MACH-O binaries. We can observe the file types by executing <code>file</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ file *
+
+Applications: directory
+Bom:          Mac OS X bill of materials <span style="color:#f92672">(</span>BOM<span style="color:#f92672">)</span> file
+Library:      directory
+PackageInfo:  ASCII text
+Payload:      gzip compressed data, from Unix, original size modulo 2^32 <span style="color:#ae81ff">31987200</span>
+postinstall:  Bourne-Again shell script, ASCII text executable
+preinstall:   Mach-O 64-bit x86_64 executable, flags:&lt;NOUNDEFS|DYLDLINK|TWOLEVEL|WEAK_DEFINES|BINDS_TO_WEAK|PIE&gt;
+Scripts:      gzip compressed data, from Unix, original size modulo 2^32 <span style="color:#ae81ff">150528</span>
+</code></pre></div><p>From here you can dive into analyzing the scripts and binaries as you please.</p>
+<h2 id="ripping-open-dmg-files">Ripping open DMG files</h2>
+<p>DMG files are like ISO/IMG/VHD files on Windows platforms. They contain a filesystem that house multiple files and folders. DMGs can be compressed or not, and they can contain one of multiple filesystem types. To show opening a DMG, I’ll open up a DMG containing a cracked version of Little Snitch you can find passed around pirated app sites.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ 7z x Little_Snitch_4.0.3_CR2_<span style="color:#ae81ff">\[</span>TNT<span style="color:#ae81ff">\]</span>.dmg 
+
+7-Zip <span style="color:#f92672">[</span>64<span style="color:#f92672">]</span> 16.02 : Copyright <span style="color:#f92672">(</span>c<span style="color:#f92672">)</span> 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 <span style="color:#f92672">(</span>locale<span style="color:#f92672">=</span>en_US.UTF-8,Utf16<span style="color:#f92672">=</span>on,HugeFiles<span style="color:#f92672">=</span>on,64 bits,8 CPUs Intel<span style="color:#f92672">(</span>R<span style="color:#f92672">)</span> Core<span style="color:#f92672">(</span>TM<span style="color:#f92672">)</span> i7-8550U CPU @ 1.80GHz <span style="color:#f92672">(</span>806EA<span style="color:#f92672">)</span>,ASM,AES-NI<span style="color:#f92672">)</span>
+
+Scanning the drive <span style="color:#66d9ef">for</span> archives:
+<span style="color:#ae81ff">1</span> file, <span style="color:#ae81ff">52963974</span> bytes <span style="color:#f92672">(</span><span style="color:#ae81ff">51</span> MiB<span style="color:#f92672">)</span>
+
+Extracting archive: Little_Snitch_4.0.3_CR2_<span style="color:#f92672">[</span>TNT<span style="color:#f92672">]</span>.dmg
+--
+Path <span style="color:#f92672">=</span> Little_Snitch_4.0.3_CR2_<span style="color:#f92672">[</span>TNT<span style="color:#f92672">]</span>.dmg
+Type <span style="color:#f92672">=</span> Dmg
+Physical Size <span style="color:#f92672">=</span> <span style="color:#ae81ff">52963974</span>
+Method <span style="color:#f92672">=</span> Copy Zero2 CRC
+Blocks <span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+----
+Path <span style="color:#f92672">=</span> 4.hfs
+Size <span style="color:#f92672">=</span> <span style="color:#ae81ff">59727872</span>
+Packed Size <span style="color:#f92672">=</span> <span style="color:#ae81ff">52920832</span>
+Comment <span style="color:#f92672">=</span> disk image <span style="color:#f92672">(</span>Apple_HFS : 4<span style="color:#f92672">)</span>
+Method <span style="color:#f92672">=</span> Copy Zero2 CRC
+--
+Path <span style="color:#f92672">=</span> 4.hfs
+Type <span style="color:#f92672">=</span> HFS
+Physical Size <span style="color:#f92672">=</span> <span style="color:#ae81ff">59727872</span>
+Method <span style="color:#f92672">=</span> HFS+
+Cluster Size <span style="color:#f92672">=</span> <span style="color:#ae81ff">4096</span>
+Free Space <span style="color:#f92672">=</span> <span style="color:#ae81ff">6807552</span>
+Created <span style="color:#f92672">=</span> 2017-10-02 07:19:41
+Modified <span style="color:#f92672">=</span> 2017-10-01 23:19:58
+
+Everything is Ok
+
+Folders: <span style="color:#ae81ff">5</span>
+Files: <span style="color:#ae81ff">6</span>
+Size:       <span style="color:#ae81ff">50799922</span>
+Compressed: <span style="color:#ae81ff">52963974</span>
+
+$ ls -lah
+
+total 51M
+drwxrwxr-x <span style="color:#ae81ff">3</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 21:08  .
+drwxrwxr-x <span style="color:#ae81ff">3</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 21:08  ..
+drwx------ <span style="color:#ae81ff">6</span> forensicitguy forensicitguy 4.0K Oct  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2017</span> <span style="color:#e6db74">&#39;Little Snitch 4.0.3 CR2&#39;</span>
+-rw-rw-r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  51M Feb  <span style="color:#ae81ff">9</span>  <span style="color:#ae81ff">2019</span> <span style="color:#e6db74">&#39;Little_Snitch_4.0.3_CR2_[TNT].dmg&#39;</span>
+
+$ cd Little<span style="color:#ae81ff">\ </span>Snitch<span style="color:#ae81ff">\ </span>4.0.3<span style="color:#ae81ff">\ </span>CR2/
+$ ls -lah
+
+total 424K
+drwx------ <span style="color:#ae81ff">6</span> forensicitguy forensicitguy 4.0K Oct  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2017</span>  .
+drwxrwxr-x <span style="color:#ae81ff">3</span> forensicitguy forensicitguy 4.0K Jan <span style="color:#ae81ff">31</span> 21:08  ..
+drwx------ <span style="color:#ae81ff">2</span> forensicitguy forensicitguy 4.0K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span>  .background
+-rw-rw-r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy  11K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span>  .DS_Store
+-rw-rw-r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy 1.6K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span>  Help.txt
+drwx------ <span style="color:#ae81ff">2</span> forensicitguy forensicitguy 4.0K Oct  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2017</span> <span style="color:#e6db74">&#39;[HFS+ Private Data]&#39;</span>
+drwx------ <span style="color:#ae81ff">2</span> forensicitguy forensicitguy 4.0K Oct  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2017</span> <span style="color:#e6db74">&#39;.HFS+ Private Directory Data&#39;$&#39;\r&#39;</span>
+drwx------ <span style="color:#ae81ff">2</span> forensicitguy forensicitguy 4.0K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span> <span style="color:#e6db74">&#39;Manual install&#39;</span>
+-rw-rw-r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy 1.6K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span> <span style="color:#e6db74">&#39;Open Gatekeeper friendly&#39;</span>
+-rw-rw-r-- <span style="color:#ae81ff">1</span> forensicitguy forensicitguy 377K Sep <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2017</span>  .VolumeIcon.icns
+</code></pre></div><p>Sometimes DMGs get maddening and you can’t unpack them easily with 7z. In these cases I recommend dmg2img, which <a href="https://eastmanreference.com/how-to-work-with-dmg-files-on-linux">this blog post</a> talks about. When looking at DMGs, keep in mind they can contain any form of content needed for an application, including PKG installer files, scripts, folders, and more.</p>
+<p>Good hunting!</p>
+
+</div>
+
+
+  </div>
+</section><footer class="footer">
+  <div class="content has-text-centered">
+    
+    
+    <p>
+      
+      
+    </p>
+    
+  </div>
+</footer>
+
+
+<script type="application/javascript">
+var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+var doNotTrack = (dnt == "1" || dnt == "yes");
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-155060013-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</body>
+</html>
