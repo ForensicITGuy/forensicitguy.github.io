@@ -6,11 +6,7 @@
     <description>Recent content in SANS on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Aug 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://forensicitguy.github.io/tags/sans/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 26 Aug 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://forensicitguy.github.io/tags/sans/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>My Sans Dfir NetWars Experience</title>
       <link>https://forensicitguy.github.io/posts/my-sans-dfir-netwars-experience/</link>
