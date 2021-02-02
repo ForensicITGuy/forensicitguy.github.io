@@ -4,6 +4,7 @@
 
 
 
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,46 +13,18 @@
     Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses
      | Tony Lambert 
   </title>
-  <link rel="stylesheet" href='https://forensicitguy.github.io/css/site.min.76020436cf046947e8c2e9e90dd1cb5eefaeadbb0db7bd02cab327511f62295a1f5ae30e470f070e0955c4d4fa302f399cb74b893f61716bb1149741cea15d41.css' integrity='sha512-dgIENs8EaUfowunpDdHLXu&#43;urbsNt70CyrMnUR9iKVofWuMORw8HDglVxNT6MC85nLdLiT9hcWuxFJdBzqFdQQ=='>
+  <link rel="stylesheet" href='https://forensicitguy.github.io/css/site.min.79fe936623aa76027ec7f37e2c1f88575bc07ec92581712940e3dd619a002236e0522d1202b5d1f6df0ddca3a2aea9a163ce58001d960ed138f4f19e83fa83db.css' integrity='sha512-ef6TZiOqdgJ&#43;x/N&#43;LB&#43;IV1vAfsklgXEpQOPdYZoAIjbgUi0SArXR9t8N3KOirqmhY85YAB2WDtE49PGeg/qD2w=='>
   <link rel="canonical" href="https://forensicitguy.github.io/posts/road-to-rhcsa8-input-redirection/">
   <link rel="alternate" type="application/rss&#43;xml" href="https://forensicitguy.github.io/index.xml" title="Where DFIR Meets IT">
-  <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="chrome=1">
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<meta name="author" content="Tony Lambert">
-<meta name="description" content="Bourne-compatible Unix shells (bash, sh, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you&rsquo;re just here for the security stuff, jump forward here.">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <meta name="author" content="Tony Lambert">
+  <meta name="description" content="Bourne-compatible Unix shells (bash, sh, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you&rsquo;re just here for the security stuff, jump forward here.">
 
-<script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type" : "BlogPosting",
-        "mainEntityOfPage": {
-             "@type": "WebPage",
-             "@id": "https:\/\/forensicitguy.github.io"
-        },
-        "articleSection" : "posts",
-        "name" : "Road to RHCSA 8 - I\/O Redirection, Piping, and Their Evil Uses",
-        "headline" : "Road to RHCSA 8 - I\/O Redirection, Piping, and Their Evil Uses",
-        "description" : "Bourne-compatible Unix shells (bash, sh, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I\/O redirection to stump defenders. If you already know about I\/O redirection and you\u0026rsquo;re just here for the security stuff, jump forward here.",
-        "inLanguage" : "en-US",
-        "author" : "Tony Lambert",
-        "creator" : "Tony Lambert",
-        "publisher": "Tony Lambert",
-        "accountablePerson" : "Tony Lambert",
-        "copyrightHolder" : "Tony Lambert",
-        "copyrightYear" : "2020",
-        "datePublished": "2020-02-29 15:08:25 -0600 CST",
-        "dateModified" : "2020-02-29 15:08:25 -0600 CST",
-        "url" : "https:\/\/forensicitguy.github.io\/posts\/road-to-rhcsa8-input-redirection\/",
-        "wordCount" : "1124",
-        "keywords" : [ "RedHat","RHCSA","Linux","certification","Redirection","Input","Output","Piping","Python","Base64","Bash","Blog" ]
-    }
-</script>
-
-<meta property="og:title" content="Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses" />
+  <meta property="og:title" content="Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses" />
 <meta property="og:description" content="Bourne-compatible Unix shells (bash, sh, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you&rsquo;re just here for the security stuff, jump forward here." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://forensicitguy.github.io/posts/road-to-rhcsa8-input-redirection/" />
@@ -122,12 +95,6 @@
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/dmg/">
-        
-        Dmg
-        
-      </a>
-      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/dnf/">
         
         DNF
@@ -149,6 +116,12 @@
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/education/">
         
         Education
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/esentutl/">
+        
+        Esentutl
         
       </a>
       
@@ -200,9 +173,9 @@
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/macos/">
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/malware/">
         
-        Macos
+        Malware
         
       </a>
       
@@ -266,12 +239,6 @@
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/pkg/">
-        
-        Pkg
-        
-      </a>
-      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
         
         Plugin
@@ -281,6 +248,12 @@
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
         
         Python
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/qbot/">
+        
+        Qbot
         
       </a>
       
@@ -357,7 +330,7 @@
       <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
           
-            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+            
           
         </span>
       </a>
@@ -378,11 +351,13 @@
         </span>
       </a>
       
+      
       <a class="navbar-item" href="mailto:tmlambert13@gmail.com" target="_blank">
         <span class="icon">
           <img alt="email" src='https://forensicitguy.github.io/icons/svg/email.svg'>
         </span>
       </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/index.xml" target="_blank">
         <span class="icon">
           <img alt="rss" src='https://forensicitguy.github.io/icons/svg/rss.svg'>
@@ -392,8 +367,10 @@
     </div>
   </div>
 </nav>
-<section class="hero is-small is-info is-fullwidth">
-  <div class="hero-body">
+
+  <section>
+    <section class='hero is-small is-info is-fullwidth'>
+      <div class="hero-body">
 <div class="container">
   <h1 class="title">
     Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses
@@ -464,10 +441,10 @@
   </h2>
 </div>
 
-  </div>
-</section>
-<section class="section">
-  <div class="container">
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
 <div class="content is-medium">
   <p>Bourne-compatible Unix shells (<code>bash</code>, <code>sh</code>, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you&rsquo;re just here for the security stuff, <a href="#-Evil-Uses-of-Redirection-and-Piping">jump forward here</a>.</p>
 <h2 id="basics-of-io-redirection">Basics of I/O Redirection</h2>
@@ -529,8 +506,9 @@ $ sh -c echo PD9waHAgQGV2YWwoWydwYXNzd29yZCddKTs/Pgo= | base64 -d &gt; china-cho
 </div>
 
 
-  </div>
-</section><footer class="footer">
+      </div>
+    </section>
+  </section><footer class="footer">
   <div class="content has-text-centered">
     
     

@@ -4,6 +4,7 @@
 
 
 
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,47 +13,19 @@
     Linux EDR Evasion With Meterpreter and LD_PRELOAD
      | Tony Lambert 
   </title>
-  <link rel="stylesheet" href='https://forensicitguy.github.io/css/site.min.76020436cf046947e8c2e9e90dd1cb5eefaeadbb0db7bd02cab327511f62295a1f5ae30e470f070e0955c4d4fa302f399cb74b893f61716bb1149741cea15d41.css' integrity='sha512-dgIENs8EaUfowunpDdHLXu&#43;urbsNt70CyrMnUR9iKVofWuMORw8HDglVxNT6MC85nLdLiT9hcWuxFJdBzqFdQQ=='>
+  <link rel="stylesheet" href='https://forensicitguy.github.io/css/site.min.79fe936623aa76027ec7f37e2c1f88575bc07ec92581712940e3dd619a002236e0522d1202b5d1f6df0ddca3a2aea9a163ce58001d960ed138f4f19e83fa83db.css' integrity='sha512-ef6TZiOqdgJ&#43;x/N&#43;LB&#43;IV1vAfsklgXEpQOPdYZoAIjbgUi0SArXR9t8N3KOirqmhY85YAB2WDtE49PGeg/qD2w=='>
   <link rel="canonical" href="https://forensicitguy.github.io/posts/linux-edr-evasion-with-ld-preload/">
   <link rel="alternate" type="application/rss&#43;xml" href="https://forensicitguy.github.io/index.xml" title="Where DFIR Meets IT">
-  <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="chrome=1">
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<meta name="author" content="Tony Lambert">
-<meta name="description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <meta name="author" content="Tony Lambert">
+  <meta name="description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
 The Setup To get started, I&rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.">
 
-<script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type" : "BlogPosting",
-        "mainEntityOfPage": {
-             "@type": "WebPage",
-             "@id": "https:\/\/forensicitguy.github.io"
-        },
-        "articleSection" : "posts",
-        "name" : "Linux EDR Evasion With Meterpreter and LD_PRELOAD",
-        "headline" : "Linux EDR Evasion With Meterpreter and LD_PRELOAD",
-        "description" : "Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it\u0026rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I\u0026rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.\nThe Setup To get started, I\u0026rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim.",
-        "inLanguage" : "en-US",
-        "author" : "Tony Lambert",
-        "creator" : "Tony Lambert",
-        "publisher": "Tony Lambert",
-        "accountablePerson" : "Tony Lambert",
-        "copyrightHolder" : "Tony Lambert",
-        "copyrightYear" : "2020",
-        "datePublished": "2020-02-06 16:06:16 -0600 CST",
-        "dateModified" : "2020-02-06 16:06:16 -0600 CST",
-        "url" : "https:\/\/forensicitguy.github.io\/posts\/linux-edr-evasion-with-ld-preload\/",
-        "wordCount" : "992",
-        "keywords" : [ "ld_preload","linux","edr","evasion","meterpreter","Blog" ]
-    }
-</script>
-
-<meta property="og:title" content="Linux EDR Evasion With Meterpreter and LD_PRELOAD" />
+  <meta property="og:title" content="Linux EDR Evasion With Meterpreter and LD_PRELOAD" />
 <meta property="og:description" content="Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
 The Setup To get started, I&rsquo;m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim." />
 <meta property="og:type" content="article" />
@@ -124,12 +97,6 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/dmg/">
-        
-        Dmg
-        
-      </a>
-      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/dnf/">
         
         DNF
@@ -151,6 +118,12 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/education/">
         
         Education
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/esentutl/">
+        
+        Esentutl
         
       </a>
       
@@ -202,9 +175,9 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/macos/">
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/malware/">
         
-        Macos
+        Malware
         
       </a>
       
@@ -268,12 +241,6 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
         
       </a>
       
-      <a class="navbar-item" href="https://forensicitguy.github.io/tags/pkg/">
-        
-        Pkg
-        
-      </a>
-      
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/plugin/">
         
         Plugin
@@ -283,6 +250,12 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
       <a class="navbar-item" href="https://forensicitguy.github.io/tags/python/">
         
         Python
+        
+      </a>
+      
+      <a class="navbar-item" href="https://forensicitguy.github.io/tags/qbot/">
+        
+        Qbot
         
       </a>
       
@@ -359,7 +332,7 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
       <a class="navbar-item" href="https://github.com/ForensicITGuy" rel="noopener" target="_blank">
         <span class="icon">
           
-            <img alt="icons/svg/github.svg" src='https://forensicitguy.github.io/icons/svg/github.svg'>
+            
           
         </span>
       </a>
@@ -380,11 +353,13 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
         </span>
       </a>
       
+      
       <a class="navbar-item" href="mailto:tmlambert13@gmail.com" target="_blank">
         <span class="icon">
           <img alt="email" src='https://forensicitguy.github.io/icons/svg/email.svg'>
         </span>
       </a>
+      
       <a class="navbar-item" href="https://forensicitguy.github.io/index.xml" target="_blank">
         <span class="icon">
           <img alt="rss" src='https://forensicitguy.github.io/icons/svg/rss.svg'>
@@ -394,8 +369,10 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
     </div>
   </div>
 </nav>
-<section class="hero is-small is-info is-fullwidth">
-  <div class="hero-body">
+
+  <section>
+    <section class='hero is-small is-info is-fullwidth'>
+      <div class="hero-body">
 <div class="container">
   <h1 class="title">
     Linux EDR Evasion With Meterpreter and LD_PRELOAD
@@ -436,10 +413,10 @@ The Setup To get started, I&rsquo;m working with a Kali Linux machine as my atta
   </h2>
 </div>
 
-  </div>
-</section>
-<section class="section">
-  <div class="container">
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
 <div class="content is-medium">
   <p>Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it&rsquo;s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I&rsquo;ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.</p>
 <h2 id="the-setup">The Setup</h2>
@@ -493,8 +470,9 @@ nm: meterpreter.so: no symbols
 </div>
 
 
-  </div>
-</section><footer class="footer">
+      </div>
+    </section>
+  </section><footer class="footer">
   <div class="content has-text-centered">
     
     
