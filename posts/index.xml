@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Feb 2021 23:18:37 -0600</lastBuildDate><atom:link href="https://forensicitguy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 08 Feb 2021 22:18:04 -0600</lastBuildDate><atom:link href="https://forensicitguy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Analyzing an Empire macOS PKG Stager</title>
+      <link>https://forensicitguy.github.io/posts/analyzing-empire-macos-pkg/</link>
+      <pubDate>Mon, 08 Feb 2021 22:18:04 -0600</pubDate>
+      
+      <guid>https://forensicitguy.github.io/posts/analyzing-empire-macos-pkg/</guid>
+      <description>Command and control (C2) frameworks often support multiple platforms, and PowerShell Empire is no different. In older days, there was a Python Empyre version that eventually merged into the full Empire project and support for macOS and Linux systems still exists within Empire. For these platforms, Empire leverages python-based launchers to execute commands. While the Python launchers may be platform independent, adversaries must still deliver them to victim hosts. This delivery presents an excellent opportunity for detection and analysis.</description>
+    </item>
+    
     <item>
       <title>How Qbot Uses Esentutl</title>
       <link>https://forensicitguy.github.io/posts/how-qbot-uses-esentutl/</link>

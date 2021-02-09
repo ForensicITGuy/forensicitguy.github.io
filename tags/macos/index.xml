@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>macos on Where DFIR Meets IT</title>
+    <title>macOS on Where DFIR Meets IT</title>
     <link>https://forensicitguy.github.io/tags/macos/</link>
-    <description>Recent content in macos on Where DFIR Meets IT</description>
+    <description>Recent content in macOS on Where DFIR Meets IT</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 Jan 2021 20:46:21 -0600</lastBuildDate>
-    
-	<atom:link href="https://forensicitguy.github.io/tags/macos/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 08 Feb 2021 22:18:04 -0600</lastBuildDate><atom:link href="https://forensicitguy.github.io/tags/macos/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Working with macOS DMG and PKG files on Linux</title>
-      <link>https://forensicitguy.github.io/posts/macos-pkg-dmg-on-linux/</link>
-      <pubDate>Sun, 31 Jan 2021 20:46:21 -0600</pubDate>
+      <title>Analyzing an Empire macOS PKG Stager</title>
+      <link>https://forensicitguy.github.io/posts/analyzing-empire-macos-pkg/</link>
+      <pubDate>Mon, 08 Feb 2021 22:18:04 -0600</pubDate>
       
-      <guid>https://forensicitguy.github.io/posts/macos-pkg-dmg-on-linux/</guid>
-      <description>At my day job I’ve been diving into macOS malware, and it turns out that quite a lot of macOS malware gets distributed through installer packages like DMG images and PKG archives. I work on malware using REMnux or a Pop!_OS Linux system, so I wanted to share how I work with these files to analyze them on Linux.
-Ripping open PKG files PKG files are xar archive files you can open with bsdtar.</description>
+      <guid>https://forensicitguy.github.io/posts/analyzing-empire-macos-pkg/</guid>
+      <description>Command and control (C2) frameworks often support multiple platforms, and PowerShell Empire is no different. In older days, there was a Python Empyre version that eventually merged into the full Empire project and support for macOS and Linux systems still exists within Empire. For these platforms, Empire leverages python-based launchers to execute commands. While the Python launchers may be platform independent, adversaries must still deliver them to victim hosts. This delivery presents an excellent opportunity for detection and analysis.</description>
     </item>
     
   </channel>
