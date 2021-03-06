@@ -1,0 +1,13 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Hugo template
+# Generated files by hugo
+/public/
+
+# Executable may be added to repository
+hugo.exe
+hugo.darwin
+hugo.linux
+node_modules/
+.idea/
+exampleSite/resources/
+exampleSite/public/

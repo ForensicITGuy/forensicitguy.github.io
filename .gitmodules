@@ -1,0 +1,8 @@
+[submodule "themes/bare"]
+	path = themes/bare
+	url = git@github.com:orf/bare-hugo-theme.git
+	branch = master
+[submodule "public"]
+	path = public
+	url = git@github.com:ForensicITGuy/forensicitguy.github.io.git
+	branch = master

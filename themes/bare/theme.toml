@@ -1,0 +1,12 @@
+name = "Bare"
+license = "MIT"
+licenselink = "https://github.com/orf/bare-hugo-theme/blob/master/LICENSE"
+description = "A speed-focused, minimalist Hugo blog theme based on Bulma.io"
+homepage = "https://github.com/orf/bare-hugo-theme"
+tags = ["blog", "responsive", "minimal", "clean", "simple", "google-analytics", "light", "fast", "flexbox", "bulma"]
+features = []
+min_version = "0.58.3"
+
+[author]
+  name = "Tom Forbes"
+  homepage = "https://tomforb.es"

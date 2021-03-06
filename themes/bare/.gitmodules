@@ -1,0 +1,6 @@
+[submodule "assets/css/bulma"]
+	path = assets/css/bulma
+	url = https://github.com/jgthms/bulma.git
+[submodule "assets/icons"]
+	path = assets/icons
+	url = https://github.com/Templarian/MaterialDesign.git

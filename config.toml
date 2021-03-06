@@ -1,0 +1,36 @@
+baseURL = "https://forensicitguy.github.io"
+languageCode = "en-us"
+title = "Where DFIR Meets IT"
+theme = "bare"
+enableRobotsTXT = true
+canonifyurls = true
+googleAnalytics = "UA-155060013-1"
+
+[params]
+    author = "Tony Lambert"
+    description = "Educator that happens to do security things."
+    keywords = "blog,infosec,security,technology,dfir,forensics"
+    info = "Educator that happens to do security things."
+    avatarurl = "images/avatar.png"
+    email = "tmlambert13@gmail.com"
+    disableAttribution = true
+    includeAuthorInTitle = true
+
+[[params.social]]
+  icon = "github"
+  url = "https://github.com/ForensicITGuy"
+
+[[params.social]]
+  icon = "linkedin"
+  url = "https://linkedin.com/in/tonymlambert"
+
+[[params.social]]
+  icon = "twitter"
+  url = "https://twitter.com/ForensicITGuy"
+
+[privacy]
+  [privacy.googleAnalytics]
+        anonymizeIP = true
+        respectDoNotTrack = true
+    [privacy.youtube]
+        privacyEnhanced = true
