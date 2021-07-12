@@ -3,6 +3,7 @@ layout: post
 title: "When Local Password Resets Aren't Local"
 date: 2020-01-09
 categories: windows active-directory domain-controllers accounts administrators
+permalink: /when-local-password-resets-arent-local/
 ---
 
 ## When You Reset a Domain Administrator Instead of Local

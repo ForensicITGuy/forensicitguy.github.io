@@ -5,8 +5,8 @@
     <description>ForensicITGuy&apos;s blog about DFIR and tech</description>
     <link>https://forensicitguy.github.io/feed.xml/</link>
     <atom:link href="https://forensicitguy.github.io/feed.xml/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 11 Jul 2021 20:52:40 -0500</pubDate>
-    <lastBuildDate>Sun, 11 Jul 2021 20:52:40 -0500</lastBuildDate>
+    <pubDate>Sun, 11 Jul 2021 21:05:20 -0500</pubDate>
+    <lastBuildDate>Sun, 11 Jul 2021 21:05:20 -0500</lastBuildDate>
     <generator>Jekyll v4.2.0</generator>
     
       <item>
@@ -55,8 +55,8 @@
 &lt;p&gt;&lt;img src=&quot;/assets/images/extracting-sfx-installer/configuration-script.png&quot; alt=&quot;SFX Configuration Script&quot; /&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 10 Jul 2021 00:00:00 -0500</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/windows/7zip/sfx/self-extracting/installers/2021/07/10/extracting-sfx-installer.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/windows/7zip/sfx/self-extracting/installers/2021/07/10/extracting-sfx-installer.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/extracting-sfx-installer/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/extracting-sfx-installer/</guid>
         
         
         <category>windows</category>
@@ -320,8 +320,8 @@ templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
 
 </description>
         <pubDate>Mon, 08 Feb 2021 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/macos/empire/pkg/malware/2021/02/08/analyzing-empire-macos-pkg.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/macos/empire/pkg/malware/2021/02/08/analyzing-empire-macos-pkg.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/analyzing-empire-macos-pkg-stager/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/analyzing-empire-macos-pkg-stager/</guid>
         
         
         <category>macOS</category>
@@ -356,8 +356,8 @@ templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
 &lt;p&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/hh875546(v=ws.11)&quot;&gt;esentutl Reference&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 01 Feb 2021 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/qbot/malware/esentutil/2021/02/01/how-qbot-uses-esentutl.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/qbot/malware/esentutil/2021/02/01/how-qbot-uses-esentutl.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/how-qbot-uses-esentutl/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/how-qbot-uses-esentutl/</guid>
         
         
         <category>qbot</category>
@@ -483,8 +483,8 @@ $ sh -c echo PD9waHAgQGV2YWwoWydwYXNzd29yZCddKTs/Pgo= | base64 -d &amp;gt; china
 &lt;/ul&gt;
 </description>
         <pubDate>Sat, 29 Feb 2020 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/redirection/input/output/piping/python/base64/bash/2020/02/29/road-to-rhcsa8-input-redirection.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/redirection/input/output/piping/python/base64/bash/2020/02/29/road-to-rhcsa8-input-redirection.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/road-to-rhcsa8-io-redirection-piping/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/road-to-rhcsa8-io-redirection-piping/</guid>
         
         
         <category>RedHat</category>
@@ -602,8 +602,8 @@ nm: meterpreter.so: no symbols
 &lt;p&gt;Eh, it depends. We obviously already need code execution and a method of downloading code to a victim for this to be possible. I could see this being useful when combined with an RCE against publicly-available services to get a stable shell. That said, a simpler and safer route in terms of stability could also be the execution of a Python C2 agent. In the case of a Python agent, it would be slightly harder to cause the attribution of activity to a system process. This is not going to be an initial access method, it would be more useful for long-term evasion and persistence when combined with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.bash_profile&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.bashrc&lt;/code&gt; command execution.&lt;/p&gt;
 </description>
         <pubDate>Thu, 06 Feb 2020 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/linux-edr-evasion-meterpreter-ld-preload/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/linux-edr-evasion-meterpreter-ld-preload/</guid>
         
         
         <category>ld_preload</category>
@@ -690,8 +690,8 @@ ls -l /etc/root-marker
 &lt;p&gt;It depends. This technique requires root/sudo privileges to use. The technique assumes you’re attempting to persist on a system that you’ve found either misconfigured or susceptible to privilege escalation. This path should not be your first stop for persistence if you only have user privileges.&lt;/p&gt;
 </description>
         <pubDate>Mon, 13 Jan 2020 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/dnf/yum/linux/plugin/persistence/2020/01/13/exploiting-yum-dnf-plugins.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/dnf/yum/linux/plugin/persistence/2020/01/13/exploiting-yum-dnf-plugins.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/exploiting-yum-dnf-plugins-persistence/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/exploiting-yum-dnf-plugins-persistence/</guid>
         
         
         <category>DNF</category>
@@ -754,8 +754,8 @@ ls -l /etc/root-marker
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 09 Jan 2020 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/windows/active-directory/domain-controllers/accounts/administrators/2020/01/09/when-local-resets-arent-local.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/windows/active-directory/domain-controllers/accounts/administrators/2020/01/09/when-local-resets-arent-local.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/when-local-password-resets-arent-local/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/when-local-password-resets-arent-local/</guid>
         
         
         <category>windows</category>
@@ -856,8 +856,8 @@ ls -l /etc/root-marker
 &lt;p&gt;So far, the year is young and I haven’t attempted the RHCSA, yet. Once I do, I’ll update this post with the resources that helped the most. Cheers!&lt;/p&gt;
 </description>
         <pubDate>Thu, 02 Jan 2020 00:00:00 -0600</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/road-to-rhcsa8-getting-started/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/road-to-rhcsa8-getting-started/</guid>
         
         
         <category>RedHat</category>
@@ -934,8 +934,8 @@ ls -l /etc/root-marker
 &lt;p&gt;&lt;img src=&quot;/assets/images/whitelisting-ld_preload-fun-no-profit/be-excellent.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 </description>
         <pubDate>Thu, 29 Aug 2019 00:00:00 -0500</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/whitelisting-ld-preload-for-fun-and-no-profit/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/whitelisting-ld-preload-for-fun-and-no-profit/</guid>
         
         
         <category>ld_preload</category>
@@ -964,8 +964,8 @@ ls -l /etc/root-marker
 &lt;p&gt;This wouldn’t be complete without some notes for the blue team for detection! There are a easy search/hunt you can use to find this activity- look for the modification of /etc/ld.so.preload. This file isn’t commonly modified outside security or performance monitoring applications.&lt;/p&gt;
 </description>
         <pubDate>Wed, 28 Aug 2019 00:00:00 -0500</pubDate>
-        <link>https://forensicitguy.github.io/feed.xml/merlin/ld_preload/red_team/2019/08/28/adding-process-hiding-to-merlin.html</link>
-        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/merlin/ld_preload/red_team/2019/08/28/adding-process-hiding-to-merlin.html</guid>
+        <link>https://forensicitguy.github.io/feed.xml/adding-process-hiding-to-merlin/</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/adding-process-hiding-to-merlin/</guid>
         
         
         <category>merlin</category>

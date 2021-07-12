@@ -3,6 +3,7 @@ layout: post
 title: "Analyzing an Empire macOS PKG Stager"
 date: 2021-02-08
 categories: macOS Empire PKG malware 
+permalink: /analyzing-empire-macos-pkg-stager/
 ---
 
 Command and control (C2) frameworks often support multiple platforms, and PowerShell Empire is no different. In older days, there was a Python Empyre version that eventually merged into the full Empire project and support for macOS and Linux systems still exists within Empire. For these platforms, Empire leverages python-based launchers to execute commands. While the Python launchers may be platform independent, adversaries must still deliver them to victim hosts. This delivery presents an excellent opportunity for detection and analysis. For this example, we're going to walk through the analysis of an Empire stager found in VirusTotal: [https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection](https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection).

@@ -3,6 +3,7 @@ layout: post
 title: "Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses"
 date: 2020-02-29
 categories: RedHat RHCSA Linux certification redirection input output piping python base64 bash
+permalink: /road-to-rhcsa8-io-redirection-piping/
 ---
 
 Bourne-compatible Unix shells (`bash`, `sh`, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you're just here for the security stuff, [jump forward here](#-Evil-Uses-of-Redirection-and-Piping).

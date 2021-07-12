@@ -3,6 +3,7 @@ layout: post
 title: "Making Meterpreter Look Google Signed"
 date: 2019-01-18
 categories: meterpreter chrome msfvenom jar metasploit
+permalink: /making-meterpreter-look-google-signed/
 ---
 
 In this post I’ll use some of the information made public by VirusTotal in a [recent blog post](https://blog.virustotal.com/2019/01/distribution-of-malicious-jar-appended.html) and show how you can easily create a Metasploit Meterpreter payload and append it to a signed MSI file. This will allow you to leverage the code signing from the MSI file to make your payload appear legitimately signed by Google, Inc. After I’ll cover a bit of discussion on why this technique is dangerously significant and how to investigate for its use.

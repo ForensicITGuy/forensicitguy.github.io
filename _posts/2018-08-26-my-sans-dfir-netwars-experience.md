@@ -3,6 +3,7 @@ layout: post
 title: "My SANS DFIR NetWars Experience"
 date: 2018-08-26
 categories: SANS DFIR NetWars
+permalink: /my-sans-dfir-netwars-experience/
 ---
 
 At SANSFIRE 2018 in Washington, DC I had the awesome opportunity to compete in SANS DFIR NetWars with a coworker from Red Canary. This was my first experience with NetWars, and I wasn’t sure what to expect with the tournament. We heard that at SANSFIRE DFIR NetWars would allow team competition this time around, which is different from the previous individual-only competition. I went to a SANS@Night session titled “Intro to NetWars” given by Tim Medin of Red Siege Infosec fame with my coworker and our experience soon turned into a recruiting effort. We realized that we could perform Windows disk and memory forensics fairly well alongside network forensics, but neither of us could work well with smartphone, Apple forensics, or malware analysis beyond running simple static analysis tools. That said, we met a couple of awesome folks willing to team up with us for the tournament at the session.

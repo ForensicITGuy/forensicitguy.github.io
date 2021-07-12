@@ -3,6 +3,7 @@ layout: post
 title: "How Qbot Uses Esentutl"
 date: 2021-02-01
 categories: qbot malware esentutil
+permalink: /how-qbot-uses-esentutl/
 ---
 
 A colleague asked me a question today about the relationship between Qbot and a Windows system utility: `esentutl.exe`. It’s been sparsely documented [via tweet](https://twitter.com/redcanary/status/1334224870536712192), and I want to more fully explain why Qbot jumped into using the utility during operations.

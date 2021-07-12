@@ -3,6 +3,7 @@ layout: post
 title: "Extracting Malicious Payloads from SFX Self-Extracting Installers"
 date: 2021-07-10
 categories: windows 7zip sfx self-extracting installers
+permalink: /extracting-sfx-installer/
 ---
 
 Self-extracting installers are an awesome way to distribute software because they require very little overhead and minimal configuration. Because of this, some malware threats use these SFX files to deploy components to victim systems, and malware analysts need to know how to safely unpack the components for investigation. For this example, we're going to walk through the process to unpack this malicious installer: [https://www.virustotal.com/gui/file/9d27976b21da5fc419da598ea44456a528b9fbf83f24fc5e14f697f610a5b295/detection](https://www.virustotal.com/gui/file/9d27976b21da5fc419da598ea44456a528b9fbf83f24fc5e14f697f610a5b295/detection).

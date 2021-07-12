@@ -3,6 +3,7 @@ layout: post
 title: "Whitelisting LD_PRELOAD for Fun and No Profit"
 date: 2019-08-29
 categories: ld_preload linux whitelisting unix ld_audit libpreloadvaccine
+permalink: /whitelisting-ld-preload-for-fun-and-no-profit/
 ---
 
 If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…

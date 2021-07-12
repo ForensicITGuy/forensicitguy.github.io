@@ -3,6 +3,7 @@ layout: post
 title: "Linux EDR Evasion With Meterpreter and LD_PRELOAD"
 date: 2020-02-06
 categories: ld_preload linux edr evasion meterpreter
+permalink: /linux-edr-evasion-meterpreter-ld-preload/
 ---
 
 Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it's pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I'll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.
