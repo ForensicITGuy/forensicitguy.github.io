@@ -1,0 +1,20 @@
+name: Where DFIR Meets IT
+description: ForensicITGuy's blog about DFIR and tech
+meta_description: "ForensicITGuy's blog about DFIR and tech"
+
+markdown: kramdown
+highlighter: rouge
+logo: false
+paginate: 15
+baseurl: ""
+domain_name: "https://forensicitguy.github.io"
+google_analytics: "UA-155060013-1"
+plugins: [jekyll-paginate]
+
+# Details for the RSS feed generator
+url: "https://forensicitguy.github.io/feed.xml"
+author: "Tony Lambert (ForensicITGuy)"
+author-bio: "An educator that happens to do security things for Red Canary"
+
+# Disqus config
+disqus-shortname: "ForensicITGuy"

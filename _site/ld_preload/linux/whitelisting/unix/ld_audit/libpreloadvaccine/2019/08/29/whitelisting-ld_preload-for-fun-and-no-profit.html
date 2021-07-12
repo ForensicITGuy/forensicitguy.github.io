@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Where DFIR Meets IT - ForensicITGuy's blog about DFIR and tech</title>
+    <meta name="description" content="ForensicITGuy's blog about DFIR and tech" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css " />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+        <a class="subscribe-button icon-feed" href="/feed.xml">Subscribe</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Whitelisting LD_PRELOAD for Fun and No Profit</h1>
+            <section class="post-meta">
+                
+                    on ld_preload, linux, whitelisting, unix, ld_audit, and libpreloadvaccine
+                
+                <time class="post-date" datetime="2019-08-29">29 Aug 2019</time>
+            </section>
+        </header>
+
+<!--         <header class="post-header">
+            <a id="blog-logo" href="https://forensicitguy.github.io/feed.xml">
+                
+                    <span class="blog-title">Where DFIR Meets IT</span>
+                
+            </a>
+        </header> -->
+
+        <!-- <span class="post-meta">
+            <time datetime="2019-08-29">29 Aug 2019</time>
+            
+                on ld_preload, linux, whitelisting, unix, ld_audit, and libpreloadvaccine
+            
+        </span> -->
+
+        <!-- <h1 class="post-title">Whitelisting LD_PRELOAD for Fun and No Profit</h1> -->
+
+        <section class="post-content">
+            <p>If you’ve been around the Linux/BSD/Solaris/Other UNIX ecosystem for a while you’ve probably heard of the fabled LD_PRELOAD trick. If you haven’t heard of it, let me introduce you to one of the longest-held, dirty security issues in UNIX…</p>
+
+<h2 id="a-brief-look-at-ld_preload">A Brief Look at LD_PRELOAD</h2>
+
+<p><img src="/assets/images/whitelisting-ld_preload-fun-no-profit/ld_preload-header.png" alt="" /></p>
+
+<p>LD_PRELOAD is an environment variable used by the dynamic linker on UNIX-based systems. Normally the dynamic linker follows a specified search pattern to load various dynamic libraries (shared objects on UNIX). Libraries specified using the LD_PRELOAD variable are loaded before the ones typically required by whatever command you’ll execute. It also goes one step further, libraries specified in LD_PRELOAD are loaded by commands even if their executables don’t require the preloaded binaries for operation.</p>
+
+<p>This is an insanely easy way to introduce malicious code to a system. Preloaded libraries allow an adversary some extra advantages. First, an adversary has the ability to hook system calls or library calls. In at least one project, <a href="https://github.com/gianlucaborello/libprocesshider">libprocesshider</a>, this functionality is leveraged to taint the contents of a directory listing to hide processes. It doesn’t stop there, either. As shown in the <a href="https://github.com/dsnezhkov/zombieant">Zombie Ant Farm project</a>, adversaries don’t need specific information about the internals of binaries to execute their evil code. In the case of the ZAF project, it’s shown that adversaries can implement functions that execute at the load or unload of preloaded binaries. This means that adversaries can execute code by simply specifying a library is a preload and waiting for a legitimate user to execute something.</p>
+
+<p>This functionality is implemented by the the dynamic linker (rtld.c source file for the geeks out there). It’s been an issue in Linux systems specifically for at least 20 years, longer in UNIX as a whole. To make matters a bit worse, this can play havoc with security tooling. First off, security tools aren’t always aware of environment variables. In the case of endpoint detection and response (EDR) tooling, environment variables aren’t even visible most of the time. In other cases, security tools may even become victims of LD_PRELOAD if they aren’t statically linked with code they need to execute.</p>
+
+<p>Oh, and adversaries with root privileges can make preloads load in any process on a system by creating the file <code class="language-plaintext highlighter-rouge">/etc/ld.so.preload</code> and specifying the path of their preload library within. When done properly, adversaries can persist and evade defenses indefinitely on a system using this technique.</p>
+
+<p>By the way, there’s not really an easy way to disable LD_PRELOAD - <a href="https://security.stackexchange.com/questions/63599/is-there-any-way-to-block-ld-preload-and-ld-library-path-on-linux">https://security.stackexchange.com/questions/63599/is-there-any-way-to-block-ld-preload-and-ld-library-path-on-linux</a>.</p>
+
+<p>There are some useful abilities to LD_PRELOAD, though. It’s sometimes handy to hook functions that already exist in various applications or libraries to test or debug code. From what I can tell, this and performance monitoring are pretty much the only legitimate uses of it. Even the source and manpages say preloading shouldn’t be used long-term.</p>
+
+<h2 id="auditing-preload-libraries">Auditing Preload Libraries</h2>
+
+<p>During my day job at <a href="https://redcanary.com/">Red Canary</a>, I’ve spent a lot of time diving into Linux threats of various forms. LD_PRELOAD kept showing up in the form of userspace rootkits. <a href="https://github.com/chokepoint/azazel">Azazel</a>, <a href="https://www.intezer.com/blog-hiddenwasp-malware-targeting-linux-systems/">HiddenWasp</a>/<a href="https://medium.com/chronicle-blog/winnti-more-than-just-windows-and-gates-e4f03436031a">Winnti</a>/Highnoon.Linux, nation-state malware, and other threats have used LD_PRELOAD to evade defenders and persist within systems. I became really disconcerted at the lack of visibility around this threat. The closest bit of visibility I could find was implemented in osquery (<a href="https://www.alienvault.com/blogs/labs-research/hunting-for-linux-library-injection-with-osquery">Alienvault</a>, <a href="https://github.com/palantir/osquery-configuration/blob/master/Classic/Servers/Linux/osquery.conf">Palantir</a>) and with select hunts using shell <a href="https://twitter.com/ForensicITGuy/status/1153291548978794496">commands</a>.</p>
+
+<p>And then I read the manpage for rtld-audit- <a href="http://man7.org/linux/man-pages/man7/rtld-audit.7.html">http://man7.org/linux/man-pages/man7/rtld-audit.7.html</a>.</p>
+
+<p>It turns out there’s an audit API exposed by the dynamic linker that may be leveraged by libraries specified in another environment variable- LD_AUDIT. In my spare time, I initially dove into this API exploring a function named <code class="language-plaintext highlighter-rouge">la_preinit()</code> which lets an audit library take actions after all libraries have been loaded but before control is passed to the executable. My hope was to implement visibility folks could use by logging preloads that have been mapped to syslog. I started out with Golang and then Rust, but neither language would compile properly for an LD_AUDIT library (although they can be used with LD_PRELOAD).</p>
+
+<p>So I started learning C and test-driven development. Around this time I read the manpage for rtld-audit in more depth, noting one particular function- <code class="language-plaintext highlighter-rouge">la_objsearch()</code>. When the dynamic linker loads libraries for execution, it has to reconcile libraries requested by an ELF binary and find them on disk. When the linker searches for a particular library, it triggers the <code class="language-plaintext highlighter-rouge">la_objsearch()</code> function. The function typically returns the name a linker should use to further search for a library.</p>
+
+<p>Then I read this line- <strong>“If NULL is returned, then this pathname is ignored for further processing.”</strong></p>
+
+<p><img src="/assets/images/whitelisting-ld_preload-fun-no-profit/curiosity-attention.jpg" alt="" /></p>
+
+<p>Could it be that simple? I set off to start another project around whitelisting LD_PRELOAD binaries with a simple design. I wanted to implement <code class="language-plaintext highlighter-rouge">la_objsearch()</code>, check each library loaded against the known lists of preloads (environment variable and <code class="language-plaintext highlighter-rouge">ld.so.preload</code>) and then return NULL for each preload that wasn’t also included in a known-good list. I was shocked to discover that this approach actually worked!</p>
+
+<h2 id="introducing-libpreloadvaccine">Introducing libpreloadvaccine!</h2>
+
+<p>The result of this research and project is <a href="https://github.com/ForensicITGuy/libpreloadvaccine">libpreloadvaccine</a>. This tool is designed to load with every process execution, checking library loads against preload lists. If a preload search is attempted and isn’t allowed, libpreloadvaccine instructs the dynamic linker to ignore the preload. This hinders the successful execution of libraries using LD_PRELOAD.</p>
+
+<p>Admittedly, this is the first version of the tool and it likely needs a bit extra work. Definitely test this before putting into production in your server farms! I’d love to see this functionality built into the dynamic linker itself, making this tool redundant. Until then, this is designed to help shore up systems against the LD_PRELOAD threat. I’m offering libpreloadvaccine to the public as open source code with a MIT License. Go forth and make the world a better place using it where you can!</p>
+
+<p>Here it is in action against a module from Merlin:</p>
+
+<p><img src="/assets/images/whitelisting-ld_preload-fun-no-profit/libpreloadvaccine-in-action.png" alt="" /></p>
+
+<h2 id="installing-libpreloadvaccine">Installing libpreloadvaccine</h2>
+
+<p>To install libpreloadvaccine, first build it for your system by running <code class="language-plaintext highlighter-rouge">make build</code>. Copy the compiled shared object into the preferred library folder of your system. Then export the environment variable LD_AUDIT defining the path of your libpreloadvaccine library.</p>
+
+<p>To make it persistent, add a line like this to your <code class="language-plaintext highlighter-rouge">/etc/profile</code> file:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export LD_AUDIT=&lt;path to libpreloadvaccine&gt;
+</code></pre></div></div>
+
+<p>If you want to whitelist preloads, create a space-delimited list at <code class="language-plaintext highlighter-rouge">/etc/libpreloadvaccine.allow</code>. Preload paths found in this list will be allowed for execution.</p>
+
+<p>Go forth and be excellent!</p>
+
+<p><img src="/assets/images/whitelisting-ld_preload-fun-no-profit/be-excellent.jpg" alt="" /></p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+                <figure class="author-image">
+                    <a class="img" href="/" style="background-image: url(/assets/images/profile.png)">
+                    <span class="hidden">Tony Lambert (ForensicITGuy)'s Picture</span></a>
+                </figure>
+                <section class="author">
+                    <!-- Author Name -->
+                    <h4> Tony Lambert (ForensicITGuy) </h4>
+                    <!-- Author Bio -->
+                    <p>
+                        An educator that happens to do security things for Red Canary
+                    </p>
+                </section>
+            
+
+            <!-- Share links section -->
+            <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Whitelisting LD_PRELOAD for Fun and No Profit&amp;url=https://forensicitguy.github.io/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html"
+        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://forensicitguy.github.io/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html"
+        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=https://forensicitguy.github.io/ld_preload/linux/whitelisting/unix/ld_audit/libpreloadvaccine/2019/08/29/whitelisting-ld_preload-for-fun-and-no-profit.html"
+       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+        <span class="hidden">Google+</span>
+    </a>
+</section>
+
+            <!-- Disqus comments -->
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="">Where DFIR Meets IT</a> &copy; 
+              2021 &bull; All rights reserved.
+      </section>
+      <section class="poweredby">Made with Jekyll using 
+        <a href="http://github.com/rosario/kasper">Kasper theme</a>
+      </section>
+    </footer>
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-155060013-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   
+</body>
+</html>
