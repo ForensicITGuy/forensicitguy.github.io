@@ -6,17 +6,17 @@ categories: windows pefile pe rich header hash virustotal
 permalink: /rich-header-hashes-with-pefile/
 ---
 
-If you've performed Windows malware analysis using Python tools, you've almost certainly worked with the Python `pefile` library. This library allows analysts to parse, manipulate, and dump information related to Windows Portable Executable (PE) files. Given its prevalence among malware analysis tools, it can also prove useful for threat intelligence folks trying to look for data points to pivot on to find similar malware samples.
+If you've performed Windows malware analysis using Python tools, you've almost certainly worked with the Python [`pefile`](https://github.com/erocarrera/pefile) library. This library allows analysts to parse, manipulate, and dump information related to Windows Portable Executable (PE) files. Given its prevalence among malware analysis tools, it can also prove useful for threat intelligence folks trying to look for data points to pivot on to find similar malware samples.
 
 ## Malware Similarity via Hashes
 
 There are loads of resources talking about calculating hashes that allow you to pivot and find similar samples. Rather than reiterating those points, I'll just share resources talking about the ones I've used the most lately: import table and rich header hashing.
 
-- https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
-- https://github.com/RichHeaderResearch/RichPE
-- https://www.virusbulletin.com/virusbulletin/2020/01/vb2019-paper-rich-headers-leveraging-mysterious-artifact-pe-format/
-- https://blog.virustotal.com/2020/11/why-is-similarity-so-relevant-when.html
-- https://www.youtube.com/watch?v=ipPAFG8qtyg
+- <https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html>
+- <https://github.com/RichHeaderResearch/RichPE>
+- <https://www.virusbulletin.com/virusbulletin/2020/01/vb2019-paper-rich-headers-leveraging-mysterious-artifact-pe-format/>
+- <https://blog.virustotal.com/2020/11/why-is-similarity-so-relevant-when.html>
+- <https://www.youtube.com/watch?v=ipPAFG8qtyg>
 
 By the way, VirusTotal enterprise lets you search for rich header matching using the operator `rich_pe_header_hash:`, which relies on calculating the MD5 hash of the clear bytes of a rich header.
 
