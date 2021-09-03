@@ -29,10 +29,10 @@ I've contributed documentation for multiple MITRE ATT&CK Techniques and at least
 
 Finally, I make regular contributions to the information security community via Red Canary blog posts and webinars, my own personal blog, social media, and Slack groups.
 
-Red Canary Blog - <https://redcanary.com/authors/tony-lambert/>
-Twitter - <https://twitter.com/ForensicITGuy>
-LinkedIn - <https://www.linkedin.com/in/tonymlambert/>
-GitHub - <https://www.github.com/ForensicITGuy>
+- Red Canary Blog - <https://redcanary.com/authors/tony-lambert/>
+- Twitter - <https://twitter.com/ForensicITGuy>
+- LinkedIn - <https://www.linkedin.com/in/tonymlambert/>
+- GitHub - <https://www.github.com/ForensicITGuy>
 
 
 
