@@ -22,6 +22,8 @@ I've presented security-related work at multiple conferences:
   - <https://speakerdeck.com/forensicitguy/whitelisting-ld-preload-for-fun-and-no-profit>
   - <https://www.youtube.com/watch?v=nM9Y2Sky6S0>
 - Defcon 28 Blue Team Village Threat Hunting Panel
+- Objective By The Sea v4.0 (2021) - The Wild World of macOS Installers
+  - <https://www.youtube.com/watch?v=Eow5uNHtmIg>
 
 I've contributed documentation for multiple MITRE ATT&CK Techniques and at least one group.
 
@@ -33,7 +35,3 @@ Finally, I make regular contributions to the information security community via 
 - Twitter - <https://twitter.com/ForensicITGuy>
 - LinkedIn - <https://www.linkedin.com/in/tonymlambert/>
 - GitHub - <https://www.github.com/ForensicITGuy>
-
-
-
-
