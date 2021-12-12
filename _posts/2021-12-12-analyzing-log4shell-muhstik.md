@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "Analyzing a Log4jShell Exploit from Muhstik"
+title: "Analyzing a Log4Shell log4j Exploit from Muhstik"
 date: 2021-12-12
 categories: log4jshell malware java powershell muhstik
-permalink: /analyzing-log4jshell-muhstik/
+permalink: /analyzing-log4shell-muhstik/
 ---
 
-In this post I set out to analyze a simple chunk of Log4jShell exploit code to see how it works.
+In this post I set out to analyze a simple chunk of Log4Shell log4j exploit code to see how it works.
 
 ## Finding the Exploit
 
