@@ -6,6 +6,7 @@ markdown: kramdown
 highlighter: rouge
 logo: false
 paginate: 15
+paginate-path: "/page:num"
 baseurl: ""
 domain_name: "https://forensicitguy.github.io"
 google_analytics: "UA-155060013-1"
