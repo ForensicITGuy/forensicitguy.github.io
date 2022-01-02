@@ -246,12 +246,12 @@ Sure enough, the import table is apparently empty and no rich header exists for 
 The Mandiant tools `floss` and `capa` yield nothing significant.
 
 ```
-+------------------------+------------------------------------------------------------------------------------+
-| md5                    | e7e4878847d31c4de301d3edf7378ecb                                                   |
-| sha1                   | a93d0f59b3374c6d3669a5872d44515f056e9dbf                                           |
-| sha256                 | f423bd6daae6c8002acf5c203267e015f7beb4c52ed54a78789dd86ab35e46c6                   |
-| path                   | eediwjus.dll                                                                       |
-+------------------------+------------------------------------------------------------------------------------+
++-----------+------------------------------------------------------------------+
+| md5       | e7e4878847d31c4de301d3edf7378ecb                                 |
+| sha1      | a93d0f59b3374c6d3669a5872d44515f056e9dbf                         |
+| sha256    | f423bd6daae6c8002acf5c203267e015f7beb4c52ed54a78789dd86ab35e46c6 |
+| path      | eediwjus.dll                                                     |
++-----------+------------------------------------------------------------------+
 
 no capabilities found
 ```
