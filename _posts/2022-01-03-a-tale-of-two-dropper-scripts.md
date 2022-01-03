@@ -3,7 +3,7 @@ layout: post
 title: "A Tale of Two Dropper Scripts for Agent Tesla"
 date: 2022-01-03
 categories: agenttesla malware javascript vbs
-permalink: /a-tale=of-two-dropper-scripts/
+permalink: /a-tale-of-two-dropper-scripts/
 ---
 
 In this post I want to look at two script files that drop Agent Tesla stealers on affected systems and show how adversary decisions affect malware analysis and detection. If you want to follow along at home, I'm working with these samples from MalwareBazaar:
