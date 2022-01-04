@@ -13,7 +13,7 @@ google_analytics: "UA-155060013-1"
 plugins: [jekyll-paginate]
 
 # Details for the RSS feed generator
-url: "https://forensicitguy.github.io/feed.xml"
+url: "https://forensicitguy.github.io/"
 author: "Tony Lambert (ForensicITGuy)"
 author-bio: "An educator that happens to do security things for Red Canary"
 
