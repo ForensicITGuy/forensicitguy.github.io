@@ -10,6 +10,8 @@ This post is dedicated to Josh Rickard ([@MSAdministrator](https://twitter.com/M
 
 ## Getting msitools
 
+> 2022-02-14 Edit: `msitools` is now included in REMnux! To get it run `remnux upgrade`.
+
 The `msitools` package isn't installed by default in REMnux, so we have to go install it ourselves. This is easily done using `apt`.
 
 ```shell
