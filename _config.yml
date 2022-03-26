@@ -6,12 +6,10 @@ remote_theme: "mmistakes/minimal-mistakes@4.24.0"
 # markdown: kramdown
 # highlighter: rouge
 logo: false
-paginate: 15
-paginate-path: "/page/:num"
 baseurl: ""
 domain_name: "https://forensicitguy.github.io"
 google_analytics: "UA-155060013-1"
-plugins: [jekyll-paginate, jekyll-include-cache]
+plugins: [jekyll-include-cache]
 
 # Details for the RSS feed generator
 url: "https://forensicitguy.github.io"
