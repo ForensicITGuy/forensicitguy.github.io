@@ -1,0 +1,16 @@
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+     this.page.url = "{{ site.url }}{{ page.url }}";
+     this.page.identifier = "{{ page.url }}";
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://{{ site.disqus-shortname }}.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+</section>
