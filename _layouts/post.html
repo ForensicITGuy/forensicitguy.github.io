@@ -5,7 +5,8 @@ archive: false
 post_class: post-template
 ---
 
-<header class="main-header post-head {% if page.cover %}" style="background-image: url({{ page.cover }}) {%else%}no-cover{% endif %}">
+<header class="main-header post-head {% if page.cover %}"
+    style="background-image: url({{ page.cover }}) {%else%}no-cover{% endif %}">
     <nav class="main-nav {% if page.cover %} overlay {% endif %} clearfix">
         <a class="back-button icon-arrow-left" href="{{'/' | relative_url }}">Home</a>
         <a class="subscribe-button icon-feed" href="{{'feed.xml' | relative_url }}">Subscribe</a>
@@ -20,13 +21,14 @@ post_class: post-template
             <h1 class="post-title">{{ page.title }}</h1>
             <section class="post-meta">
                 {% if page.categories.size > 0 %}
-                    {{ page.categories | array_to_sentence_string | prepend: 'on ' }}
+                {{ page.categories | array_to_sentence_string | prepend: 'on ' }}
                 {% endif %}
-                <time class="post-date" datetime="{{ page.date | date:"%Y-%m-%d" }}">{{ page.date | date_to_string }}</time>
+                <time class="post-date" datetime="{{ page.date | date:" %Y-%m-%d" }}">{{ page.date | date_to_string
+                    }}</time>
             </section>
         </header>
 
-<!--         <header class="post-header">
+        <!--         <header class="post-header">
             <a id="blog-logo" href="{{site.url}}">
                 {% if site.logo %}
                     <img src="{{site.logo}}" alt="{{ site.name }}" />
@@ -54,7 +56,8 @@ post_class: post-template
             <h5>Archive</h5>
             <ul>
                 {% for post in site.posts %}
-                    <li><span>{{ post.date | date_to_string }}</span>  <a href="{{ post.url  | relative_url}}">{{ post.title }}</a></li>
+                <li><span>{{ post.date | date_to_string }}</span> <a href="{{ post.url  | relative_url}}">{{ post.title
+                        }}</a></li>
                 {% endfor %}
             </ul>
         </section>
@@ -63,18 +66,22 @@ post_class: post-template
         <footer class="post-footer">
             <!-- If we want to display author's name and bio -->
             {% if site.author %}
-                <figure class="author-image">
-                    <a class="img" href="{{'/' | relative_url }}" style="background-image: url({{'/assets/images/profile.png' | relative_url}})">
+            <figure class="author-image">
+                <a class="img" href="{{'/' | relative_url }}"
+                    style="background-image: url({{'/assets/images/profile.png' | relative_url}})">
                     <span class="hidden">{{site.author}}'s Picture</span></a>
-                </figure>
-                <section class="author">
-                    <!-- Author Name -->
-                    <h4> {{ site.author }} </h4>
-                    <!-- Author Bio -->
-                    <p>
-                        {{ site.author-bio}}
-                    </p>
-                </section>
+            </figure>
+            <section class="author">
+                <!-- Author Name -->
+                <h4> {{ site.author }} </h4>
+                <!-- Author Bio -->
+                <p>
+                    {{ site.author-bio}}
+                </p>
+                <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+                <script
+                    type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B7BTGFS'); kofiwidget2.draw();</script>
+            </section>
             {% endif %}
 
             <!-- Share links section -->
@@ -82,7 +89,7 @@ post_class: post-template
 
             <!-- Disqus comments -->
             {% if page.disqus %}
-                {% include disqus.html %}
+            {% include disqus.html %}
             {% endif %}
 
         </footer>

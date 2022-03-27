@@ -35,3 +35,5 @@ Finally, I make regular contributions to the information security community via 
 - Twitter - <https://twitter.com/ForensicITGuy>
 - LinkedIn - <https://www.linkedin.com/in/tonymlambert/>
 - GitHub - <https://www.github.com/ForensicITGuy>
+
+If you enjoy my content, please consider supporting via Ko-Fi: <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B7BTGFS');kofiwidget2.draw();</script> 
