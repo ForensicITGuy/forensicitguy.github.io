@@ -2,7 +2,8 @@
 layout: post
 title: "AgentTesla From RTF Exploitation to .NET Tradecraft"
 date: 2022-02-06
-categories: malware .net agenttesla rtf equationeditor 
+categories: malware 
+tags: malware .net agenttesla rtf equationeditor 
 permalink: /agenttesla-rtf-dotnet-tradecraft/
 ---
 

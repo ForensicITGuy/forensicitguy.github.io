@@ -2,7 +2,8 @@
 layout: post
 title: "BazarISO Analysis - Loading with Advpack.dll"
 date: 2022-01-22
-categories: malware bazariso advpack
+categories: malware
+tags: malware bazariso advpack
 permalink: /bazariso-analysis-advpack/
 ---
 

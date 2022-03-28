@@ -2,7 +2,8 @@
 layout: post
 title: "STRRAT Attached to a MSI File"
 date: 2022-02-02
-categories: malware strrat msi oledump java jar
+categories: malware
+tags: malware strrat msi oledump java jar
 permalink: /strrat-attached-to-msi/
 ---
 

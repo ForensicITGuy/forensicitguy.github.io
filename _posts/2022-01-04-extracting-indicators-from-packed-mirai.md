@@ -2,7 +2,8 @@
 layout: post
 title: "Extracting Indicators from a Packed Mirai Sample"
 date: 2022-01-04
-categories: malware mirai upx
+categories: Malware
+tags: malware mirai upx
 permalink: /extracting-indicators-from-packed-mirai/
 ---
 

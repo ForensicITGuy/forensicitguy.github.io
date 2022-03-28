@@ -2,7 +2,8 @@
 layout: post
 title: "Formbook Distributed Via VBScript, PowerShell, and C# Code"
 date: 2022-03-25
-categories: malware formbook vbscript powershell csharp 
+categories: malware
+tags: malware formbook vbscript powershell csharp 
 permalink: /formbook-via-vbs-powershell-and-csharp/
 ---
 

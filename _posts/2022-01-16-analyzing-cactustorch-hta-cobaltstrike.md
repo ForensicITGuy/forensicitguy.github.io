@@ -2,7 +2,8 @@
 layout: post
 title: "Analyzing a CACTUSTORCH HTA Leading to Cobalt Strike"
 date: 2022-01-16
-categories: malware hta cobalt-strike
+categories: Malware
+tags: malware hta cobalt-strike
 permalink: /analyzing-cactustorch-hta-cobaltstrike/
 ---
 

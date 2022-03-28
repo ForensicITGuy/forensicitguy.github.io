@@ -2,7 +2,8 @@
 layout: post
 title: "Getting PE Rich Header Hashes with pefile in Python"
 date: 2021-09-02
-categories: windows pefile pe rich header hash virustotal
+categories: blue-team tools
+tags: windows pefile pe rich header hash virustotal
 permalink: /rich-header-hashes-with-pefile/
 ---
 

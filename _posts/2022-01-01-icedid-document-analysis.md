@@ -2,7 +2,8 @@
 layout: post
 title: "Analyzing an IcedID Loader Document"
 date: 2022-01-01
-categories: icedid malware msword mshta regsvr32
+categories: Malware
+tags: icedid malware msword mshta regsvr32
 permalink: /analyzing-icedid-document/
 ---
 

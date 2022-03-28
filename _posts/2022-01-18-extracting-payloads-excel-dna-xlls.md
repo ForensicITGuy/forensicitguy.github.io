@@ -2,7 +2,8 @@
 layout: post
 title: "Extracting Payloads from Excel-DNA XLL Add-Ins"
 date: 2022-01-18
-categories: malware xll excel-dna
+categories: malware
+tags: malware xll excel-dna
 permalink: /extracting-payloads-excel-dna-xlls/
 ---
 

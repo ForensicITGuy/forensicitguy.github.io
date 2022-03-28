@@ -2,7 +2,8 @@
 layout: post
 title: "Analyzing a Magnitude EK Appx Package Dropping Magniber"
 date: 2022-01-02
-categories: magnitude malware magniber appx
+categories: Malware
+tags: magnitude malware magniber appx
 permalink: /analyzing-magnitude-magniber-appx/
 ---
 

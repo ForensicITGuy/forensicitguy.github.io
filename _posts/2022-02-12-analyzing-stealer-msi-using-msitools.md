@@ -2,7 +2,8 @@
 layout: post
 title: "Analyzing a Stealer MSI using msitools"
 date: 2022-02-12
-categories: malware msitools stealer msi 
+categories: malware 
+tags: malware msitools stealer msi 
 permalink: /analyzing-stealer-msi-using-msitools/
 ---
 

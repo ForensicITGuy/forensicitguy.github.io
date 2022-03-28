@@ -2,7 +2,8 @@
 layout: post
 title: "HCrypt Injecting BitRAT using PowerShell, HTAs, and .NET"
 date: 2022-01-23
-categories: malware hcrypt process-injection powershell hta bitrat
+categories: malware
+tags: malware hcrypt process-injection powershell hta bitrat
 permalink: /hcrypt-injecting-bitrat-analysis/
 ---
 

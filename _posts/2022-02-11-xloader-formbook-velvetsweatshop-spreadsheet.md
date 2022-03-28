@@ -2,7 +2,8 @@
 layout: post
 title: "XLoader/Formbook Distributed by Encrypted VelvetSweatshop Spreadsheets"
 date: 2022-02-11
-categories: malware xloader formbook xlsx velvetsweatshop equationeditor 
+categories: malware 
+tags: malware xloader formbook xlsx velvetsweatshop equationeditor 
 permalink: /xloader-formbook-velvetsweatshop-spreadsheet/
 ---
 

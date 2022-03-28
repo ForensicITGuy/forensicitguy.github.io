@@ -2,7 +2,8 @@
 layout: post
 title: "Analyzing an Empire macOS PKG Stager"
 date: 2021-02-08
-categories: macOS Empire PKG malware 
+categories: Malware 
+tags: macOS Empire PKG malware 
 permalink: /analyzing-empire-macos-pkg-stager/
 ---
 

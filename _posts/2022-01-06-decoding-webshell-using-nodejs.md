@@ -2,7 +2,8 @@
 layout: post
 title: "Decoding an Encoded Webshell Using NodeJS"
 date: 2022-01-06
-categories: malware webshell nodejs javascript
+categories: Malware
+tags: malware webshell nodejs javascript
 permalink: /decoding-webshell-using-nodejs/
 ---
 

@@ -2,7 +2,8 @@
 layout: post
 title: "Making Meterpreter Look Google Signed"
 date: 2019-01-18
-categories: meterpreter chrome msfvenom jar metasploit
+categories: security red-team
+tags: meterpreter chrome msfvenom jar metasploit
 permalink: /making-meterpreter-look-google-signed/
 ---
 

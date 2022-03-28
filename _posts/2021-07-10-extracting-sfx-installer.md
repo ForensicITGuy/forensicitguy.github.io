@@ -2,7 +2,8 @@
 layout: post
 title: "Extracting Malicious Payloads from SFX Self-Extracting Installers"
 date: 2021-07-10
-categories: windows 7zip sfx self-extracting installers
+categories: Malware
+tags: windows 7zip sfx self-extracting installers
 permalink: /extracting-sfx-installer/
 ---
 

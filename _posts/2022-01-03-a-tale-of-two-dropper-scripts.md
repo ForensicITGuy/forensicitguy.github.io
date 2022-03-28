@@ -2,7 +2,8 @@
 layout: post
 title: "A Tale of Two Dropper Scripts for Agent Tesla"
 date: 2022-01-03
-categories: agenttesla malware javascript vbs
+categories: Malware
+tags: agenttesla malware javascript vbs
 permalink: /a-tale-of-two-dropper-scripts/
 ---
 

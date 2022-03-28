@@ -2,7 +2,8 @@
 layout: post
 title: "Adding Process Hiding to Merlin"
 date: 2019-08-28
-categories: merlin ld_preload red_team
+categories: security red-team linux
+tags: merlin ld_preload libprocesshider
 permalink: /adding-process-hiding-to-merlin/
 ---
 

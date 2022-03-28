@@ -2,7 +2,8 @@
 layout: post
 title: "Emotet's Excel 4.0 Macros Dropping DLLs"
 date: 2022-01-17
-categories: malware emotet excel4-macro
+categories: malware
+tags: malware emotet excel4-macro
 permalink: /emotet-excel4-macro-analysis/
 ---
 

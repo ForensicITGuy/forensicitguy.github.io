@@ -2,7 +2,8 @@
 layout: post
 title: "Whitelisting LD_PRELOAD for Fun and No Profit"
 date: 2019-08-29
-categories: ld_preload linux whitelisting unix ld_audit libpreloadvaccine
+categories: blue-team linux security
+tags: ld_preload linux whitelisting unix ld_audit libpreloadvaccine
 permalink: /whitelisting-ld-preload-for-fun-and-no-profit/
 ---
 

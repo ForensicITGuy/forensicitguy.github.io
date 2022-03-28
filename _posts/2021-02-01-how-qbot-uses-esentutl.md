@@ -2,7 +2,8 @@
 layout: post
 title: "How Qbot Uses Esentutl"
 date: 2021-02-01
-categories: qbot malware esentutil
+categories: Malware
+tags: qbot malware esentutil
 permalink: /how-qbot-uses-esentutl/
 ---
 

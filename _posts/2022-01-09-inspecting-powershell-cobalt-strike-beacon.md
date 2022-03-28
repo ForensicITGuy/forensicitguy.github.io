@@ -2,7 +2,8 @@
 layout: post
 title: "Inspecting a PowerShell Cobalt Strike Beacon"
 date: 2022-01-09
-categories: malware powershell "cobalt strike"
+categories: malware
+tags: malware powershell cobalt-strike
 permalink: /inspecting-powershell-cobalt-strike-beacon/
 ---
 

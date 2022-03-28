@@ -2,7 +2,8 @@
 layout: post
 title: "My SANS DFIR NetWars Experience"
 date: 2018-08-26
-categories: SANS DFIR NetWars
+categories: Education
+tags: SANS DFIR NetWars
 permalink: /my-sans-dfir-netwars-experience/
 ---
 

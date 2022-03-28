@@ -2,7 +2,8 @@
 layout: post
 title: "Road to RHCSA 8 - I/O Redirection, Piping, and Their Evil Uses"
 date: 2020-02-29
-categories: RedHat RHCSA Linux certification redirection input output piping python base64 bash
+categories: Education Certification Linux
+tags: RedHat RHCSA Linux certification redirection input output piping python base64 bash
 permalink: /road-to-rhcsa8-io-redirection-piping/
 ---
 

@@ -2,7 +2,8 @@
 layout: post
 title: "Linux EDR Evasion With Meterpreter and LD_PRELOAD"
 date: 2020-02-06
-categories: ld_preload linux edr evasion meterpreter
+categories: red-team linux security
+tags: ld_preload linux edr evasion meterpreter
 permalink: /linux-edr-evasion-meterpreter-ld-preload/
 ---
 

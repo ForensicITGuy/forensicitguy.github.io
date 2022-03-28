@@ -2,7 +2,8 @@
 layout: post
 title: "An AgentTesla Sample Using VBA Macros and Certutil"
 date: 2022-03-26
-categories: malware agenttesla macro certutil 
+categories: malware
+tags: malware agenttesla macro certutil 
 permalink: /agenttesla-vba-certutil-download/
 ---
 

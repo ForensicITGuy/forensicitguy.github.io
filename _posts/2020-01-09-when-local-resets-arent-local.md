@@ -2,7 +2,8 @@
 layout: post
 title: "When Local Password Resets Aren't Local"
 date: 2020-01-09
-categories: windows active-directory domain-controllers accounts administrators
+categories: blue-team windows security
+tags: windows active-directory domain-controllers accounts administrators
 permalink: /when-local-password-resets-arent-local/
 ---
 

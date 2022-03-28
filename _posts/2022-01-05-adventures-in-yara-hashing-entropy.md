@@ -2,7 +2,8 @@
 layout: post
 title: "Adventures in YARA Hashing and Entropy"
 date: 2022-01-05
-categories: malware yara hashing entropy
+categories: blue-team tools
+categories: yara hashing entropy
 permalink: /adventures-in-yara-hashing-entropy/
 ---
 

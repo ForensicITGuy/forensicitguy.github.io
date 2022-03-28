@@ -2,7 +2,8 @@
 layout: post
 title: "GuLoader Executing Shellcode Using Callback Functions"
 date: 2022-01-27
-categories: malware guloader shellcode callbacks
+categories: malware
+tags: malware guloader shellcode callbacks
 permalink: /guloader-executing-shellcode-callbacks/
 ---
 

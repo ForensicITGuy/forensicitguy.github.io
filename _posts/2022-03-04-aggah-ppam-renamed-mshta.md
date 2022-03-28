@@ -2,7 +2,8 @@
 layout: post
 title: "Aggah PPAM macros renaming MSHTA"
 date: 2022-03-04
-categories: malware ppam macro mshta aggah 
+categories: malware
+tags: malware ppam macro mshta aggah 
 permalink: /aggah-ppam-renamed-mshta/
 ---
 

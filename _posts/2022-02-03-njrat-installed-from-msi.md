@@ -2,7 +2,8 @@
 layout: post
 title: "njRAT Installed from a MSI"
 date: 2022-02-03
-categories: malware njrat msi oledump 
+categories: malware 
+tags: malware njrat msi oledump 
 permalink: /njrat-installed-from-msi/
 ---
 

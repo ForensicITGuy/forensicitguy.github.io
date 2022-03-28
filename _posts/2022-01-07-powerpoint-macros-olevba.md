@@ -2,7 +2,8 @@
 layout: post
 title: "Looking at PowerPoint Macros with Olevba"
 date: 2022-01-07
-categories: malware powerpoint macros mshta olevba
+categories: Malware
+tags: malware powerpoint macros mshta olevba
 permalink: /powerpoint-macros-olevba/
 ---
 
