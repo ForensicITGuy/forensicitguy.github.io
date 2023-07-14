@@ -25,6 +25,8 @@ I've presented security-related work at multiple conferences:
 - Defcon 28 Blue Team Village Threat Hunting Panel
 - Objective By The Sea v4.0 (2021) - The Wild World of macOS Installers
   - <https://www.youtube.com/watch?v=Eow5uNHtmIg>
+- SANS CTI Summit 2023 - Malware Analysis: What's the Point?
+  - <https://www.youtube.com/watch?v=16kSEoDvV5c>
 
 I've contributed documentation for multiple MITRE ATT&CK Techniques and at least one group.
 
