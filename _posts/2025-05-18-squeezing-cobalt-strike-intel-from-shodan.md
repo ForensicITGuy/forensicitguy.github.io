@@ -2,8 +2,8 @@
 layout: post
 title: "Squeezing Cobalt Strike Threat Intelligence from Shodan"
 date: 2025-05-18
-categories: malware
-tags: malware shodan cobaltstrike
+categories: threat-intelligence
+tags: threat-intelligence shodan cobaltstrike
 permalink: /squeezing-cobalt-strike-intel-from-shodan/
 image:
   path: /assets/images/previews/squeezing-data-shodan-preview.png
