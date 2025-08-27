@@ -211,8 +211,9 @@ exclude:
   - tools
   - README.md
   - LICENSE
+  - purgecss.js
   - "*.config.js"
-  - package*.json
+  - "package*.json"
 
 jekyll-archives:
   enabled: [categories, tags]
